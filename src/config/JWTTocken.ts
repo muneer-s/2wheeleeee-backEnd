@@ -1,16 +1,16 @@
 
-import { Jwt } from "jsonwebtoken";
+// import { Jwt } from "jsonwebtoken";
 
 
-const access_secret=process.
+// const access_secret=process.
 
-class JWT{
-    accessToken(userData){
+// class JWT{
+//     accessToken(userData){
 
-    }
-    refresh(userData){
+//     }
+//     refresh(userData){
 
-    }
-}
+//     }
+// }
 
-export default JWT;
+// export default JWT;

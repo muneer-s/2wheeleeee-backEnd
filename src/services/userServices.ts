@@ -1,68 +1,30 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { UserRepository } from '../repositories/userRepository';
-import { IUser, IUserResponse } from '../types/types';
-import { config } from '../config/config';
+import UserInterface from "../interfaces/IUser";
+import UserRepository from "../repositories/userRepository";
+import { STATUS_CODES } from "../constants/httpStatusCodes";
+import { CreateJWT } from "../utils/generateToken";
+import Encrypt from "../utils/comparePassword";
 
-export class UserService {
-    private userRepository: UserRepository;
+const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 
-    constructor() {
-        this.userRepository = new UserRepository();
-    }
 
-    private generateToken(userId: string): string {
-        return jwt.sign({ userId }, config.jwtSecret, {
-            expiresIn: config.jwtExpiration
-        });
-    }
 
-    private async validatePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
-        return await bcrypt.compare(plainPassword, hashedPassword);
-    }
+class UserServices {
+    constructor(private userRepository: UserRepository,
+        private encrypt: Encrypt,
+        private createjwt: CreateJWT,
+    ) { }
 
-    async register(userData: IUser): Promise<IUserResponse> {
-        const existingUser = await this.userRepository.findByEmail(userData.email);
-
-        if (existingUser) {
-            throw new Error('Email already registered');
+    async userSignup(userData: UserInterface): Promise<UserInterface | null> {
+        try {
+            return await this.userRepository.emailExistCheck(userData.email);
+        } catch (error) {
+            console.log(error as Error);
+            return null;
         }
 
-        const hashedPassword = await bcrypt.hash(userData.password, 10);
-        
-        const user = await this.userRepository.create({
-            ...userData,
-            password: hashedPassword
-        });
-
-        const token = this.generateToken(user.id);
-
-        return {
-            id: user.id,
-            userName: user.userName,
-            email: user.email,
-            token
-        };
     }
 
-    async login(email: string, password: string): Promise<IUserResponse> {
-        const user = await this.userRepository.findByEmail(email);
-        if (!user) {
-            throw new Error('Invalid credentials');
-        }
 
-        const isValidPassword = await this.validatePassword(password, user.password);
-        if (!isValidPassword) {
-            throw new Error('Invalid credentials');
-        }
-
-        const token = this.generateToken(user.id);
-
-        return {
-            id: user.id,
-            userName: user.userName,
-            email: user.email,
-            token
-        };
-    }
 }
+
+export default UserServices;

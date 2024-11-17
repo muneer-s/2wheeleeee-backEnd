@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import connectDB from './database/mongoDB'; // Ensure the path is correct
-import userRouter from './routes/users';
+import userRouter from './routes/userRoutes';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import cors from 'cors'; // CORS Middleware
