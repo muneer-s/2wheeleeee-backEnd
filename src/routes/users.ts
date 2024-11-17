@@ -5,8 +5,16 @@ import { UserController } from '../controllers/userController';
 const userController=new UserController()
 
 
+
+  
+  
 const userRouter = express.Router();
 
-userRouter.get('/users/:id', (req, res) => userController.getUser(req, res));
+
+userRouter.post('/register', (req, res) => {
+    console.log(req.body);
+    
+    userController.Register(req, res)
+});
 
 export default userRouter;

@@ -4,9 +4,9 @@ export class UserController {
       
   ) {}
 
-  public getUser = async (req: Request, res: Response) => {
-    const user =12 //await this.userService.getUserDetails(req.params.id);
-   // res.json({ user });
+  public Register = async (req: Request, res: Response) => {
+    const user =12 
+    
   };
 }
 

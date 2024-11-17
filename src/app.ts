@@ -3,6 +3,16 @@ import connectDB from './database/mongoDB'; // Ensure the path is correct
 import userRouter from './routes/users';
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import cors from 'cors'; // CORS Middleware
+
+
+
+const corsOptions = {
+  origin: 'http://localhost:5173', // Allow only this origin
+  credentials: true,              // Allow cookies and credentials
+  methods: 'GET,POST,PUT,DELETE', // Allow specific HTTP methods
+  allowedHeaders: 'Content-Type,Authorization', // Allow specific headers
+};
 
 dotenv.config();
 
@@ -10,6 +20,8 @@ dotenv.config();
 connectDB();
 
 const app = express();
+app.use(cors(corsOptions));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
