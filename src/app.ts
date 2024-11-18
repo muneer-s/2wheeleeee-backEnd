@@ -1,17 +1,17 @@
 import dotenv from 'dotenv';
-import connectDB from './database/mongoDB'; // Ensure the path is correct
+import connectDB from './database/mongoDB'; 
 import userRouter from './routes/userRoutes';
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import cors from 'cors'; // CORS Middleware
+import cors from 'cors'; 
 
 
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow only this origin
-  credentials: true,              // Allow cookies and credentials
-  methods: 'GET,POST,PUT,DELETE', // Allow specific HTTP methods
-  allowedHeaders: 'Content-Type,Authorization', // Allow specific headers
+  origin: 'http://localhost:5173', 
+  credentials: true,             
+  methods: 'GET,POST,PUT,DELETE', 
+  allowedHeaders: 'Content-Type,Authorization',
 };
 
 dotenv.config();

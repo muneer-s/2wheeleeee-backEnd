@@ -11,6 +11,7 @@ const transporter = nodemailer.createTransport({
     }
 })
 
+
 export const generateAndSendOTP = async (toEmail: string): Promise<string> => {
     const otp: string | null = generateRandomOTP()
 
@@ -18,8 +19,9 @@ export const generateAndSendOTP = async (toEmail: string): Promise<string> => {
         from: process.env.TRANSPORTER_EMAIL,
         to: toEmail,
         subject: 'OTP Verification',
-        text: `Welcome to JobberWin. Your OTP for registration is: ${otp}`
+        text: `Welcome to 2wheleee. Your OTP for registration is: ${otp}`
     }
+    
     await transporter.sendMail(mailOptions)
     return otp
 }

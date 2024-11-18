@@ -15,7 +15,6 @@
 //         if (!token) {
 //             return res.status(401).json({ message: 'No token provided' });
 //         }
-
 //         // Verify token
 //         const decoded = JWTUtils.verifyToken(token);
 //         req.user = decoded;

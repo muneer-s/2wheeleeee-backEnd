@@ -14,8 +14,8 @@ class UserServices {
         private createjwt: CreateJWT,
     ) { }
 
-    async userSignup(userData: UserInterface): Promise<UserInterface | null> {
-        try {
+    async userSignup(userData: UserInterface): Promise<string | null> {
+        try {            
             return await this.userRepository.emailExistCheck(userData.email);
         } catch (error) {
             console.log(error as Error);

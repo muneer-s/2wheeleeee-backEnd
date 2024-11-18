@@ -15,16 +15,15 @@ export class UserController {
 
   milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
 
-
-  // public Register = async (req: Request, res: Response) => {
-  //   const user =12 
-    
-  // };
-
   async userSignup(req: Request, res: Response): Promise<void> {
     try {
+      
+
+
         req.app.locals.userData = req.body;
+        
         const newUser = await this.UserServices.userSignup(req.app.locals.userData);
+        
         if (!newUser) {
             req.app.locals.newUser = true;
             req.app.locals.userData = req.body;
