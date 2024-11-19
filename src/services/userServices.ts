@@ -35,10 +35,14 @@ class UserServices {
         }
     }
 
-    async verifyOtp(){
+    async verifyOtp(data:{ otp: number, userId: string }){
         try {
+console.log('11111',data);
 
-            // return await this.userRepository.verifyOtp()
+            let email = data.userId
+            let otp = data.otp
+            
+            return await this.userRepository.checkOtp(email,otp)
             
         } catch (error) {
             console.log(error);

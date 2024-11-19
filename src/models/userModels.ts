@@ -26,6 +26,7 @@ const userSchema: Schema<UserInterface> = new Schema({
     
     phoneNumber: {
         type: Number,
+        
     },
     isBlocked: {
         type: Boolean,
