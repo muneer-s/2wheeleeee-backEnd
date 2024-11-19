@@ -17,33 +17,27 @@ export class UserController {
 
   async userSignup(req: Request, res: Response): Promise<void> {
     try {
-      
-
-
         req.app.locals.userData = req.body;
-        
         const newUser = await this.UserServices.userSignup(req.app.locals.userData);
-        
         if (!newUser) {
-            req.app.locals.newUser = true;
-            req.app.locals.userData = req.body;
-            req.app.locals.userEmail = req.body.email;
-            const otp = await generateAndSendOTP(req.body.email);
-            req.app.locals.userOtp = otp;
-            const expirationMinutes = 5;
-            setTimeout(() => {
-                delete req.app.locals.userOtp;
-            }, expirationMinutes * 60 * 1000);
-
-            res.status(OK).json({ userId: null, success: true, message: 'OTP sent for verification...' });
-
-        } else {
+            await generateAndSendOTP(req.body.email);
+            const saveData = await this.UserServices.saveUser(req.body);
+            console.log(saveData);
+            res.status(OK).json({ userId: req.body.email, success: true, message: 'OTP sent for verification...' });
+        } else {            
             res.status(BAD_REQUEST).json({ success: false, message: 'The email is already in use!' });
         }
     } catch (error) {
         console.log(error as Error)
         res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
     }
+}
+
+async verifyOtp(req:Request,res:Response){
+    let otp = req.body
+    console.log('otp is -----',otp );
+    
+
 }
 
 

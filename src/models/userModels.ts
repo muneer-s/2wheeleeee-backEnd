@@ -1,20 +1,10 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from 'bcrypt';
+import { UserInterface } from "../interfaces/IUser";
 
 
-export interface UserInterface extends Document {
-    _id: mongoose.Types.ObjectId;
-    name: string;
-    password: string;
-    email: string;
-    phoneNumber: number;
-    isBlocked: boolean;
-    profile_picture:string;
-    dateOfBirth:Date;
-    location: string | null;
-    lisence_picture: string[];    
-    matchPassword: (enteredPassword: string) => Promise<boolean>;
-}
+
+
 
 
 
@@ -36,34 +26,35 @@ const userSchema: Schema<UserInterface> = new Schema({
     
     phoneNumber: {
         type: Number,
-        required:true
     },
     isBlocked: {
         type: Boolean,
         default: false
     },
-   
-    
+    isVerified:{
+        type: Boolean,
+        default:false
+    }, 
     profile_picture: {
         type: String,
+        default:''
     },
     dateOfBirth: {
         type: Date,
-        required: true
+
     },
     location: {
         type: String,
-        required:true
+        default : '',
     },
-    lisence_picture: {
-        type: [String], // Array of strings to store front and back pictures
-        validate: {
-            validator: function (value: string[]) {
-                return value.length === 2; // Ensures exactly two pictures
-            },
-            message: "lisence_picture must contain exactly two entries (front and back)."
-        }
+    lisence_picture_front: {
+        type:String,
+        default:''
     },
+    lisence_picture_back:{
+        type:String,
+        default:''
+    }
    
 });
 

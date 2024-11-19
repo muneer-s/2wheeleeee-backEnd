@@ -1,18 +1,22 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 
-interface UserInterface {
-    id: string;
+
+export interface UserInterface extends Document {
+    _id: mongoose.Types.ObjectId;
     name: string;
     password: string;
     email: string;
     phoneNumber: number;
     isBlocked: boolean;
+    isVerified:boolean;
     profile_picture:string;
     dateOfBirth:Date;
     location: string | null;
-    lisence_picture: string[]; 
-    
+    lisence_picture_front: string;    
+    lisence_picture_back: string;    
+    matchPassword: (enteredPassword: string) => Promise<boolean>;
 }
 
-export default UserInterface;
+
+

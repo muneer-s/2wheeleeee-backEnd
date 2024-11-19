@@ -25,6 +25,12 @@ userRouter.post('/userSignup', (req , res) => {
     userController.userSignup(req, res)
 });
 
+userRouter.post('/user/verifyOtp',(req,res)=>{
+    console.log(`otp is ${req.body.otp}  `);
+    userController.verifyOtp(req,res)
+    
+})
+
 
 
 

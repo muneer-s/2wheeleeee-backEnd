@@ -1,4 +1,4 @@
-import UserInterface from '../interfaces/IUser';
+import { UserInterface } from '../interfaces/IUser';
 import userModel from '../models/userModels';
 
 
@@ -9,7 +9,7 @@ class UserRepository {
       console.log("reposiry poyi email ullathano cheked",email);
       
       const userFound = await userModel.findOne({ email: email });
-      
+
       if(userFound ){
         return 'user already exist'
       }else{
@@ -21,7 +21,7 @@ class UserRepository {
       return null;
     }
   }
-  async saveUser(userData: UserInterface): Promise<UserInterface | null> {
+  async saveUser(userData: any) {
     try {
       const newUser = new userModel(userData);
       await newUser.save();

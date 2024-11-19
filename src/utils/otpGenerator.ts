@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
+import OTPModel from '../models/otpModels';
+import bcrypt from "bcrypt";
 
 dotenv.config();
 
@@ -14,14 +16,21 @@ const transporter = nodemailer.createTransport({
 
 export const generateAndSendOTP = async (toEmail: string): Promise<string> => {
     const otp: string | null = generateRandomOTP()
+    const hashedOTP = await bcrypt.hash(otp, 10);
+
+    await OTPModel.create({
+        email:toEmail,
+        hashedOTP,
+        expireAt: new Date(Date.now() + 60 * 1000), 
+      });
 
     const mailOptions = {
         from: process.env.TRANSPORTER_EMAIL,
         to: toEmail,
         subject: 'OTP Verification',
-        text: `Welcome to 2wheleee. Your OTP for registration is: ${otp}`
+        text: `Welcome to 2wheleeee. Your OTP for registration is: ${otp}`
     }
-    
+
     await transporter.sendMail(mailOptions)
     return otp
 }

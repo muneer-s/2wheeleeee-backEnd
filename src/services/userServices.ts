@@ -1,4 +1,4 @@
-import UserInterface from "../interfaces/IUser";
+import { UserInterface } from "../interfaces/IUser";
 import UserRepository from "../repositories/userRepository";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { CreateJWT } from "../utils/generateToken";
@@ -22,6 +22,28 @@ class UserServices {
             return null;
         }
 
+    }
+
+    async saveUser(userData:any){
+        try {
+            console.log("servicil",userData);
+            
+            return await this.userRepository.saveUser(userData)
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
+    async verifyOtp(){
+        try {
+
+            // return await this.userRepository.verifyOtp()
+            
+        } catch (error) {
+            console.log(error);
+            
+        }
     }
 
 
