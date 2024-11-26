@@ -14,8 +14,9 @@ class UserServices {
         private createjwt: CreateJWT,
     ) { }
 
-    async userSignup(userData: UserInterface): Promise<string | null> {
-        try {            
+    async userSignup(userData: UserInterface): Promise<boolean | null> {
+        try {
+            console.log('new user aano nn checking');
             return await this.userRepository.emailExistCheck(userData.email);
         } catch (error) {
             console.log(error as Error);
@@ -24,29 +25,41 @@ class UserServices {
 
     }
 
-    async saveUser(userData:any){
+    async saveUser(userData: any) {
         try {
-            console.log("servicil",userData);
-            
+            console.log("servicil", userData);
+
             return await this.userRepository.saveUser(userData)
         } catch (error) {
             console.log(error);
-            
+
         }
     }
 
-    async verifyOtp(data:{ otp: number, userId: string }){
+    async verifyOtp(data: { otp: number, userId: string }) {
         try {
-console.log('11111',data);
+            console.log('11111', data);
 
             let email = data.userId
             let otp = data.otp
-            
-            return await this.userRepository.checkOtp(email,otp)
-            
+
+            return await this.userRepository.checkOtp(email, otp)
+
         } catch (error) {
             console.log(error);
-            
+
+        }
+    }
+
+    async login(email: string) {
+        try {
+            console.log('.........', email);
+            return await this.userRepository.login(email)
+
+
+        } catch (error) {
+            console.log(error);
+
         }
     }
 

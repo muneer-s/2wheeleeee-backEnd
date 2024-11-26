@@ -15,48 +15,60 @@ const userSchema: Schema<UserInterface> = new Schema({
     },
     password: {
         type: String,
-        required:true
+        required: true
     },
-    
+
     email: {
         type: String,
         required: true,
         unique: true
     },
-    
+
     phoneNumber: {
         type: Number,
-        
+
     },
     isBlocked: {
         type: Boolean,
         default: false
     },
-    isVerified:{
+    isVerified: {
         type: Boolean,
-        default:false
-    }, 
+        default: false
+    },
     profile_picture: {
         type: String,
-        default:''
+        default: ''
     },
     dateOfBirth: {
         type: Date,
 
     },
-    location: {
+    address: {
         type: String,
-        default : '',
+        default: '',
     },
     lisence_picture_front: {
-        type:String,
-        default:''
+        type: String,
+        default: ''
     },
-    lisence_picture_back:{
-        type:String,
-        default:''
+    lisence_picture_back: {
+        type: String,
+        default: ''
     }
-   
+    ,
+    isUser: {
+        type: Boolean,
+        default: false
+    },
+    lisence_number: {
+        type: Number
+    },
+    lisence_Exp_Date: {
+        type: Date
+    }
+
+
 });
 
 userSchema.pre('save', async function (this: UserInterface, next) {

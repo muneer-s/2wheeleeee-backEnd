@@ -18,11 +18,27 @@ export const generateAndSendOTP = async (toEmail: string): Promise<string> => {
     const otp: string | null = generateRandomOTP()
     const hashedOTP = await bcrypt.hash(otp, 10);
 
-    await OTPModel.create({
-        email:toEmail,
-        hashedOTP,
-        expireAt: new Date(Date.now() + 60 * 1000), 
-      });
+    // await OTPModel.create({
+    //     email:toEmail,
+    //     hashedOTP,
+    //     expireAt: new Date(Date.now() + 60 * 1000), 
+    //   });
+
+    // Upsert logic: update or create an OTP document for the given email
+    await OTPModel.findOneAndUpdate(
+        { email: toEmail }, // Find document by email
+        {
+            $set: {
+                hashedOTP, // Update with new hashed OTP
+                expireAt: new Date(Date.now() + 60 * 1000), // Update expiration time
+            },
+        },
+        { upsert: true, new: true } // Create if doesn't exist, return the updated document
+    );
+
+
+
+
 
     const mailOptions = {
         from: process.env.TRANSPORTER_EMAIL,

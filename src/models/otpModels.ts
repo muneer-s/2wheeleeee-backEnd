@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import { OTPInterface } from "../interfaces/IOtp";
 
 const otpSchema: Schema<OTPInterface> = new Schema({
@@ -13,7 +13,7 @@ const otpSchema: Schema<OTPInterface> = new Schema({
   expireAt: {
     type: Date,
     default: Date.now,
-    expires: 60,
+    expires: 59,
   },
 });
 

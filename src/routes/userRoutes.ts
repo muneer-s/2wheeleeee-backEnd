@@ -31,6 +31,14 @@ userRouter.post('/user/verifyOtp',(req,res)=>{
     
 })
 
+userRouter.post('/user/login',(req,res)=>{    
+    userController.login(req,res)
+})
+                
+userRouter.post('/user/resendOtp',(req,res)=>{
+    userController.resendOtp(req,res)
+})
+
 
 
 
