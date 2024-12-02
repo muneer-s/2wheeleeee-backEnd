@@ -26,14 +26,14 @@ export const generateAndSendOTP = async (toEmail: string): Promise<string> => {
 
     // Upsert logic: update or create an OTP document for the given email
     await OTPModel.findOneAndUpdate(
-        { email: toEmail }, // Find document by email
+        { email: toEmail },
         {
             $set: {
-                hashedOTP, // Update with new hashed OTP
-                expireAt: new Date(Date.now() + 60 * 1000), // Update expiration time
+                hashedOTP, 
+                expireAt: new Date(Date.now() + 60 * 1000), 
             },
         },
-        { upsert: true, new: true } // Create if doesn't exist, return the updated document
+        { upsert: true, new: true } 
     );
 
 

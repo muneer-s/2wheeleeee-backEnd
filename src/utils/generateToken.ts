@@ -8,13 +8,12 @@ export class CreateJWT {
     generateToken(payload: string | undefined): string | undefined {
         if (payload) {
             const token = jwt.sign({ data: payload }, process.env.JWT_SECRET as Secret, { expiresIn: '30m' });
-            console.log("tooken : ",token);
-            
+            console.log("token : ",token);
             return token;
         }
     }
     generateRefreshToken(payload: string | undefined): string | undefined {
-        return jwt.sign({ data: payload }, process.env.JWT_REFRESH_SECRET as Secret, { expiresIn: '48h' });
+        return jwt.sign({ data: payload }, process.env.JWT_SECRET as Secret, { expiresIn: '48h' });
     }
 
     verifyToken(token: string): JwtPayload | null {
@@ -31,7 +30,7 @@ export class CreateJWT {
     }
     verifyRefreshToken(token: string) {
         try {
-            let secret = process.env.JWT_REFRESH_SECRET;
+            let secret = process.env.JWT_SECRET
             const decoded = jwt.verify(token, secret) as JwtPayload;
             return { success: true, decoded };
         } catch (error) {

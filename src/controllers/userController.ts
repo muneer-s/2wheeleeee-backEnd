@@ -19,7 +19,6 @@ export class UserController {
     async userSignup(req: Request, res: Response): Promise<void> {
         try {
             const userData = req.body;
-            console.log('sign up controller ethi', userData);
 
             const userFound = await this.UserServices.userSignup(userData);
 
@@ -27,7 +26,7 @@ export class UserController {
             if (userFound == false) {
                 await generateAndSendOTP(req.body.email);
                 const saveData = await this.UserServices.saveUser(req.body);
-                console.log(saveData);
+                console.log('saved data: ',saveData);
                 res.status(OK).json({ userId: req.body.email, success: true, message: 'OTP sent for verification...' });
             } else {
                 console.log('user already nd , so onnum cheyyanda , resposne sended to front end ');
@@ -101,13 +100,23 @@ export class UserController {
             console.log('resend otp req : ',req.body);
             const email = req.body.email
             console.log(email);
-            
+
             const otp = await generateAndSendOTP(email);
             
         } catch (error) {
             console.log(error);
             res.status(500).json({ success: false, message: 'Internal server error' });
 
+        }
+    }
+
+    async logout(req:Request,res:Response){
+        try {
+            console.log('logout ethi :only cookies clrear cheyyal aanu vendath ',req.body.email);
+            
+        } catch (error) {
+            console.log(error);
+            
         }
     }
 

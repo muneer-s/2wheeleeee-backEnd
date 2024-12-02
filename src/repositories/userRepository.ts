@@ -7,7 +7,7 @@ class UserRepository {
   async emailExistCheck(email: string): Promise<boolean | null> {
     try {
       const userFound = await userModel.findOne({ email: email });
-      
+
       if (userFound) {
         return true
       } else {
@@ -33,7 +33,7 @@ class UserRepository {
   async checkOtp(email: string, otp: number) {
     try {
       const otpRecord = await OTPModel.findOne({ email })
-      
+
       if (!otpRecord) {
         console.log('OTP record not found');
         return false;
@@ -57,7 +57,7 @@ class UserRepository {
 
   async login(email: string) {
     try {
-      return await userModel.findOne({ email: email })
+      return await userModel.findOne({ email: email,isVerified: true })
     } catch (error) {
       console.log(error);
     }

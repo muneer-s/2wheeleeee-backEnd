@@ -21,23 +21,27 @@ const userRouter = express.Router();
 
 userRouter.post('/userSignup', (req , res) => {
     console.log(req.body);
-    
     userController.userSignup(req, res)
 });
 
-userRouter.post('/user/verifyOtp',(req,res)=>{
+userRouter.post('/verifyOtp',(req,res)=>{
     console.log(`otp is ${req.body.otp}  `);
     userController.verifyOtp(req,res)
     
 })
 
-userRouter.post('/user/login',(req,res)=>{    
+userRouter.post('/login',(req,res)=>{    
     userController.login(req,res)
 })
                 
-userRouter.post('/user/resendOtp',(req,res)=>{
+userRouter.post('/resendOtp',(req,res)=>{
     userController.resendOtp(req,res)
 })
+
+userRouter.put('logout',(req,res)=>{    
+    userController.logout(req,res)
+})
+
 
 
 
