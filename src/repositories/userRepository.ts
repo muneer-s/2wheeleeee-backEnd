@@ -64,6 +64,16 @@ class UserRepository {
   }
 
 
+  async getProfile(email:string){
+    try {
+      return await userModel.findOne({email:email})
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+
 
 
 }

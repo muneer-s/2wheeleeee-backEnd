@@ -38,9 +38,15 @@ userRouter.post('/resendOtp',(req,res)=>{
     userController.resendOtp(req,res)
 })
 
-userRouter.put('logout',(req,res)=>{    
+userRouter.put('/logout',(req,res)=>{    
     userController.logout(req,res)
 })
+
+userRouter.get('/getProfile', (req, res) => {
+    console.log("Email received:", req.query.email);
+    userController.getProfile(req, res);
+});
+
 
 
 

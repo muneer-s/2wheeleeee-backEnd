@@ -33,21 +33,18 @@ export class AdminController {
 
             if (email !== adminEmail || password !== adminPassword) {
                 console.log('same alla');
-                
                 return res.status(UNAUTHORIZED).json({ success: false, message: 'Invalid email or password' });
             }
-            console.log('pinne no work');
+
             
             const time = this.milliseconds(23, 30, 0);
 
             const token = jwtHandler.generateToken(adminEmail);
             const refreshToken = jwtHandler.generateRefreshToken(adminEmail);
-            console.log('sameSite value:', 'none');
 
             res.status(OK).cookie('admin_access_token', token, {
                 expires: new Date(Date.now() + time),
                 sameSite: 'strict', 
-                //secure: true
             }).json({
                 success: true,
                 message: 'Login successful',

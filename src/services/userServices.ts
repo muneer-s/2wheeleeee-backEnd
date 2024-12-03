@@ -62,6 +62,15 @@ class UserServices {
         }
     }
 
+    async getProfile(email:string){
+        try {
+            return await this.userRepository.getProfile(email)
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
 
 }
 
