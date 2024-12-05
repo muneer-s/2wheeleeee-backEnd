@@ -47,6 +47,10 @@ userRouter.get('/getProfile', (req, res) => {
     userController.getProfile(req, res);
 });
 
+userRouter.put('/editUser',(req,res)=>{    
+    userController.editUser(req,res)
+})
+
 
 
 

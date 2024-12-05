@@ -82,12 +82,12 @@ export class UserController {
             const isUserPresent = await this.UserServices.login(email)
 
             if (!isUserPresent) {
-                return res.status(404).json({ success: false, message: 'There is no such user with this email' });
+                return res.status(404).json({ success: false, message: 'No account found with this email. Please register first.' });
             }
             const isPasswordMatch = await isUserPresent.matchPassword(password);
 
             if (!isPasswordMatch) {
-                return res.status(400).json({ success: false, message: 'Invalid email or password' });
+                return res.status(400).json({ success: false, message: 'Incorrect password. Please try again.' });
             }
 
             const time = this.milliseconds(23, 30, 0);
@@ -108,13 +108,9 @@ export class UserController {
                 userAccessToken,
                 userRefreshToken
             });
-
-
-
-
         } catch (error) {
-            console.log(error);
-            res.status(500).json({ success: false, message: 'Internal server error' });
+            console.log('Error during login:', error);
+            return res.status(500).json({ success: false, message: 'An unexpected error occurred. Please try again later.' });
 
         }
     }
@@ -169,6 +165,18 @@ console.log('userd dataaa:    ',userDetails);
         } catch (error) {
             console.log(error);
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
+        }
+    }
+
+    async editUser(req:Request,res:Response){
+        try {
+            const { email, ...userData } = req.body; // Destructure email and userData from the request body
+        console.log('User email:', email);
+        console.log('User data:', userData);
+            
+            
+        } catch (error) {
+            
         }
     }
 
