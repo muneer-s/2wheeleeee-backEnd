@@ -18,7 +18,7 @@ const userController = new UserController(service)
 
 const userRouter = express.Router();
 
-
+ 
 userRouter.post('/userSignup', (req , res) => {
     console.log(req.body);
     userController.userSignup(req, res)

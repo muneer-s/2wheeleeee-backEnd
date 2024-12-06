@@ -73,6 +73,28 @@ class UserRepository {
     }
   }
 
+  async editProfile(email: string, userData: Partial<UserInterface>) {
+    try {
+      // Check if password is being updated
+      if (userData.password) {
+        const salt = await bcrypt.genSalt(10);
+        userData.password = await bcrypt.hash(userData.password, salt);
+    }
+
+    
+        const updatedUser = await userModel.findOneAndUpdate(
+            { email }, 
+            { $set: userData }, 
+            { new: true, runValidators: true }
+        );
+        return updatedUser;
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        throw new Error("Error updating user profile");
+    }
+}
+
+
 
 
 

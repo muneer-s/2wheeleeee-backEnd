@@ -15,7 +15,7 @@ const corsOptions = {
   allowedHeaders: 'Content-Type,Authorization',
 };
 
-dotenv.config();
+dotenv.config(); 
 connectDB();
 
 const app = express();

@@ -62,12 +62,25 @@ class UserServices {
         }
     }
 
-    async getProfile(email:string){
+    async getProfile(email: string) {
         try {
             return await this.userRepository.getProfile(email)
         } catch (error) {
             console.log(error);
-            
+
+        }
+    }
+
+    async editProfile(email: string, userData: Partial<UserInterface>) {
+        try {
+            const updatedUser = await this.userRepository.editProfile(email, userData);
+            if (!updatedUser) {
+                throw new Error("User not found");
+            }
+            return updatedUser;
+        } catch (error) {
+            console.error("Service error updating profile:", error);
+            throw new Error("Service error updating user profile");
         }
     }
 

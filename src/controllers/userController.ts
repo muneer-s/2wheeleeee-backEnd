@@ -29,7 +29,7 @@ export class UserController {
                 await generateAndSendOTP(req.body.email);
                 const saveData = await this.UserServices.saveUser(req.body);
                 console.log('saved data: ', saveData);
-                res.status(OK).json({ userId: req.body.email, success: true, message: 'OTP sent for verification...' });
+                res.status(OK).json({ email: req.body.email, success: true, message: 'OTP sent for verification...' });
             } else {
                 console.log('user already nd , so onnum cheyyanda , resposne sended to front end ');
                 res.status(BAD_REQUEST).json({ success: false, message: 'The email is already in use!' });
@@ -40,6 +40,7 @@ export class UserController {
         }
     }
 
+
     async verifyOtp(req: Request, res: Response) {
         try {
             let data = req.body
@@ -49,12 +50,22 @@ export class UserController {
                 const userEmail = data.userId
                 let userDetails = await userModel.findOne(
                     { email: userEmail },
-                    'email name profile_picture'
+                    'email name profile_picture _id'
                 );
+                console.log('user details in verify otp , ',userDetails);
+
+
+                if (!userDetails) {
+                    return res.status(BAD_REQUEST).json({
+                        success: false,
+                        message: 'User not found!',
+                    });
+                }
+                
 
                 const time = this.milliseconds(23, 30, 0);
-                const userAccessToken = jwtHandler.generateToken(userEmail);
-                const userRefreshToken = jwtHandler.generateRefreshToken(userEmail);
+                const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
+                const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
 
                 console.log("user details : ", userDetails);
                 res.status(OK).cookie('user_access_token', userAccessToken, {
@@ -63,7 +74,7 @@ export class UserController {
                 }).cookie('user_refresh_token', userRefreshToken, {
                     expires: new Date(Date.now() + time),
                     sameSite: 'strict',
-                }).json({ userData: userDetails,userAccessToken:userAccessToken,userRefreshToken:userRefreshToken, success: true, message: 'OTP verification successful, account verified.' });
+                }).json({ userData: userDetails, userAccessToken: userAccessToken, userRefreshToken: userRefreshToken, success: true, message: 'OTP verification successful, account verified.' });
 
 
             } else {
@@ -80,6 +91,7 @@ export class UserController {
         try {
             const { email, password } = req.body
             const isUserPresent = await this.UserServices.login(email)
+console.log('is user present',isUserPresent);
 
             if (!isUserPresent) {
                 return res.status(404).json({ success: false, message: 'No account found with this email. Please register first.' });
@@ -91,8 +103,8 @@ export class UserController {
             }
 
             const time = this.milliseconds(23, 30, 0);
-            const userAccessToken = jwtHandler.generateToken(email);
-            const userRefreshToken = jwtHandler.generateRefreshToken(email);
+            const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
+            const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
 
             return res.status(200).cookie('user_access_token', userAccessToken, {
                 expires: new Date(Date.now() + time),
@@ -104,6 +116,7 @@ export class UserController {
                     email: isUserPresent.email,
                     name: isUserPresent.name,
                     profile_picture: isUserPresent.profile_picture,
+                    userId:isUserPresent._id
                 },
                 userAccessToken,
                 userRefreshToken
@@ -137,9 +150,9 @@ export class UserController {
             res.cookie('user_access_token', '', {
                 httpOnly: true,
                 expires: new Date(0)
-            }).cookie('user_refresh_token','',{
-                httpOnly:true,
-                expires:new Date(0)
+            }).cookie('user_refresh_token', '', {
+                httpOnly: true,
+                expires: new Date(0)
             }).status(OK).json({ success: true, message: 'Logged out successfully' });
 
         } catch (error) {
@@ -151,14 +164,14 @@ export class UserController {
         try {
             console.log('get profilil ethiiii');
             const email = req.query.email ?? ''; // Use a default value if email is undefined
-    
+
             if (!email || typeof email !== 'string') {
                 return res.status(BAD_REQUEST).json({ success: false, message: 'Invalid email provided' });
             }
-    
+
             const userDetails = await this.UserServices.getProfile(email);
 
-console.log('userd dataaa:    ',userDetails);
+            console.log('userd dataaa:    ', userDetails);
 
 
             res.status(OK).json({ success: true, userDetails });
@@ -168,15 +181,31 @@ console.log('userd dataaa:    ',userDetails);
         }
     }
 
-    async editUser(req:Request,res:Response){
+    async editUser(req: Request, res: Response) {
         try {
-            const { email, ...userData } = req.body; // Destructure email and userData from the request body
-        console.log('User email:', email);
-        console.log('User data:', userData);
-            
-            
+            const { email, ...userData } = req.body; 
+            console.log('User email:', email);
+            console.log('User data:', userData);
+
+            if (!email) {
+                return res.status(400).json({ message: "Email is required" });
+            }
+
+            const updatedUserData = await this.UserServices.editProfile(email,userData)
+
+            if (!updatedUserData) {
+                return res.status(404).json({ message: "User not found" });
+            }
+    
+            res.status(200).json({
+                message: "User profile updated successfully",
+                data: updatedUserData,
+            });
+
+
         } catch (error) {
-            
+            console.error("Controller error updating profile:", error);
+            res.status(500).json("Internal server error" );
         }
     }
 
