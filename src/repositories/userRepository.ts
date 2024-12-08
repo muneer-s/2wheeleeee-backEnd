@@ -2,6 +2,9 @@ import { UserInterface } from '../interfaces/IUser';
 import OTPModel from '../models/otpModels';
 import userModel from '../models/userModels';
 import bcrypt from 'bcrypt';
+
+
+
 class UserRepository {
 
   async emailExistCheck(email: string): Promise<boolean | null> {
@@ -75,13 +78,12 @@ class UserRepository {
 
   async editProfile(email: string, userData: Partial<UserInterface>) {
     try {
-      // Check if password is being updated
       if (userData.password) {
         const salt = await bcrypt.genSalt(10);
         userData.password = await bcrypt.hash(userData.password, salt);
     }
 
-    
+
         const updatedUser = await userModel.findOneAndUpdate(
             { email }, 
             { $set: userData }, 

@@ -3,7 +3,7 @@ import { STATUS_CODES } from '../constants/httpStatusCodes';
 import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
 import { time } from 'console';
-
+import AdminServices from '../services/adminServices';
 
 dotenv.config();
 
@@ -11,6 +11,10 @@ const { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
 export class AdminController {
+
+    constructor(private AdminServices: AdminServices) {
+
+    }
 
     milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
 
@@ -70,6 +74,43 @@ export class AdminController {
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
         }
     }
+
+    async getAllUsers(req:Request,res:Response){
+        try {
+            let findUsers = await this.AdminServices.getAllUsers()
+            console.log('admin cntrller - ',findUsers);
+            res.status(OK).json({ success:true, usersList : findUsers})
+            
+            
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
+    async getSingleUser(req:Request,res:Response){
+        try {
+
+            const userId = req.params.id; // Extract ID from the request
+            const user = await this.AdminServices.getSingleUser(userId);
+            res.status(200).json({ success: true, user });
+            
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
 
 export default AdminController;
