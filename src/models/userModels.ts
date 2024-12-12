@@ -2,31 +2,34 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from 'bcrypt';
 import { UserInterface } from "../interfaces/IUser";
 
-
-
-
-
-
-
 const userSchema: Schema<UserInterface> = new Schema({
     name: {
         type: String,
         required: true
     },
-    password: {
-        type: String,
-        required: true
-    },
-
     email: {
         type: String,
         required: true,
         unique: true
     },
-
     phoneNumber: {
         type: Number,
 
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    dateOfBirth: {
+        type: Date,
+    },
+    address: {
+        type: String,
+        default: '',
+    },
+    profile_picture: {
+        type: String,
+        default: ''
     },
     isBlocked: {
         type: Boolean,
@@ -36,39 +39,24 @@ const userSchema: Schema<UserInterface> = new Schema({
         type: Boolean,
         default: false
     },
-    profile_picture: {
-        type: String,
-        default: ''
-    },
-    dateOfBirth: {
-        type: Date,
-
-    },
-    address: {
-        type: String,
-        default: '',
-    },
-    lisence_picture_front: {
-        type: String,
-        default: ''
-    },
-    lisence_picture_back: {
-        type: String,
-        default: ''
-    }
-    ,
     isUser: {
         type: Boolean,
         default: false
     },
-    lisence_number: {
-        type: Number
+    license_number: {
+        type: String
     },
-    lisence_Exp_Date: {
+    license_Exp_Date: {
         type: Date
+    },
+    license_picture_front: {
+        type: String,
+        default: ''
+    },
+    license_picture_back: {
+        type: String,
+        default: ''
     }
-
-
 });
 
 userSchema.pre('save', async function (this: UserInterface, next) {

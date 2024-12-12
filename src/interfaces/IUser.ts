@@ -14,10 +14,10 @@ export interface UserInterface extends Document {
     address: string | null;
 
     isUser:boolean;
-    lisence_number:number;
-    lisence_Exp_Date:Date;
-    lisence_picture_front: string;    
-    lisence_picture_back: string;    
+    license_number:string;
+    license_Exp_Date:Date;
+    license_picture_front: string;    
+    license_picture_back: string;    
     matchPassword: (enteredPassword: string) => Promise<boolean>;
 }
 

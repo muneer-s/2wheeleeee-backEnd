@@ -186,6 +186,12 @@ export class UserController {
             res.status(200).json({
                 message: "User profile updated successfully",
                 data: updatedUserData,
+                user: {
+                    email: updatedUserData.email,
+                    name: updatedUserData.name,
+                    profile_picture: updatedUserData.profile_picture,
+                    userId: updatedUserData._id
+                },
             });
 
 

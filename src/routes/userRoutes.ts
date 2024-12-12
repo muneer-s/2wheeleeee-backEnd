@@ -44,17 +44,12 @@ userRouter.put('/logout',(req,res)=>{
 })
 
 userRouter.get('/getProfile', (req, res) => {
-    console.log("Email received:", req.query.email);
     userController.getProfile(req, res);
 });
 
-userRouter.put('/editUser',upload.single("profile_picture"),(req,res)=>{ 
-    console.log("file stored",req.file);
-       
+userRouter.put('/editUser',upload.single("profile_picture"),(req,res)=>{        
     userController.editUser(req,res)
 })
-
-
 
 
 

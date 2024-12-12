@@ -17,7 +17,6 @@ class AdminRepository {
     async getSingleUser(userId: string) {
         try {
             return await userModel.findById(userId)
-
         } catch (error) {
             console.log(error);
 
@@ -26,17 +25,10 @@ class AdminRepository {
 
     async userVerify(userId: string) {
         try {
-
-            
             const user = await userModel.findById(userId);
-
-            if (!user) {
-                return 'User not found'
-            }
-
+            if (!user) return 'User not found'
             user.isUser = !user.isUser;
             await user.save();
-
             return user 
 
         } catch (error) {
@@ -47,7 +39,6 @@ class AdminRepository {
 
     // async editProfile(email: string, userData: Partial<UserInterface>) {
     //     try {
-
     //         const updatedUser = await userModel.findOneAndUpdate(
     //             { email },
     //             { $set: userData },
