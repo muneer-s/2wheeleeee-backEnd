@@ -8,15 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class AdminServices {
-    constructor(adminRepository) {
-        this.adminRepository = adminRepository;
-    }
+const userModels_1 = __importDefault(require("../models/userModels"));
+class AdminRepository {
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.adminRepository.getAllUsers();
+                return yield userModels_1.default.find();
             }
             catch (error) {
                 console.log(error);
@@ -26,7 +27,7 @@ class AdminServices {
     getSingleUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.adminRepository.getSingleUser(userId);
+                return yield userModels_1.default.findById(userId);
             }
             catch (error) {
                 console.log(error);
@@ -34,4 +35,4 @@ class AdminServices {
         });
     }
 }
-exports.default = AdminServices;
+exports.default = AdminRepository;

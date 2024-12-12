@@ -27,6 +27,10 @@ adminRouter.get('/getSingleUser/:id', (req, res) => {
         adminController.getSingleUser(req,res)
 })
 
+adminRouter.put('/userVerify/:id',(req,res)=>{
+        adminController.userVerify(req,res)
+})
+
 
 
 

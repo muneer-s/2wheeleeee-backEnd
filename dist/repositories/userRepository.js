@@ -89,5 +89,21 @@ class UserRepository {
             }
         });
     }
+    editProfile(email, userData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (userData.password) {
+                    const salt = yield bcrypt_1.default.genSalt(10);
+                    userData.password = yield bcrypt_1.default.hash(userData.password, salt);
+                }
+                const updatedUser = yield userModels_1.default.findOneAndUpdate({ email }, { $set: userData }, { new: true, runValidators: true });
+                return updatedUser;
+            }
+            catch (error) {
+                console.error("Error updating profile:", error);
+                throw new Error("Error updating user profile");
+            }
+        });
+    }
 }
 exports.default = UserRepository;

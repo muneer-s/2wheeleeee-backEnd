@@ -14,13 +14,34 @@ class AdminRepository {
         }
     }
 
-    async getSingleUser(userId:string){
+    async getSingleUser(userId: string) {
         try {
             return await userModel.findById(userId)
-            
+
         } catch (error) {
             console.log(error);
+
+        }
+    }
+
+    async userVerify(userId: string) {
+        try {
+
             
+            const user = await userModel.findById(userId);
+
+            if (!user) {
+                return 'User not found'
+            }
+
+            user.isUser = !user.isUser;
+            await user.save();
+
+            return user 
+
+        } catch (error) {
+            console.log(error);
+
         }
     }
 

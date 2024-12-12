@@ -73,5 +73,20 @@ class UserServices {
             }
         });
     }
+    editProfile(email, userData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const updatedUser = yield this.userRepository.editProfile(email, userData);
+                if (!updatedUser) {
+                    throw new Error("User not found");
+                }
+                return updatedUser;
+            }
+            catch (error) {
+                console.error("Service error updating profile:", error);
+                throw new Error("Service error updating user profile");
+            }
+        });
+    }
 }
 exports.default = UserServices;

@@ -60,19 +60,19 @@ class UserRepository {
 
   async login(email: string) {
     try {
-      return await userModel.findOne({ email: email,isVerified: true })
+      return await userModel.findOne({ email: email, isVerified: true })
     } catch (error) {
       console.log(error);
     }
   }
 
 
-  async getProfile(email:string){
+  async getProfile(email: string) {
     try {
-      return await userModel.findOne({email:email})
+      return await userModel.findOne({ email: email })
     } catch (error) {
       console.log(error);
-      
+
     }
   }
 
@@ -81,20 +81,21 @@ class UserRepository {
       if (userData.password) {
         const salt = await bcrypt.genSalt(10);
         userData.password = await bcrypt.hash(userData.password, salt);
-    }
+      }
 
 
-        const updatedUser = await userModel.findOneAndUpdate(
-            { email }, 
-            { $set: userData }, 
-            { new: true, runValidators: true }
-        );
-        return updatedUser;
+      const updatedUser = await userModel.findOneAndUpdate(
+        { email },
+        { $set: userData },
+        { new: true, runValidators: true }
+      );
+
+      return updatedUser;
     } catch (error) {
-        console.error("Error updating profile:", error);
-        throw new Error("Error updating user profile");
+      console.error("Error updating profile:", error);
+      throw new Error("Error updating user profile");
     }
-}
+  }
 
 
 

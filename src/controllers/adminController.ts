@@ -21,7 +21,6 @@ export class AdminController {
     
     async login(req: Request, res: Response) {
         try {
-            console.log('admin login controlleril ethi',req.body);
             
             const { email, password } = req.body;
 
@@ -31,12 +30,10 @@ export class AdminController {
 
             const adminEmail = process.env.ADMIN_EMAIL;
             const adminPassword = process.env.ADMIN_PASSWORD;
-            console.log('em:',adminEmail);
-            console.log('em:',adminPassword);
+            
             
 
             if (email !== adminEmail || password !== adminPassword) {
-                console.log('same alla');
                 return res.status(UNAUTHORIZED).json({ success: false, message: 'Invalid email or password' });
             }
 
@@ -78,7 +75,6 @@ export class AdminController {
     async getAllUsers(req:Request,res:Response){
         try {
             let findUsers = await this.AdminServices.getAllUsers()
-            console.log('admin cntrller - ',findUsers);
             res.status(OK).json({ success:true, usersList : findUsers})
             
             
@@ -91,12 +87,26 @@ export class AdminController {
     async getSingleUser(req:Request,res:Response){
         try {
 
-            const userId = req.params.id; // Extract ID from the request
+            const userId = req.params.id; 
             const user = await this.AdminServices.getSingleUser(userId);
             res.status(200).json({ success: true, user });
             
         } catch (error) {
             console.log(error);
+            
+        }
+    }
+
+    async userVerify(req:Request,res:Response){
+        try {
+            const userId = req.params.id
+            console.log('ethi ethi ', userId);
+            const user = await this.AdminServices.userVerify(userId)
+            res.status(200).json({ success: true, user });
+            
+            
+        } catch (error) {
+            console.log();
             
         }
     }

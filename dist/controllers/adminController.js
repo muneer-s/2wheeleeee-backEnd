@@ -20,23 +20,20 @@ dotenv_1.default.config();
 const { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = httpStatusCodes_1.STATUS_CODES;
 const jwtHandler = new generateToken_1.CreateJWT();
 class AdminController {
-    constructor() {
+    constructor(AdminServices) {
+        this.AdminServices = AdminServices;
         this.milliseconds = (h, m, s) => ((h * 60 * 60 + m * 60 + s) * 1000);
     }
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('admin login controlleril ethi', req.body);
                 const { email, password } = req.body;
                 if (!email || !password) {
                     return res.status(UNAUTHORIZED).json({ success: false, message: 'Email and password are required' });
                 }
                 const adminEmail = process.env.ADMIN_EMAIL;
                 const adminPassword = process.env.ADMIN_PASSWORD;
-                console.log('em:', adminEmail);
-                console.log('em:', adminPassword);
                 if (email !== adminEmail || password !== adminPassword) {
-                    console.log('same alla');
                     return res.status(UNAUTHORIZED).json({ success: false, message: 'Invalid email or password' });
                 }
                 const time = this.milliseconds(23, 30, 0);
@@ -71,6 +68,29 @@ class AdminController {
             catch (error) {
                 console.error('Admin logout error:', error);
                 res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
+            }
+        });
+    }
+    getAllUsers(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let findUsers = yield this.AdminServices.getAllUsers();
+                res.status(OK).json({ success: true, usersList: findUsers });
+            }
+            catch (error) {
+                console.log(error);
+            }
+        });
+    }
+    getSingleUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const userId = req.params.id;
+                const user = yield this.AdminServices.getSingleUser(userId);
+                res.status(200).json({ success: true, user });
+            }
+            catch (error) {
+                console.log(error);
             }
         });
     }

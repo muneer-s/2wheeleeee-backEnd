@@ -1,18 +1,10 @@
 import { UserInterface } from "../interfaces/IUser";
-import UserRepository from "../repositories/userRepository";
 
-import { STATUS_CODES } from "../constants/httpStatusCodes";
 import AdminRepository from "../repositories/adminRepository";
-
-const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
-
-
 
 class AdminServices {
     constructor(private adminRepository: AdminRepository,
     ) { }
-
-    
 
     async getAllUsers() {
         try {
@@ -26,6 +18,17 @@ class AdminServices {
     async getSingleUser(userId:string){
         try {
             return await this.adminRepository.getSingleUser(userId)
+            
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
+    async userVerify(userId:string){
+        try {
+
+            return await this.adminRepository.userVerify(userId)
             
         } catch (error) {
             console.log(error);

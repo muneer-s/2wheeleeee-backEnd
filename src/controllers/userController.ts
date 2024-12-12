@@ -28,7 +28,6 @@ export class UserController {
             if (userFound == false) {
                 await generateAndSendOTP(req.body.email);
                 const saveData = await this.UserServices.saveUser(req.body);
-                console.log('saved data: ', saveData);
                 res.status(OK).json({ email: req.body.email, success: true, message: 'OTP sent for verification...' });
             } else {
                 console.log('user already nd , so onnum cheyyanda , resposne sended to front end ');
@@ -52,7 +51,6 @@ export class UserController {
                     { email: userEmail },
                     'email name profile_picture _id'
                 );
-                console.log('user details in verify otp , ',userDetails);
 
 
                 if (!userDetails) {
@@ -61,13 +59,12 @@ export class UserController {
                         message: 'User not found!',
                     });
                 }
-                
+
 
                 const time = this.milliseconds(23, 30, 0);
                 const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
                 const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
 
-                console.log("user details : ", userDetails);
                 res.status(OK).cookie('user_access_token', userAccessToken, {
                     expires: new Date(Date.now() + time),
                     sameSite: 'strict',
@@ -91,7 +88,6 @@ export class UserController {
         try {
             const { email, password } = req.body
             const isUserPresent = await this.UserServices.login(email)
-console.log('is user present',isUserPresent);
 
             if (!isUserPresent) {
                 return res.status(404).json({ success: false, message: 'No account found with this email. Please register first.' });
@@ -116,7 +112,7 @@ console.log('is user present',isUserPresent);
                     email: isUserPresent.email,
                     name: isUserPresent.name,
                     profile_picture: isUserPresent.profile_picture,
-                    userId:isUserPresent._id
+                    userId: isUserPresent._id
                 },
                 userAccessToken,
                 userRefreshToken
@@ -130,9 +126,7 @@ console.log('is user present',isUserPresent);
 
     async resendOtp(req: Request, res: Response) {
         try {
-            console.log('resend otp req : ', req.body);
             const email = req.body.email
-            console.log(email);
 
             const otp = await generateAndSendOTP(email);
 
@@ -145,8 +139,6 @@ console.log('is user present',isUserPresent);
 
     async logout(req: Request, res: Response) {
         try {
-            console.log('logout ethi :only cookies clrear cheyyal aanu vendath ', req.body.email);
-
             res.cookie('user_access_token', '', {
                 httpOnly: true,
                 expires: new Date(0)
@@ -162,7 +154,6 @@ console.log('is user present',isUserPresent);
     }
     async getProfile(req: Request, res: Response) {
         try {
-            console.log('get profilil ethiiii');
             const email = req.query.email ?? ''; // Use a default value if email is undefined
 
             if (!email || typeof email !== 'string') {
@@ -170,9 +161,6 @@ console.log('is user present',isUserPresent);
             }
 
             const userDetails = await this.UserServices.getProfile(email);
-
-            console.log('userd dataaa:    ', userDetails);
-
 
             res.status(OK).json({ success: true, userDetails });
         } catch (error) {
@@ -183,20 +171,18 @@ console.log('is user present',isUserPresent);
 
     async editUser(req: Request, res: Response) {
         try {
-            const { email, ...userData } = req.body; 
-            console.log('User email:', email);
-            console.log('User data:', userData);
+            const { email, ...userData } = req.body;
 
             if (!email) {
                 return res.status(400).json({ message: "Email is required" });
             }
 
-            const updatedUserData = await this.UserServices.editProfile(email,userData)
+            const updatedUserData = await this.UserServices.editProfile(email, userData, req)
 
             if (!updatedUserData) {
                 return res.status(404).json({ message: "User not found" });
             }
-    
+
             res.status(200).json({
                 message: "User profile updated successfully",
                 data: updatedUserData,
@@ -205,7 +191,7 @@ console.log('is user present',isUserPresent);
 
         } catch (error) {
             console.error("Controller error updating profile:", error);
-            res.status(500).json("Internal server error" );
+            res.status(500).json("Internal server error");
         }
     }
 

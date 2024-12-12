@@ -4,6 +4,7 @@ import UserServices from '../services/userServices';
 import UserRepository from '../repositories/userRepository';
 import Encrypt from '../utils/comparePassword';
 import { CreateJWT } from '../utils/generateToken';
+import upload from '../config/multer';
 
 
 
@@ -47,7 +48,9 @@ userRouter.get('/getProfile', (req, res) => {
     userController.getProfile(req, res);
 });
 
-userRouter.put('/editUser',(req,res)=>{    
+userRouter.put('/editUser',upload.single("profile_picture"),(req,res)=>{ 
+    console.log("file stored",req.file);
+       
     userController.editUser(req,res)
 })
 
