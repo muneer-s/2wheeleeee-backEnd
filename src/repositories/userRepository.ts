@@ -97,6 +97,28 @@ class UserRepository {
     }
   }
 
+  async saveUserDocuments(userId: string, documentData: Partial<UserInterface>) {
+    try {
+      const updatedUser = await userModel.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            license_number: documentData.license_number,
+            license_Exp_Date: documentData.license_Exp_Date,
+            license_picture_front: documentData.license_picture_front,
+            license_picture_back: documentData.license_picture_back,
+          }
+        },
+        { new: true }
+      );
+
+      return updatedUser;
+    } catch (error) {
+      console.error("Error updating user documents in the repository:", error);
+      throw new Error("Failed to update user documents in the database");
+    }
+  }
+
 
 
 

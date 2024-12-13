@@ -6,6 +6,8 @@ import userModel from '../models/userModels';
 import { CreateJWT } from '../utils/generateToken';
 
 
+
+
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
@@ -21,7 +23,6 @@ export class UserController {
     async userSignup(req: Request, res: Response): Promise<void> {
         try {
             const userData = req.body;
-
             const userFound = await this.UserServices.userSignup(userData);
 
 
@@ -30,7 +31,6 @@ export class UserController {
                 const saveData = await this.UserServices.saveUser(req.body);
                 res.status(OK).json({ email: req.body.email, success: true, message: 'OTP sent for verification...' });
             } else {
-                console.log('user already nd , so onnum cheyyanda , resposne sended to front end ');
                 res.status(BAD_REQUEST).json({ success: false, message: 'The email is already in use!' });
             }
         } catch (error) {
@@ -172,17 +172,13 @@ export class UserController {
     async editUser(req: Request, res: Response) {
         try {
             const { email, ...userData } = req.body;
-
             if (!email) {
                 return res.status(400).json({ message: "Email is required" });
             }
-
             const updatedUserData = await this.UserServices.editProfile(email, userData, req)
-
             if (!updatedUserData) {
                 return res.status(404).json({ message: "User not found" });
             }
-
             res.status(200).json({
                 message: "User profile updated successfully",
                 data: updatedUserData,
@@ -193,11 +189,27 @@ export class UserController {
                     userId: updatedUserData._id
                 },
             });
-
-
         } catch (error) {
             console.error("Controller error updating profile:", error);
             res.status(500).json("Internal server error");
+        }
+    }
+
+
+
+    async editUserDocuments(req: Request, res: Response) {
+        try {
+            const updatedUserDocuments = await this.UserServices.editUserDocuments(req,res)
+            res.status(OK).json({
+                message: "User profile updated successfully",
+                data: updatedUserDocuments,
+            });
+
+
+
+        } catch (error) {
+            console.log(error);
+
         }
     }
 

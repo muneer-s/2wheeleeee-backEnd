@@ -12,7 +12,6 @@ export interface UserInterface extends Document {
     profile_picture:string;
     dateOfBirth:Date;
     address: string | null;
-
     isUser:boolean;
     license_number:string;
     license_Exp_Date:Date;

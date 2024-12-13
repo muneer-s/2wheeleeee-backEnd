@@ -7,6 +7,19 @@ import { CreateJWT } from '../utils/generateToken';
 import upload from '../config/multer';
 
 
+import multer from 'multer';
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/"); // Specify the directory where files will be saved
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname); // Save files with unique names
+    },
+});
+const uploads = multer({ storage });
+
+
+
 
 const userRepository = new UserRepository()
 const encrypt = new Encrypt()
@@ -49,6 +62,12 @@ userRouter.get('/getProfile', (req, res) => {
 
 userRouter.put('/editUser',upload.single("profile_picture"),(req,res)=>{        
     userController.editUser(req,res)
+})
+
+userRouter.put('/editUserDocuments',uploads.fields([{ name: 'frontImage' }, { name: 'backImage' }]),(req,res)=>{
+    console.log("Files received:", req.files); 
+    console.log("Form fields:", req.body); 
+    userController.editUserDocuments(req,res)
 })
 
 

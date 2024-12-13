@@ -2,6 +2,7 @@ import multer, { StorageEngine, FileFilterCallback } from "multer";
 import path from "path";
 import { Request } from "express";
 
+
 // Configure storage
 const storage: StorageEngine = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
@@ -23,8 +24,6 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallb
   if (extName && mimeType) {
     cb(null, true);
   } else {
-    console.log("Only images are allowed!");
-    
     cb(new Error("Only images are allowed!"));
   }
 };
@@ -32,10 +31,10 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallb
 // Set up multer middleware
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB file size limit
-  },
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: fileFilter,
 });
 
 export default upload;
+
+
