@@ -179,24 +179,37 @@ class UserServices {
         try {
             const frontImage = (req.files as { [fieldname: string]: UploadedFile[] })?.frontImage?.[0];
             const backImage = (req.files as { [fieldname: string]: UploadedFile[] })?.backImage?.[0];
-            console.log(11111, frontImage);
-            console.log(22222, backImage);
-
-            if (!frontImage || !backImage) {
-                return res.status(400).json({ message: "Both frontImage and backImage are required." });
-            }
+            
 
             const userId = req.body.userId;
             const licenseNumber = req.body.license_number;
             const licenseExpDate = req.body.license_Exp_Date;
 
-            console.log("Form data:", { userId, licenseNumber, licenseExpDate });
+            const existingUser = await this.userRepository.getUserById(userId);
+
+            console.log(1,existingUser);
+            
+
+
+            if (!existingUser) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            let frontImageUrl = existingUser.license_picture_front;
+        let backImageUrl = existingUser.license_picture_back;
+
+
+
 
             // Upload images to Cloudinary
-            const frontImageUrl = await uploadToCloudinary(frontImage, "user_documents");
-            const backImageUrl = await uploadToCloudinary(backImage, "user_documents");
-            console.log('url front : ', frontImageUrl);
-            console.log('url back : ', backImageUrl);
+            if (frontImage) {
+                frontImageUrl = await uploadToCloudinary(frontImage, "user_documents");
+            }
+            if (backImage) {
+                backImageUrl = await uploadToCloudinary(backImage, "user_documents");
+            }
+            
+            
 
 
             const documentData = {

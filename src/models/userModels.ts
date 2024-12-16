@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from 'bcrypt';
 import { UserInterface } from "../interfaces/IUser";
 
+
 const userSchema: Schema<UserInterface> = new Schema({
     name: {
         type: String,

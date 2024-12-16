@@ -19,8 +19,4 @@ export interface UserInterface extends Document {
     license_picture_back: string;    
     matchPassword: (enteredPassword: string) => Promise<boolean>;
 }
-
-
-
-
  

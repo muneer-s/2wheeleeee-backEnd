@@ -119,6 +119,11 @@ class UserRepository {
     }
   }
 
+  async getUserById(userId: string) {
+    return await userModel.findById(userId);
+}
+
+
 
 
 

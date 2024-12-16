@@ -65,8 +65,8 @@ userRouter.put('/editUser',upload.single("profile_picture"),(req,res)=>{
 })
 
 userRouter.put('/editUserDocuments',uploads.fields([{ name: 'frontImage' }, { name: 'backImage' }]),(req,res)=>{
-    console.log("Files received:", req.files); 
-    console.log("Form fields:", req.body); 
+    // console.log("Files received:", req.files); 
+    // console.log("Form fields:", req.body); 
     userController.editUserDocuments(req,res)
 })
 

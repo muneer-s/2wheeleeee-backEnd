@@ -204,9 +204,6 @@ export class UserController {
                 message: "User profile updated successfully",
                 data: updatedUserDocuments,
             });
-
-
-
         } catch (error) {
             console.log(error);
 

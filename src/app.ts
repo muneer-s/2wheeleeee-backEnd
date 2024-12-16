@@ -5,7 +5,8 @@ import adminRouter from './routes/adminRoutes';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import cors from 'cors'; 
-import { adminAuthMiddleware } from './config/adminAuthMiddleware';
+// import { adminAuthMiddleware } from './config/adminAuthMiddleware';
+import hostRouter from './routes/hostRoutes';
 
 
 const corsOptions = {
@@ -29,6 +30,7 @@ app.use(cookieParser());
 // Routes 
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/host', hostRouter);
 
 const port = process.env.PORT || 2000;
 
