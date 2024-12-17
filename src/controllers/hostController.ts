@@ -7,14 +7,10 @@ const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 
 export class HostController {
 
-    constructor(private HostServices: HostServices) {
-
-    }
+    constructor(private HostServices: HostServices) { }
 
     async saveBikeDetails(req: Request, res: Response) {
         try {
-
-
             const updatedUserDocuments = await this.HostServices.saveBikeDetails(req,res)
             return res.status(OK).json({
                 message: "Bike details saved successfully",

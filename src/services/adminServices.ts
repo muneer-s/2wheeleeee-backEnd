@@ -15,39 +15,44 @@ class AdminServices {
         }
     }
 
-    async getSingleUser(userId:string){
+    async getSingleUser(userId: string) {
         try {
             return await this.adminRepository.getSingleUser(userId)
-            
+
         } catch (error) {
             console.log(error);
-            
+
         }
     }
 
-    async userVerify(userId:string){
+    async userVerify(userId: string) {
         try {
 
             return await this.adminRepository.userVerify(userId)
-            
+
         } catch (error) {
             console.log(error);
-            
+
         }
     }
 
-    // async editProfile(email: string, userData: Partial<UserInterface>) {
-    //     try {
-    //         const updatedUser = await this.userRepository.editProfile(email, userData);
-    //         if (!updatedUser) {
-    //             throw new Error("User not found");
-    //         }
-    //         return updatedUser;
-    //     } catch (error) {
-    //         console.error("Service error updating profile:", error);
-    //         throw new Error("Service error updating user profile");
-    //     }
-    // }
+    async getAllBikeDetails() {
+        try {
+            return await this.adminRepository.getAllBikeDetails()
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+
+    async verifyHost(bikeId: string) {
+        try {
+            return await this.adminRepository.verifyHost(bikeId)
+
+        } catch (error) {
+
+        }
+    }
 
 
 }

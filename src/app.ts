@@ -5,7 +5,6 @@ import adminRouter from './routes/adminRoutes';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import cors from 'cors'; 
-// import { adminAuthMiddleware } from './config/adminAuthMiddleware';
 import hostRouter from './routes/hostRoutes';
 
 

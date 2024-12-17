@@ -1,4 +1,4 @@
-import { UserInterface } from '../interfaces/IUser';
+import bikeModel from '../models/bikeModel';
 import userModel from '../models/userModels';
 
 
@@ -37,19 +37,76 @@ class AdminRepository {
         }
     }
 
-    // async editProfile(email: string, userData: Partial<UserInterface>) {
-    //     try {
-    //         const updatedUser = await userModel.findOneAndUpdate(
-    //             { email },
-    //             { $set: userData },
-    //             { new: true, runValidators: true }
-    //         );
-    //         return updatedUser;
-    //     } catch (error) {
-    //         console.error("Error updating profile:", error);
-    //         throw new Error("Error updating user profile");
-    //     }
-    // }
+
+
+
+
+    async getAllBikeDetails() {
+    try {
+        const result = await bikeModel.aggregate([
+            {
+                $lookup: {
+                    from: "users", 
+                    localField: "userId", 
+                    foreignField: "_id", 
+                    as: "userDetails" 
+                }
+            },
+            {
+                $unwind: "$userDetails"
+            },
+            {
+                $project: {
+                    _id: 1,
+                    companyName: 1,
+                    modelName: 1,
+                    rentAmount: 1,
+                    fuelType: 1,
+                    images: 1,
+                    isBlocked: 1,
+                    isHost: 1,
+                    registerNumber: 1,
+                    insuranceExpDate: 1,
+                    polutionExpDate: 1,
+                    rcImage: 1,
+                    insuranceImage: 1,
+
+                    "userDetails._id": 1,
+                    "userDetails.name": 1,
+                    "userDetails.email": 1,
+                    "userDetails.phoneNumber": 1,
+                    "userDetails.address": 1,
+                    "userDetails.profile_picture": 1
+                }
+            }
+        ]);
+
+        console.log("Fetched Bike Details: ", result);
+        return result;
+    } catch (error) {
+        console.error("Error fetching bike details with user details:", error);
+        throw error;
+    }
+}
+
+
+async verifyHost(bikeId: string) {
+    try {
+        const bike = await bikeModel.findById(bikeId);
+        if (!bike) return 'User not found'
+
+        bike.isHost = !bike.isHost;
+        await bike.save();
+        return bike 
+
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+    
+
+   
 
 
 

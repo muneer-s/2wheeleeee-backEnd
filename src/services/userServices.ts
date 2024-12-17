@@ -8,7 +8,6 @@ import cloudinary from "../config/cloudinaryConfig";
 import { UploadApiResponse } from "cloudinary";
 const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 
-// Helper function to upload files to Cloudinary
 const uploadToCloudinary = async (file: UploadedFile, folder: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
 
@@ -16,7 +15,7 @@ const uploadToCloudinary = async (file: UploadedFile, folder: string): Promise<s
             {
                 folder,
                 transformation: [
-                    { width: 500, height: 500, crop: "limit" } // Optional: Add transformations as needed
+                    { width: 500, height: 500, crop: "limit" } 
                 ]
             },
             (error, result) => {
@@ -29,21 +28,15 @@ const uploadToCloudinary = async (file: UploadedFile, folder: string): Promise<s
             }
         );
 
-         // Ensure buffer is written to the stream
          if (file?.path) {
             const fs = require("fs");
             const stream = fs.createReadStream(file.path);
-            stream.pipe(uploadStream); // Use the file's path to create a stream
+            stream.pipe(uploadStream); 
         } else {
             reject(new Error("File path is undefined"));
         }
 
-        // Ensure buffer is written to the stream
-        // if (file?.buffer) {
-        //     uploadStream.end(file.buffer);
-        // } else {
-        //     reject(new Error("File buffer is undefined"));
-        // }
+        
     });
 };
 
@@ -145,7 +138,6 @@ class UserServices {
                         }
                     );
 
-                    // Ensure buffer is being written
                     if (req.file?.buffer) {
                         uploadStream.end(req.file.buffer);
                     } else {
@@ -154,10 +146,8 @@ class UserServices {
 
                 });
 
-                // Store the Cloudinary URL
                 cloudinaryUrl = result?.secure_url;
 
-                // Add the Cloudinary URL to userData
                 userData.profile_picture = cloudinaryUrl;
 
             }
@@ -165,6 +155,7 @@ class UserServices {
 
 
             const updatedUser = await this.userRepository.editProfile(email, userData);
+            
             if (!updatedUser) {
                 throw new Error("User not found");
             }
@@ -201,7 +192,6 @@ class UserServices {
 
 
 
-            // Upload images to Cloudinary
             if (frontImage) {
                 frontImageUrl = await uploadToCloudinary(frontImage, "user_documents");
             }

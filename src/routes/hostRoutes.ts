@@ -16,7 +16,7 @@ const hostController = new HostController(service)
 
 
 const hostRouter = express.Router();
-const upload = multer({ storage: multer.memoryStorage() }); // Use memory storage for demo
+const upload = multer({ storage: multer.memoryStorage() }); 
 
 
 hostRouter.post('/saveBikeDetails', upload.fields([

@@ -19,22 +19,25 @@ adminRouter.get('/logout', (req, res) => {
         adminController.logout(req, res);
 });
 
-adminRouter.get('/getAllUsers', (req, res) => {
+adminRouter.get('/getAllUsers',adminAuthMiddleware, (req, res) => {
         adminController.getAllUsers(req, res)
 })
 
-adminRouter.get('/getSingleUser/:id', (req, res) => {
+adminRouter.get('/getSingleUser/:id',adminAuthMiddleware, (req, res) => {
         adminController.getSingleUser(req,res)
 })
 
-adminRouter.put('/userVerify/:id',(req,res)=>{
+adminRouter.put('/userVerify/:id',adminAuthMiddleware,(req,res)=>{
         adminController.userVerify(req,res)
 })
 
+adminRouter.get('/getAllBikeDetails',adminAuthMiddleware,(req,res)=>{
+        adminController.getAllBikeDetails(req,res)  
+})
 
-
-
-
+adminRouter.put('/verifyHost/:id',adminAuthMiddleware,(req,res)=>{
+        adminController.verifyHost(req,res)
+})
 
 
 

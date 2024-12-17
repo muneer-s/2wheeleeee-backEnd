@@ -10,10 +10,10 @@ import upload from '../config/multer';
 import multer from 'multer';
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/"); // Specify the directory where files will be saved
+        cb(null, "uploads/"); 
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname); // Save files with unique names
+        cb(null, Date.now() + "-" + file.originalname); 
     },
 });
 const uploads = multer({ storage });

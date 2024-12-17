@@ -10,9 +10,9 @@ export interface BikeData {
     registerNumber: string;
     insuranceExpDate: Date;
     polutionExpDate: Date;
-    images: string[]; // Store array of image URLs
-    rcImage: string | null; // Store single RC image URL
-    insuranceImage: string | null; // Store single insurance image URL
-    isBlocked?: boolean; // Add this field
-    isHost?: boolean; // Add this field
+    images: string[]; 
+    rcImage: string | null; 
+    insuranceImage: string | null; 
+    isBlocked?: boolean; 
+    isHost?: boolean; 
 }

@@ -19,7 +19,6 @@ const userSchema: Schema<UserInterface> = new Schema({
     },
     password: {
         type: String,
-        required: true
     },
     dateOfBirth: {
         type: Date,

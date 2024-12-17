@@ -18,19 +18,6 @@ class HostServices {
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
 
-            const {
-                userId,
-                companyName,
-                modelName,
-                rentAmount,
-                fuelType,
-                registerNumber,
-                insuranceExpDate,
-                polutionExpDate,
-            } = req.body;
-
-
-
             const images: Express.Multer.File[] = files?.images || [];
             const rcImage: Express.Multer.File | undefined = files?.rcImage?.[0];
             const insuranceImage: Express.Multer.File | undefined = files?.insuranceImage?.[0];
@@ -45,12 +32,11 @@ class HostServices {
             console.log("Insurance Image: ", insuranceImage);
 
 
-            // Helper function to upload file from buffer
             const uploadToCloudinary = (buffer: Buffer, folder: string): Promise<UploadApiResponse> => {
                 return new Promise((resolve, reject) => {
                     const readableStream = new Readable();
                     readableStream.push(buffer);
-                    readableStream.push(null); // Signal end of stream
+                    readableStream.push(null); 
                     const uploadStream = cloudinary.uploader.upload_stream(
                         { folder, resource_type: "image" },
                         (error, result) => {
@@ -63,13 +49,11 @@ class HostServices {
             };
 
 
-            // Upload images
             const imageUploadPromises = images.map((image) =>
                 uploadToCloudinary(image.buffer, "bikes/images")
             );
 
 
-            // Upload rcImage and insuranceImage
             const rcImageUploadPromise = rcImage
                 ? uploadToCloudinary(rcImage.buffer, "bikes/rc_images")
                 : null;
@@ -105,10 +89,10 @@ class HostServices {
                 };
 
 
-
-
             console.log('-------------', bikeData);
             const savedBike = await this.hostRepository.saveBikeDetails(bikeData);
+            console.log("00000000000",savedBike);
+            
 
             return savedBike
             

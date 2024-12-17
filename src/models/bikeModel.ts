@@ -63,3 +63,5 @@ const bikeSchema: Schema<BikeData> = new Schema({
 
 const bikeModel: Model<BikeData> = mongoose.model<BikeData>('Bike', bikeSchema);
 export default bikeModel;
+
+

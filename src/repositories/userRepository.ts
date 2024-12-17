@@ -22,6 +22,7 @@ class UserRepository {
       return null;
     }
   }
+  
   async saveUser(userData: any) {
     try {
       const newUser = new userModel(userData);
@@ -42,14 +43,13 @@ class UserRepository {
         return false;
       }
       const isMatch = await bcrypt.compare(otp.toString(), otpRecord.hashedOTP);
-      console.log('fghjkl;', isMatch);
 
       if (!isMatch) {
         console.log('Invalid OTP');
         return false;
       }
       await userModel.updateOne({ email }, { $set: { isVerified: true } })
-      return true; // OTP is valid
+      return true; 
 
 
     } catch (error) {
@@ -78,11 +78,13 @@ class UserRepository {
 
   async editProfile(email: string, userData: Partial<UserInterface>) {
     try {
-      if (userData.password) {
-        const salt = await bcrypt.genSalt(10);
-        userData.password = await bcrypt.hash(userData.password, salt);
-      }
+      // if (userData.password) {
+      //   const salt = await bcrypt.genSalt(10);
+      //   userData.password = await bcrypt.hash(userData.password, salt);
+      // }
 
+      console.log(11111111111,userData);
+      
 
       const updatedUser = await userModel.findOneAndUpdate(
         { email },
@@ -90,7 +92,7 @@ class UserRepository {
         { new: true, runValidators: true }
       );
 
-      return updatedUser;
+      return updatedUser ;
     } catch (error) {
       console.error("Error updating profile:", error);
       throw new Error("Error updating user profile");
