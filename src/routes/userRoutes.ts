@@ -5,7 +5,7 @@ import UserRepository from '../repositories/userRepository';
 import Encrypt from '../utils/comparePassword';
 import { CreateJWT } from '../utils/generateToken';
 import upload from '../config/multer';
-
+import userAuth from '../Middleware/userAuthMiddleware';
 
 import multer from 'multer';
 const storage = multer.diskStorage({
@@ -56,15 +56,19 @@ userRouter.put('/logout',(req,res)=>{
     userController.logout(req,res)
 })
 
-userRouter.get('/getProfile', (req, res) => {
+userRouter.post('/forgotPassword',(req,res)=>{
+    userController.forgotPassword(req,res)
+})
+
+userRouter.get('/getProfile',userAuth, (req, res) => {
     userController.getProfile(req, res);
 });
 
-userRouter.put('/editUser',upload.single("profile_picture"),(req,res)=>{        
+userRouter.put('/editUser',userAuth,upload.single("profile_picture"),(req,res)=>{        
     userController.editUser(req,res)
 })
 
-userRouter.put('/editUserDocuments',uploads.fields([{ name: 'frontImage' }, { name: 'backImage' }]),(req,res)=>{
+userRouter.put('/editUserDocuments',userAuth,uploads.fields([{ name: 'frontImage' }, { name: 'backImage' }]),(req,res)=>{
     // console.log("Files received:", req.files); 
     // console.log("Form fields:", req.body); 
     userController.editUserDocuments(req,res)

@@ -6,11 +6,12 @@ class AdminServices {
     constructor(private adminRepository: AdminRepository,
     ) { }
 
-    async getAllUsers() {
+    async getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string |undefined}) {
         try {
-            return await this.adminRepository.getAllUsers()
+            return await this.adminRepository.getAllUsers(filters)
         } catch (error) {
             console.log(error);
+            throw error;
 
         }
     }
@@ -27,12 +28,17 @@ class AdminServices {
 
     async userVerify(userId: string) {
         try {
-
             return await this.adminRepository.userVerify(userId)
-
         } catch (error) {
             console.log(error);
+        }
+    }
 
+    async userBlockUnblock(userId:string){
+        try {
+            return await this.adminRepository.userBlockUnblock(userId)
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -50,7 +56,18 @@ class AdminServices {
             return await this.adminRepository.verifyHost(bikeId)
 
         } catch (error) {
+console.log(error);
 
+        }
+    }
+
+    async findUserByEmail(email:string){
+        try {
+            return await this.adminRepository.findUserByEmail(email)
+            
+        } catch (error) {
+            console.log(error);
+            
         }
     }
 

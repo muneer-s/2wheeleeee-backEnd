@@ -3,6 +3,7 @@ import HostController from '../controllers/hostController';
 import HostServices from '../services/hostServices';
 import HostRepository from '../repositories/hostRepository';
 import multer from 'multer';
+import userAuth from '../Middleware/userAuthMiddleware';
 
 
 
@@ -19,7 +20,7 @@ const hostRouter = express.Router();
 const upload = multer({ storage: multer.memoryStorage() }); 
 
 
-hostRouter.post('/saveBikeDetails', upload.fields([
+hostRouter.post('/saveBikeDetails',userAuth, upload.fields([
     { name: "images", maxCount: 4 },
     { name: "rcImage", maxCount: 1 },
     { name: "insuranceImage", maxCount: 1 },

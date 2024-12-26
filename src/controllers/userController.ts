@@ -8,7 +8,7 @@ import { CreateJWT } from '../utils/generateToken';
 
 
 
-const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
+const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR ,NOT_FOUND} = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
 
@@ -62,6 +62,8 @@ export class UserController {
 
 
                 const time = this.milliseconds(23, 30, 0);
+                const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
+
                 const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
                 const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
 
@@ -69,7 +71,7 @@ export class UserController {
                     expires: new Date(Date.now() + time),
                     sameSite: 'strict',
                 }).cookie('user_refresh_token', userRefreshToken, {
-                    expires: new Date(Date.now() + time),
+                    expires: new Date(Date.now() + refreshTokenExpiryTime),
                     sameSite: 'strict',
                 }).json({ userData: userDetails, userAccessToken: userAccessToken, userRefreshToken: userRefreshToken, success: true, message: 'OTP verification successful, account verified.' });
 
@@ -90,20 +92,33 @@ export class UserController {
             const isUserPresent = await this.UserServices.login(email)
 
             if (!isUserPresent) {
-                return res.status(404).json({ success: false, message: 'No account found with this email. Please register first.' });
+                return res.status(NOT_FOUND).json({ success: false, message: 'No account found with this email. Please register first.' });
             }
             const isPasswordMatch = await isUserPresent.matchPassword(password);
 
             if (!isPasswordMatch) {
-                return res.status(400).json({ success: false, message: 'Incorrect password. Please try again.' });
+                return res.status(BAD_REQUEST).json({ success: false, message: 'Incorrect password. Please try again.' });
             }
 
+            console.log(111,isUserPresent);
+            if(isUserPresent.isBlocked){
+                return res.status(BAD_REQUEST).json({success:false,message:"User is Blocked by the Admin"})
+            }
+            
+
+            
+
             const time = this.milliseconds(23, 30, 0);
+            const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
+
             const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
             const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
 
             return res.status(200).cookie('user_access_token', userAccessToken, {
                 expires: new Date(Date.now() + time),
+                sameSite: 'strict',
+            }).cookie('user_refresh_token', userRefreshToken, {
+                expires: new Date(Date.now() + refreshTokenExpiryTime),
                 sameSite: 'strict',
             }).json({
                 success: true,
@@ -129,6 +144,8 @@ export class UserController {
             const email = req.body.email
 
             const otp = await generateAndSendOTP(email);
+            return res.status(200).json({ success: true, message: 'OTP resent successfully' });
+
 
         } catch (error) {
             console.log(error);
@@ -149,9 +166,26 @@ export class UserController {
 
         } catch (error) {
             console.log(error);
-
         }
     }
+
+    async forgotPassword(req:Request,res:Response){
+        try {
+            const {email} = req.body
+
+            if(!email){
+                return res.status(400).json({success:false,message:"Email is required."})
+            }
+            
+            
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
+
+
     async getProfile(req: Request, res: Response) {
         try {
             const email = req.query.email ?? ''; // Use a default value if email is undefined

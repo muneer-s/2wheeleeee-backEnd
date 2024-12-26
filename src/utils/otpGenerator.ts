@@ -30,10 +30,6 @@ export const generateAndSendOTP = async (toEmail: string): Promise<string> => {
         { upsert: true, new: true } 
     );
 
-
-
-
-
     const mailOptions = {
         from: process.env.TRANSPORTER_EMAIL,
         to: toEmail,

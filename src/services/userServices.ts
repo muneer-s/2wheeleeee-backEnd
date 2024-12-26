@@ -98,8 +98,6 @@ class UserServices {
     async login(email: string) {
         try {
             return await this.userRepository.login(email)
-
-
         } catch (error) {
             console.log(error);
 
@@ -210,10 +208,6 @@ class UserServices {
             };
 
             const result = await this.userRepository.saveUserDocuments(userId, documentData);
-            console.log('---------------------',result);
-            
-
-
 
 
         } catch (error) {

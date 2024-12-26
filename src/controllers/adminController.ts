@@ -38,7 +38,8 @@ export class AdminController {
             }
 
 
-            const time = this.milliseconds(23, 30, 0);
+            // const time = this.milliseconds(23, 30, 0);
+            const time  = 24 * 60 * 60 * 1000
             const refreshTokenExpires = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 
 
@@ -82,12 +83,28 @@ export class AdminController {
 
     async getAllUsers(req: Request, res: Response) {
         try {
-            let findUsers = await this.AdminServices.getAllUsers()
-            res.status(OK).json({ success: true, usersList: findUsers })
 
+            const { page = 1, limit = 10, search = '', isBlocked, isUser } = req.query;
+            console.log("queryyyyy. ",req.query);
+            
 
+            const findUsers = await this.AdminServices.getAllUsers({
+                page: Number(page),
+                limit: Number(limit),
+                search: String(search),
+                isBlocked:isBlocked?String(isBlocked):undefined,
+                isUser:isUser?String(isUser):undefined
+            });
+
+            res.status(200).json({
+                success: true,
+                usersList: findUsers?.users,
+                totalUsers: findUsers?.totalUsers,
+                totalPages: findUsers?.totalPages,
+            });
         } catch (error) {
             console.log(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
 
         }
     }
@@ -108,7 +125,6 @@ export class AdminController {
     async userVerify(req: Request, res: Response) {
         try {
             const userId = req.params.id
-            console.log('ethi ethi ', userId);
             const user = await this.AdminServices.userVerify(userId)
             res.status(200).json({ success: true, user });
 
@@ -116,6 +132,36 @@ export class AdminController {
         } catch (error) {
             console.log();
 
+        }
+    }
+
+    async userBlockUnBlock(req: Request, res: Response) {
+        try {
+            const userId = req.params.id
+            console.log('ethi ethi  block', userId);
+            const user = await this.AdminServices.userBlockUnblock(userId)
+            res.status(200).json({ success: true, user })
+
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+
+    async checkBlockedStatus(req: Request, res: Response) {
+        try {
+            const { email } = req.body;
+            console.log("email of the user: ", email);
+            const user = await this.AdminServices.findUserByEmail(email)
+
+            if (!user) {
+                return res.status(404).json({ success: false, message: 'User not found' });
+            }
+
+            res.status(200).json({ success: true, isBlocked: user.isBlocked });
+        } catch (error) {
+            console.error('Error checking user status:', error);
+            res.status(500).json({ success: false, message: 'Internal server error' });
         }
     }
 

@@ -32,6 +32,8 @@ export class CreateJWT {
         try {
             let secret = process.env.JWT_SECRET
             const decoded = jwt.verify(token, secret) as JwtPayload;
+            console.log('refrsh valid aanu ',decoded);
+            
             return { success: true, decoded };
         } catch (error) {
             console.log(error as Error);

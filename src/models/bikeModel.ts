@@ -3,8 +3,8 @@ import { BikeData } from "../interfaces/BikeInterface";
 
 const bikeSchema: Schema<BikeData> = new Schema({
     userId:{
-        type: mongoose.Schema.Types.ObjectId,  // Reference to User model
-        ref: 'User',  // The collection name to reference
+        type: mongoose.Schema.Types.ObjectId,  
+        ref: 'User',  
         required: true
     },
     companyName: {

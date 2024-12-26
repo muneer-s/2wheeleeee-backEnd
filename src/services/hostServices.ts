@@ -6,6 +6,8 @@ import { UploadApiResponse } from "cloudinary";
 const { OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 import HostRepository from "../repositories/hostRepository";
 import { Readable } from "stream";
+import { error } from "console";
+import mongoose from "mongoose";
 
 
 class HostServices {
@@ -73,9 +75,13 @@ class HostServices {
                 ? await insuranceImageUploadPromise
                 : null;
 
+                if (!req.userId) {
+                    return res.status(400).json({ message: "User ID is required" });
+                }
+
 
                 const bikeData: BikeData = {
-                    userId: req.body.userId,
+                    userId: new mongoose.Types.ObjectId(req.userId),
                     companyName: req.body.companyName,
                     modelName: req.body.modelName,
                     rentAmount: req.body.rentAmount,
