@@ -29,5 +29,9 @@ hostRouter.post('/saveBikeDetails',userAuth, upload.fields([
     hostController.saveBikeDetails(req, res)
 });
 
+hostRouter.get('/isAdminVerifyUser',userAuth,(req,res)=>{
+    hostController.isAdminVerifyUser(req,res)
+})
+
 
 export default hostRouter;

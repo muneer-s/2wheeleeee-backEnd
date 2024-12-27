@@ -111,6 +111,17 @@ class HostServices {
         }
     }
 
+    async isAdminVerifyUser(userId:string ){
+        try {
+            const findUser = await this.hostRepository.isAdminVerifyUser(userId);
+            return findUser
+
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
 
 
 

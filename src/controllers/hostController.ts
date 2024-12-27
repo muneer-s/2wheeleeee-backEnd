@@ -23,6 +23,18 @@ export class HostController {
         }
     }
 
+    async isAdminVerifyUser(req:Request,res:Response){
+        try {
+            const userId = req.query.userId as string
+            const findUser = await this.HostServices.isAdminVerifyUser(userId)
+            return res.status(OK).json({success:true,user:findUser})
+            
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
 
 }
 
