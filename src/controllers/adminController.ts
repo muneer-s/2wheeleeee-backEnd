@@ -39,7 +39,7 @@ export class AdminController {
 
 
             // const time = this.milliseconds(23, 30, 0);
-            const time  = 24 * 60 * 60 * 1000
+            const time = 24 * 60 * 60 * 1000
             const refreshTokenExpires = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 
 
@@ -85,15 +85,15 @@ export class AdminController {
         try {
 
             const { page = 1, limit = 10, search = '', isBlocked, isUser } = req.query;
-            console.log("queryyyyy. ",req.query);
-            
+            console.log("queryyyyy. ", req.query);
+
 
             const findUsers = await this.AdminServices.getAllUsers({
                 page: Number(page),
                 limit: Number(limit),
                 search: String(search),
-                isBlocked:isBlocked?String(isBlocked):undefined,
-                isUser:isUser?String(isUser):undefined
+                isBlocked: isBlocked ? String(isBlocked) : undefined,
+                isUser: isUser ? String(isUser) : undefined
             });
 
             res.status(200).json({
@@ -104,7 +104,7 @@ export class AdminController {
             });
         } catch (error) {
             console.log(error);
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
+            res.status(500).json({ success: false, message: 'Internal Server Error' });
 
         }
     }
@@ -167,8 +167,32 @@ export class AdminController {
 
     async getAllBikeDetails(req: Request, res: Response) {
         try {
-            let findBikes = await this.AdminServices.getAllBikeDetails()
-            res.status(OK).json({ success: true, bikeList: findBikes })
+
+            const { page = 1, limit = 10, search = '', filter = '', sort = '' } = req.query as {
+                page?: string;
+                limit?: string;
+                search?: string;
+                filter?: string;
+                sort?: string;
+            }
+            console.log("reeeeeeeeeeee", req.query);
+
+            const query = {
+                ...(filter && { isHost: filter === 'verified' }),
+            };
+
+            const options = {
+                skip: (Number(page) - 1) * Number(limit),
+                limit: Number(limit),
+                sort: sort === 'asc' ? { rentAmount: 1 } : sort === 'desc' ? { rentAmount: -1 } : {},
+                search
+            };
+            console.log(22,options);
+            console.log(33,query);
+            
+
+            let bikeDetails = await this.AdminServices.getAllBikeDetails(query, options)
+            res.status(OK).json({ success: true, bikeDetails })
         } catch (error) {
             console.log(error);
 

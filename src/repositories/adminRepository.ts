@@ -15,16 +15,16 @@ const transporter = nodemailer.createTransport({
 
 class AdminRepository {
 
-    async getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string | undefined}) {
+    async getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string | undefined }) {
         try {
             const { page, limit, search, isBlocked, isUser } = filters;
-            console.log(1111,filters);
-            
+            console.log(1111, filters);
+
 
             const query: any = {};
 
             if (isBlocked !== undefined) query.isBlocked = isBlocked;
-            if (isUser !== undefined ) query.isUser = isUser;
+            if (isUser !== undefined) query.isUser = isUser;
             if (search) query.name = { $regex: search, $options: 'i' };
 
 
@@ -103,21 +103,45 @@ class AdminRepository {
 
 
 
-
-    async getAllBikeDetails() {
+    async getAllBikeDetails(query: object, options: { skip: number; limit: number; sort: object,search?: string }) {
         try {
-            const result = await bikeModel.aggregate([
+            const { skip, limit, sort, search } = options;
+    
+            const pipeline: any[] = [
+
+                { $match: query },
+
                 {
                     $lookup: {
                         from: "users",
                         localField: "userId",
                         foreignField: "_id",
-                        as: "userDetails"
-                    }
+                        as: "userDetails",
+                    },
                 },
-                {
-                    $unwind: "$userDetails"
-                },
+
+                { $unwind: "$userDetails" },
+            ];
+
+            if (search) {
+                pipeline.push({
+                    $match: {
+                        "userDetails.name": { $regex: search, $options: "i" }, // Case-insensitive search
+                    },
+                });
+            }
+    
+            // Add $sort stage only if the sort object has keys
+            if (Object.keys(sort).length > 0) {
+                pipeline.push({ $sort: sort });
+            } else {
+                // Default sorting if no sort keys are provided
+                pipeline.push({ $sort: { _id: 1 } });
+            }
+    
+            pipeline.push(
+                { $skip: skip },
+                { $limit: limit },
                 {
                     $project: {
                         _id: 1,
@@ -133,24 +157,28 @@ class AdminRepository {
                         polutionExpDate: 1,
                         rcImage: 1,
                         insuranceImage: 1,
-
                         "userDetails._id": 1,
                         "userDetails.name": 1,
                         "userDetails.email": 1,
                         "userDetails.phoneNumber": 1,
                         "userDetails.address": 1,
-                        "userDetails.profile_picture": 1
-                    }
+                        "userDetails.profile_picture": 1,
+                    },
                 }
-            ]);
-
+            );
+    
+            const result = await bikeModel.aggregate(pipeline);
+            const total = await bikeModel.countDocuments(query);
+    
             console.log("Fetched Bike Details: ", result);
-            return result;
+    
+            return { bikes: result, total };
         } catch (error) {
             console.error("Error fetching bike details with user details:", error);
             throw error;
         }
     }
+    
 
 
     async verifyHost(bikeId: string) {
