@@ -47,7 +47,6 @@ class AdminServices {
             return await this.adminRepository.getAllBikeDetails()
         } catch (error) {
             console.log(error);
-
         }
     }
 
