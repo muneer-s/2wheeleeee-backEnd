@@ -61,7 +61,7 @@ export class UserController {
                 }
 
 
-                const time = this.milliseconds(23, 30, 0);
+                const time = this.milliseconds(0, 30, 0);
                 const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
 
                 const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
@@ -108,7 +108,7 @@ export class UserController {
 
             
 
-            const time = this.milliseconds(23, 30, 0);
+            const time = this.milliseconds(0, 30, 0);
             const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
 
             const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());

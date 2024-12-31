@@ -33,5 +33,17 @@ hostRouter.get('/isAdminVerifyUser',userAuth,(req,res)=>{
     hostController.isAdminVerifyUser(req,res)
 })
 
+hostRouter.get('/fetchBikeData',userAuth,(req,res)=>{
+    hostController.fetchBikeData(req,res)
+})
+
+hostRouter.get('/bikeSingleView',userAuth,(req,res)=>{
+    hostController.bikeSingleView(req,res)
+})
+
+hostRouter.delete('/deleteBike',userAuth,(req,res)=>{    
+    hostController.deleteBike(req,res)
+})
+
 
 export default hostRouter;

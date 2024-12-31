@@ -123,7 +123,37 @@ class HostServices {
     }
 
 
+    async fetchBikeData(userId:string | undefined){
+        try {
+            if (!userId) throw new Error("User ID is undefined");
 
+            const bikes = await this.hostRepository.fetchBikeData(userId)
+            return bikes
+        } catch (error) {
+            console.error("Error in service layer:", error);
+            throw error;            
+        }
+    }
+
+    async bikeSingleView(bikeId:string){
+        try {
+            const bike = await this.hostRepository.bikeSingleView(bikeId)
+            return bike
+        } catch (error) {
+            console.error("Error in service layer:", error);
+            throw error;  
+        }
+    }
+
+    async deleteBike(bikeId:string){
+        try {
+            const bike = await this.hostRepository.deleteBike(bikeId)
+            return bike
+        } catch (error) {
+            console.error("Error in service layer:", error);
+            throw error;  
+        }
+    }
 
 
 }

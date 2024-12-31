@@ -18,9 +18,6 @@ class AdminRepository {
     async getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string | undefined }) {
         try {
             const { page, limit, search, isBlocked, isUser } = filters;
-            console.log(1111, filters);
-
-
             const query: any = {};
 
             if (isBlocked !== undefined) query.isBlocked = isBlocked;
@@ -28,14 +25,12 @@ class AdminRepository {
             if (search) query.name = { $regex: search, $options: 'i' };
 
 
-            // Pagination and sorting
             const skip = (page - 1) * limit;
             const users = await userModel.find(query).skip(skip).limit(limit);
             const totalUsers = await userModel.countDocuments(query);
             const totalPages = Math.ceil(totalUsers / limit)
 
             return { users, totalUsers, totalPages }
-            // return await userModel.find()
         } catch (error) {
             console.log(error);
 
@@ -47,7 +42,6 @@ class AdminRepository {
             return await userModel.findById(userId)
         } catch (error) {
             console.log(error);
-
         }
     }
 
@@ -58,10 +52,8 @@ class AdminRepository {
             user.isUser = !user.isUser;
             await user.save();
             return user
-
         } catch (error) {
             console.log(error);
-
         }
     }
 
@@ -93,7 +85,6 @@ class AdminRepository {
 
             await findUser.save();
             return findUser
-
         } catch (error) {
             console.log(error);
 
@@ -131,11 +122,9 @@ class AdminRepository {
                 });
             }
     
-            // Add $sort stage only if the sort object has keys
             if (Object.keys(sort).length > 0) {
                 pipeline.push({ $sort: sort });
             } else {
-                // Default sorting if no sort keys are provided
                 pipeline.push({ $sort: { _id: 1 } });
             }
     
@@ -226,7 +215,6 @@ class AdminRepository {
 
         } catch (error) {
             console.log(error);
-
         }
     }
 

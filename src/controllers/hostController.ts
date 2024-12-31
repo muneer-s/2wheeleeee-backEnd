@@ -11,7 +11,7 @@ export class HostController {
 
     async saveBikeDetails(req: Request, res: Response) {
         try {
-            const updatedUserDocuments = await this.HostServices.saveBikeDetails(req,res)
+            const updatedUserDocuments = await this.HostServices.saveBikeDetails(req, res)
             return res.status(OK).json({
                 message: "Bike details saved successfully",
                 data: updatedUserDocuments,
@@ -23,15 +23,67 @@ export class HostController {
         }
     }
 
-    async isAdminVerifyUser(req:Request,res:Response){
+    async isAdminVerifyUser(req: Request, res: Response) {
         try {
             const userId = req.query.userId as string
             const findUser = await this.HostServices.isAdminVerifyUser(userId)
-            return res.status(OK).json({success:true,user:findUser})
-            
+            return res.status(OK).json({ success: true, user: findUser })
+
         } catch (error) {
             console.log(error);
-            
+
+        }
+    }
+
+    async fetchBikeData(req: Request, res: Response) {
+        try {
+
+            const { userId } = req.query
+
+            if (!userId) {
+                return res.status(BAD_REQUEST).json({ success: false, message: "User ID is required" });
+            }
+
+            const findUserAndBikes = await this.HostServices.fetchBikeData(userId as string)
+
+            return res.status(OK).json({ success: true, userAndbikes: findUserAndBikes })
+        } catch (error) {
+            console.error("Error fetching bike data:", error);
+            return res.status(500).json({ success: false, message: "Failed to fetch bike data" });
+        }
+    }
+
+    async bikeSingleView(req: Request, res: Response) {
+        try {
+            const bikeId = req.query.bikeId
+            console.log(111, bikeId);
+            if (!bikeId) {
+                return res.status(BAD_REQUEST).json({ success: false, message: "Bike Id is required" })
+            }
+
+            const findBike = await this.HostServices.bikeSingleView(bikeId as string)
+            return res.status(OK).json({ success: true, bike: findBike })
+        } catch (error) {
+            console.error("Error fetching single bike  data:", error);
+            return res.status(500).json({ success: false, message: "Failed to fetch single bike data" });
+        }
+    }
+
+
+    async deleteBike(req: Request, res: Response) {
+        try {
+            const bikeId = req.query.bikeId
+            console.log("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",bikeId);
+
+            if (!bikeId) {
+                return res.status(BAD_REQUEST).json({ success: false, message: "Bike Id is required" })
+            }
+            const bike =  await this.HostServices.deleteBike(bikeId as string)
+            return res.status(OK).json({ success: true })
+
+        } catch (error) {
+            console.error("Error deleting bike  data:", error);
+            return res.status(500).json({ success: false, message: "Failed to delete  bike data" });
         }
     }
 

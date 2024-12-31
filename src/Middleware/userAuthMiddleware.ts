@@ -14,12 +14,11 @@ const userRepository = new UserRepository();
 dotenv.config()
 
 
-// This ensures that req.userId and req.user are recognized by TypeScript in other parts of the app.
-declare global {    // Global Type Declaration
-    namespace Express {     // Extends the Request object in Express to include:
+declare global {   
+    namespace Express {   
         interface Request {
-            userId?: string,      // userId (a string representing the authenticated user’s ID).
-            user?: UserInterface | null,    // user (an object of type UserInterface representing the user data or null if not available).
+            userId?: string,     
+            user?: UserInterface | null,  
         }
     }
 }
@@ -28,6 +27,9 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
     let token = req.cookies.user_access_token;
     let refresh_token = req.cookies.user_refresh_token;
 
+    console.log(99999999,token);
+    console.log(88888888888,refresh_token);
+    
 
     // If the refresh_token is not found, the response indicates that the token is expired or unavailable.
     if (!refresh_token) {
@@ -44,11 +46,13 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
             console.log("token illa so new acess token undakki, ",newAccessToken);
             
             const accessTokenMaxAge = 30 * 60 * 1000;
+
             res.cookie('user_access_token', newAccessToken, {
                 maxAge: accessTokenMaxAge,
                 sameSite: 'none',
                 secure: true
             });
+
             token = newAccessToken;
 
         } catch (error) {
@@ -60,7 +64,10 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
     try {
         if(!token){
             token = req.cookies.user_access_token;
+            console.log("new toke : ",token);
+            
         }
+        console.log("verufy munne ,",token);
         
         const decoded = jwt.verifyToken(token);
         console.log("token undel : ", decoded);
@@ -97,6 +104,7 @@ const refreshAccessToken = async (refreshToken: string): Promise<string> => {
     try {
         const decoded = jwt.verifyRefreshToken(refreshToken);
         console.log("refresh token valid aano :?", decode);
+        
         if (!decoded?.decoded?.data) {
             throw new Error('Decoded data is invalid or missing');
         }

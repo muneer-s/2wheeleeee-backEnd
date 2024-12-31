@@ -39,7 +39,7 @@ export class AdminController {
 
 
             // const time = this.milliseconds(23, 30, 0);
-            const time = 24 * 60 * 60 * 1000
+            const time = 30 * 60 * 1000;
             const refreshTokenExpires = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 
 
