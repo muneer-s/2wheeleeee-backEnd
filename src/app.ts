@@ -8,6 +8,7 @@ import cors from 'cors';
 import hostRouter from './routes/hostRoutes';
 
 
+
 const corsOptions = {
   origin: 'http://localhost:5173', 
   credentials: true,             

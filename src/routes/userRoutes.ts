@@ -74,6 +74,16 @@ userRouter.put('/editUserDocuments',userAuth,uploads.fields([{ name: 'frontImage
     userController.editUserDocuments(req,res)
 })
 
+userRouter.get('/getAllBikes',(req,res)=>{
+    userController.GetBikeList(req,res)
+})
+
+userRouter.get('/getBikeDeatils/:id', (req, res) => {
+    console.log("Route hit with ID:", req.params.id);
+    userController.getBikeDeatils(req, res);
+});
+
+
 
 
 

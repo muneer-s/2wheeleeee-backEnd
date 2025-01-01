@@ -217,6 +217,29 @@ class UserServices {
 
     }
 
+    async GetBikeList(){
+        try {
+
+            const result = await this.userRepository.getBikeList()
+            return result
+            
+        } catch (error) {
+            console.error("Error in getbikelist service layer:", error);
+            throw error;  
+        }
+    }
+
+    async getbikeDeatils(id:string){
+        try {
+            const result = await this.userRepository.getBikeDeatils(id)
+            return result
+            
+        } catch (error) {
+            console.error("Error in getbikedetails service layer:", error);
+            throw error;
+        }
+    }
+
 
 }
 

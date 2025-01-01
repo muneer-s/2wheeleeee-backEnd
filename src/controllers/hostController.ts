@@ -73,7 +73,6 @@ export class HostController {
     async deleteBike(req: Request, res: Response) {
         try {
             const bikeId = req.query.bikeId
-            console.log("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",bikeId);
 
             if (!bikeId) {
                 return res.status(BAD_REQUEST).json({ success: false, message: "Bike Id is required" })
@@ -84,6 +83,18 @@ export class HostController {
         } catch (error) {
             console.error("Error deleting bike  data:", error);
             return res.status(500).json({ success: false, message: "Failed to delete  bike data" });
+        }
+    }
+
+    async editBike(req:Request,res:Response){
+        try {
+            const bikeId = req.query.bikeId
+            console.log("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",bikeId);
+
+
+        } catch (error) {
+            console.error("Error editing bike  data:", error);
+            return res.status(500).json({ success: false, message: "Failed to editing  bike data" });
         }
     }
 

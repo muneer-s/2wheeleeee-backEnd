@@ -244,6 +244,39 @@ export class UserController {
         }
     }
 
+    async GetBikeList(req:Request,res:Response){
+        try {
+
+        const bikeList = await this.UserServices.GetBikeList()
+        res.status(OK).json({success:true,bikeList})
+            
+        } catch (error) {
+            console.error("Error getting bike list:", error);
+            return res.status(500).json({ success: false, message: "Failed to get bike Lists" });            
+        }
+    }
+
+    async getBikeDeatils(req:Request,res:Response){
+        try {
+
+            const { id } = req.params;
+            console.log("Bike ID received in controller:", id);
+
+            // Bike.findById(id);
+
+            const bike = await  this.UserServices.getbikeDeatils(id)
+
+            if (!bike) return res.status(404).json({success:false, message: 'Bike not found' });
+
+            res.status(200).json({success:true, bike });
+
+            
+        } catch (error) {
+            console.error("Error getting bike details :", error);
+            return res.status(500).json({ success: false, message: "Failed to get bike Deatils" });  
+        }
+    }
+
 
 }
 

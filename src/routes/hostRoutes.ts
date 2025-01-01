@@ -45,5 +45,11 @@ hostRouter.delete('/deleteBike',userAuth,(req,res)=>{
     hostController.deleteBike(req,res)
 })
 
+hostRouter.delete('/editBike',userAuth,(req,res)=>{    
+    hostController.editBike(req,res)
+})
+
+
+
 
 export default hostRouter;

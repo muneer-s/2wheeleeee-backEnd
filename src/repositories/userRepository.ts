@@ -1,4 +1,6 @@
+import mongoose from 'mongoose';
 import { UserInterface } from '../interfaces/IUser';
+import bikeModel from '../models/bikeModel';
 import OTPModel from '../models/otpModels';
 import userModel from '../models/userModels';
 import bcrypt from 'bcrypt';
@@ -22,7 +24,7 @@ class UserRepository {
       return null;
     }
   }
-  
+
   async saveUser(userData: any) {
     try {
       const newUser = new userModel(userData);
@@ -49,7 +51,7 @@ class UserRepository {
         return false;
       }
       await userModel.updateOne({ email }, { $set: { isVerified: true } })
-      return true; 
+      return true;
 
 
     } catch (error) {
@@ -83,8 +85,8 @@ class UserRepository {
       //   userData.password = await bcrypt.hash(userData.password, salt);
       // }
 
-      console.log(11111111111,userData);
-      
+      console.log(11111111111, userData);
+
 
       const updatedUser = await userModel.findOneAndUpdate(
         { email },
@@ -92,7 +94,7 @@ class UserRepository {
         { new: true, runValidators: true }
       );
 
-      return updatedUser ;
+      return updatedUser;
     } catch (error) {
       console.error("Error updating profile:", error);
       throw new Error("Error updating user profile");
@@ -123,6 +125,57 @@ class UserRepository {
 
   async getUserById(userId: string) {
     return await userModel.findById(userId);
+  }
+
+
+  async getBikeList() {
+    try {
+      const bikeList = await bikeModel.find({ isHost: true })
+      console.log('verified bikes are : ');
+      console.log(bikeList);
+      
+      
+      return bikeList
+
+
+    } catch (error) {
+      console.log("errro in getting data from db", error);
+      throw error
+    }
+  }
+
+  async getBikeDeatils(id: string) {
+    try {
+        const bikeDetails = await bikeModel.aggregate([
+            {
+                $match: { _id: new mongoose.Types.ObjectId(id) } // Match the bike by its ID
+            },
+            {
+                $lookup: {
+                    from: "users", // Name of the user collection
+                    localField: "userId", // Field in the bikeModel to match
+                    foreignField: "_id", // Field in the userModel to match
+                    as: "userDetails" // Alias for the joined data
+                }
+            },
+            {
+                $unwind: "$userDetails" // Unwind the userDetails array to an object
+            }
+        ]);
+
+        if (!bikeDetails || bikeDetails.length === 0) {
+            console.log("Bike not found");
+            return null;
+        }
+
+        console.log("Bike and User Details:", bikeDetails[0]);
+
+
+        return bikeDetails[0]; // Return the first (and only) result
+    } catch (error) {
+        console.error("Error fetching bike and user details:", error);
+        throw error;
+    }
 }
 
 
