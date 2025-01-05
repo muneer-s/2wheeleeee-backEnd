@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
 import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
+
 import UserRepository from '../repositories/userRepository';
 import { STATUS_CODES } from '../constants/httpStatusCodes';
 
 import { UserInterface } from '../interfaces/IUser';
-import { decode } from 'punycode';
 
 const { UNAUTHORIZED } = STATUS_CODES
 
@@ -27,8 +27,8 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
     let token = req.cookies.user_access_token;
     let refresh_token = req.cookies.user_refresh_token;
 
-    console.log(99999999,token);
-    console.log(88888888888,refresh_token);
+    // console.log(99999999,token);
+    // console.log(88888888888,refresh_token);
     
 
     // If the refresh_token is not found, the response indicates that the token is expired or unavailable.
@@ -43,7 +43,7 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
     if (!token) {
         try {
             const newAccessToken = await refreshAccessToken(refresh_token);
-            console.log("token illa so new acess token undakki, ",newAccessToken);
+            // console.log("token illa so new acess token undakki, ",newAccessToken);
             
             const accessTokenMaxAge = 30 * 60 * 1000;
 
@@ -64,13 +64,13 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
     try {
         if(!token){
             token = req.cookies.user_access_token;
-            console.log("new toke : ",token);
+            // console.log("new toke : ",token);
             
         }
-        console.log("verufy munne ,",token);
+        // console.log("verufy munne ,",token);
         
         const decoded = jwt.verifyToken(token);
-        console.log("token undel : ", decoded);
+        // console.log("token undel : ", decoded);
 
         if (decoded?.success) {
             let user = await userRepository.getUserById(decoded.decoded?.data?.toString());
@@ -103,7 +103,7 @@ const refreshAccessToken = async (refreshToken: string): Promise<string> => {
     }
     try {
         const decoded = jwt.verifyRefreshToken(refreshToken);
-        console.log("refresh token valid aano :?", decode);
+        // console.log("refresh token valid aano :?", decode);
         
         if (!decoded?.decoded?.data) {
             throw new Error('Decoded data is invalid or missing');

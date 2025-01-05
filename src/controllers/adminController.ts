@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { STATUS_CODES } from '../constants/httpStatusCodes';
 import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
-import { time } from 'console';
 import AdminServices from '../services/adminServices';
 
 dotenv.config();
@@ -38,8 +37,8 @@ export class AdminController {
             }
 
 
-            // const time = this.milliseconds(23, 30, 0);
-            const time = 30 * 60 * 1000;
+            const time = this.milliseconds(0, 30, 0);
+            // const time = 30 * 60 * 1000;
             const refreshTokenExpires = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 
 

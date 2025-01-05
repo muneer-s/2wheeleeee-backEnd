@@ -55,8 +55,8 @@ class UserRepository {
 
 
     } catch (error) {
-      console.log(error);
-      return false
+      console.log("error showing when check otp is correct ",error);
+      throw error;
     }
   }
 
@@ -80,10 +80,7 @@ class UserRepository {
 
   async editProfile(email: string, userData: Partial<UserInterface>) {
     try {
-      // if (userData.password) {
-      //   const salt = await bcrypt.genSalt(10);
-      //   userData.password = await bcrypt.hash(userData.password, salt);
-      // }
+      
 
       console.log(11111111111, userData);
 
@@ -148,18 +145,18 @@ class UserRepository {
     try {
         const bikeDetails = await bikeModel.aggregate([
             {
-                $match: { _id: new mongoose.Types.ObjectId(id) } // Match the bike by its ID
+                $match: { _id: new mongoose.Types.ObjectId(id) } 
             },
             {
                 $lookup: {
-                    from: "users", // Name of the user collection
-                    localField: "userId", // Field in the bikeModel to match
-                    foreignField: "_id", // Field in the userModel to match
-                    as: "userDetails" // Alias for the joined data
+                    from: "users", 
+                    localField: "userId", 
+                    foreignField: "_id", 
+                    as: "userDetails" 
                 }
             },
             {
-                $unwind: "$userDetails" // Unwind the userDetails array to an object
+                $unwind: "$userDetails" 
             }
         ]);
 
@@ -171,7 +168,7 @@ class UserRepository {
         console.log("Bike and User Details:", bikeDetails[0]);
 
 
-        return bikeDetails[0]; // Return the first (and only) result
+        return bikeDetails[0]; 
     } catch (error) {
         console.error("Error fetching bike and user details:", error);
         throw error;

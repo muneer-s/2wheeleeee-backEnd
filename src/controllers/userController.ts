@@ -47,6 +47,7 @@ export class UserController {
 
             if (otpMatched) {
                 const userEmail = data.userId
+                
                 let userDetails = await userModel.findOne(
                     { email: userEmail },
                     'email name profile_picture _id'
@@ -62,7 +63,7 @@ export class UserController {
 
 
                 const time = this.milliseconds(0, 30, 0);
-                const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
+                const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); 
 
                 const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
                 const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
@@ -78,7 +79,6 @@ export class UserController {
 
             } else {
                 res.status(BAD_REQUEST).json({ success: false, message: 'OTP verification failed!' });
-
             }
         } catch (error) {
             console.log(error);
@@ -188,7 +188,7 @@ export class UserController {
 
     async getProfile(req: Request, res: Response) {
         try {
-            const email = req.query.email ?? ''; // Use a default value if email is undefined
+            const email = req.query.email ?? ''; 
 
             if (!email || typeof email !== 'string') {
                 return res.status(BAD_REQUEST).json({ success: false, message: 'Invalid email provided' });
@@ -260,9 +260,8 @@ export class UserController {
         try {
 
             const { id } = req.params;
-            console.log("Bike ID received in controller:", id);
+        console.log("Bike ID received in controller:", id);
 
-            // Bike.findById(id);
 
             const bike = await  this.UserServices.getbikeDeatils(id)
 

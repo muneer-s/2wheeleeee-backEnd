@@ -82,8 +82,6 @@ class UserServices {
 
     async verifyOtp(data: { otp: number, userId: string }) {
         try {
-            // console.log('11111', data);
-
             let email = data.userId
             let otp = data.otp
 
@@ -239,6 +237,8 @@ class UserServices {
             throw error;
         }
     }
+
+    
 
 
 }

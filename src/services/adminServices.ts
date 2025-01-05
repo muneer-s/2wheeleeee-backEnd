@@ -3,8 +3,7 @@ import { UserInterface } from "../interfaces/IUser";
 import AdminRepository from "../repositories/adminRepository";
 
 class AdminServices {
-    constructor(private adminRepository: AdminRepository,
-    ) { }
+    constructor(private adminRepository: AdminRepository) { }
 
     async getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string | undefined }) {
         try {

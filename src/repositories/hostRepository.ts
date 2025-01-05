@@ -62,7 +62,7 @@ class HostRepository {
       }
 
       console.log("Bike deleted:", result);
-      return result; // Return result if deletion is successful
+      return result; 
       
     } catch (error) {
       console.error("Error in repository layer:", error);

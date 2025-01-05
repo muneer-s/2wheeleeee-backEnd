@@ -8,7 +8,6 @@ export class CreateJWT {
     generateToken(payload: string | undefined): string | undefined {
         if (payload) {
             const token = jwt.sign({ data: payload }, process.env.JWT_SECRET as Secret, { expiresIn: '30m' });
-            console.log("token : ",token);
             return token;
         }
     }
@@ -20,6 +19,8 @@ export class CreateJWT {
         try {
             let secret = process.env.JWT_SECRET;
             console.log("======",secret);
+            console.log("------",token);
+            
             
             const decoded = jwt.verify(token, secret) as JwtPayload;
             console.log("------------------------",decoded);
