@@ -30,17 +30,13 @@ export class AdminController {
             const adminEmail = process.env.ADMIN_EMAIL;
             const adminPassword = process.env.ADMIN_PASSWORD;
 
-
-
             if (email !== adminEmail || password !== adminPassword) {
                 return res.status(UNAUTHORIZED).json({ success: false, message: 'Invalid email or password' });
             }
 
-
             const time = this.milliseconds(0, 30, 0);
             // const time = 30 * 60 * 1000;
-            const refreshTokenExpires = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
-
+            const refreshTokenExpires = 48 * 60 * 60 * 1000; 
 
             const token = jwtHandler.generateToken(adminEmail);
             const refreshToken = jwtHandler.generateRefreshToken(adminEmail);
@@ -84,7 +80,6 @@ export class AdminController {
         try {
 
             const { page = 1, limit = 10, search = '', isBlocked, isUser } = req.query;
-            console.log("queryyyyy. ", req.query);
 
 
             const findUsers = await this.AdminServices.getAllUsers({
@@ -137,7 +132,6 @@ export class AdminController {
     async userBlockUnBlock(req: Request, res: Response) {
         try {
             const userId = req.params.id
-            console.log('ethi ethi  block', userId);
             const user = await this.AdminServices.userBlockUnblock(userId)
             res.status(200).json({ success: true, user })
 
@@ -150,7 +144,6 @@ export class AdminController {
     async checkBlockedStatus(req: Request, res: Response) {
         try {
             const { email } = req.body;
-            console.log("email of the user: ", email);
             const user = await this.AdminServices.findUserByEmail(email)
 
             if (!user) {
@@ -174,7 +167,6 @@ export class AdminController {
                 filter?: string;
                 sort?: string;
             }
-            console.log("reeeeeeeeeeee", req.query);
 
             const query = {
                 ...(filter && { isHost: filter === 'verified' }),
@@ -186,8 +178,7 @@ export class AdminController {
                 sort: sort === 'asc' ? { rentAmount: 1 } : sort === 'desc' ? { rentAmount: -1 } : {},
                 search
             };
-            console.log(22,options);
-            console.log(33,query);
+           
             
 
             let bikeDetails = await this.AdminServices.getAllBikeDetails(query, options)
@@ -202,7 +193,6 @@ export class AdminController {
     async verifyHost(req: Request, res: Response) {
         try {
             const bikeId = req.params.id
-            console.log('ethi ethi ', bikeId);
             const bike = await this.AdminServices.verifyHost(bikeId)
             res.status(200).json({ success: true, bike });
 

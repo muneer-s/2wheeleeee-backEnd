@@ -159,7 +159,6 @@ class AdminRepository {
             const result = await bikeModel.aggregate(pipeline);
             const total = await bikeModel.countDocuments(query);
     
-            console.log("Fetched Bike Details: ", result);
     
             return { bikes: result, total };
         } catch (error) {
