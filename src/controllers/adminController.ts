@@ -185,6 +185,7 @@ export class AdminController {
             res.status(OK).json({ success: true, bikeDetails })
         } catch (error) {
             console.log(error);
+            res.status(500).json({ success: false, message: 'Internal server error' });
 
         }
     }
@@ -198,7 +199,23 @@ export class AdminController {
 
         } catch (error) {
             console.log(error);
+            res.status(500).json({ success: false, message: 'Internal server error' });
 
+        }
+    }
+
+    async isEditOn(req:Request,res:Response){
+        try {
+
+            const bikeId = req.params.id
+            console.log("nikeid   ;   ",bikeId);
+            const bike = await this.AdminServices.isEditOn(bikeId)
+            res.status(OK).json({success:true,bike})
+            
+            
+        } catch (error) {
+            console.log("error is from is edit on ",error);
+            res.status(500).json({ success: false, message: 'Internal server error' });
         }
     }
 

@@ -25,13 +25,13 @@ class HostServices {
             const insuranceImage: Express.Multer.File | undefined = files?.insuranceImage?.[0];
 
 
-            console.log("Received Form Data:");
-            console.log(req.body);
+            // console.log("Received Form Data:");
+            // console.log(req.body);
 
-            console.log("Uploaded Files:");
-            console.log("Images: ", images);
-            console.log("RC Image: ", rcImage);
-            console.log("Insurance Image: ", insuranceImage);
+            // console.log("Uploaded Files:");
+            // console.log("Images: ", images);
+            // console.log("RC Image: ", rcImage);
+            // console.log("Insurance Image: ", insuranceImage);
 
 
             const uploadToCloudinary = (buffer: Buffer, folder: string): Promise<UploadApiResponse> => {
@@ -92,6 +92,7 @@ class HostServices {
                     images: uploadedImages.map((image) => image.secure_url),
                     rcImage: uploadedRcImage?.secure_url || null,
                     insuranceImage: uploadedInsuranceImage?.secure_url || null,
+                    isEdit: false
                 };
 
 
@@ -151,6 +152,68 @@ class HostServices {
             return bike
         } catch (error) {
             console.error("Error in service layer:", error);
+            throw error;  
+        }
+    }
+
+    async editBike(req:Request,res:Response){
+        try {
+            const { bikeId } = req.query;
+
+            if (!bikeId || typeof bikeId !== "string") {
+                return res.status(400).json({ success: false, message: "Bike ID is required and must be a string." });
+            }
+
+            const { insuranceExpDate, polutionExpDate } = req.body;
+           
+            let insuranceImageUrl = "";
+            let pollutionImageUrl = "";
+
+            const files = req.files as {
+                [fieldname: string]: Express.Multer.File[] | undefined;
+            };
+
+           
+        if (files?.insuranceImage?.[0]) {
+            const insuranceImage = files.insuranceImage[0];
+            const result = await new Promise((resolve, reject) => {
+                cloudinary.uploader.upload_stream(
+                    { folder: "bike-insurance" },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                ).end(insuranceImage.buffer);
+            });
+            insuranceImageUrl = (result as any).secure_url;
+        }
+
+        if (files?.polutionImage?.[0]) {
+            const pollutionImage = files.polutionImage[0];
+            const result = await new Promise((resolve, reject) => {
+                cloudinary.uploader.upload_stream(
+                    { folder: "bike-pollution" },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                ).end(pollutionImage.buffer);
+            });
+            pollutionImageUrl = (result as any).secure_url;
+        }
+
+        const bike = await this.hostRepository.editBike(
+            new Date(insuranceExpDate),
+            new Date(polutionExpDate),
+            insuranceImageUrl,
+            pollutionImageUrl,
+            bikeId
+        )
+
+        return bike
+            
+        } catch (error) {
+            console.error("Error in service layer edit bike:", error);
             throw error;  
         }
     }

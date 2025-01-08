@@ -16,7 +16,7 @@ class HostRepository {
     }
   }
 
-  async isAdminVerifyUser(userId: string ) {
+  async isAdminVerifyUser(userId: string) {
     try {
       const user = await userModel.findById(userId)
       return user
@@ -26,50 +26,74 @@ class HostRepository {
     }
   }
 
-  async fetchBikeData(userId:string | undefined){
+  async fetchBikeData(userId: string | undefined) {
     try {
       if (!userId) throw new Error("User ID is undefined");
       const bikes = await bikeModel.find({ userId });
-      return bikes 
+      return bikes
     } catch (error) {
       console.error("Error in repository layer:", error);
-      throw error;      
+      throw error;
     }
   }
 
-  async bikeSingleView(bikeId:string){
+  async bikeSingleView(bikeId: string) {
     try {
 
       if (!bikeId) throw new Error("User ID is undefined");
       const bike = await bikeModel.findById(bikeId);
-      console.log("Bike kitti: ",bike);
+      console.log("Bike kitti: ", bike);
       return bike
     } catch (error) {
       console.error("Error in repository layer:", error);
-      throw error;  
+      throw error;
     }
   }
 
-  async deleteBike(bikeId:string){
+  async deleteBike(bikeId: string) {
     try {
-      
+
       if (!bikeId) throw new Error("User ID is undefined");
 
       const result = await bikeModel.deleteOne({ _id: bikeId });
 
       if (result.deletedCount === 0) {
-          throw new Error("Bike not found");
+        throw new Error("Bike not found");
       }
 
       console.log("Bike deleted:", result);
-      return result; 
-      
+      return result;
+
     } catch (error) {
       console.error("Error in repository layer:", error);
-      throw error;  
+      throw error;
     }
   }
 
+
+  async editBike(insuranceExpDate: Date, polutionExpDate: Date, insuranceImageUrl: string, pollutionImageUrl: string, bikeId: string) {
+    try {
+      const updatedBike = await bikeModel.findByIdAndUpdate(
+        bikeId,
+        {
+          insuranceExpDate,
+          polutionExpDate,
+          insuranceImage: insuranceImageUrl || undefined,
+          pollutionImage: pollutionImageUrl || undefined,
+        },
+        { new: true }
+      );
+
+      if (!updatedBike) {
+        throw new Error("Bike not found.");
+      }
+      return updatedBike;
+
+    } catch (error) {
+      console.error("Error in repository layer edit bike:", error);
+      throw error;
+    }
+  }
 
 
 

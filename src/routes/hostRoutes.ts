@@ -17,10 +17,10 @@ const hostController = new HostController(service)
 
 
 const hostRouter = express.Router();
-const upload = multer({ storage: multer.memoryStorage() }); 
+const upload = multer({ storage: multer.memoryStorage() });
 
 
-hostRouter.post('/saveBikeDetails',userAuth, upload.fields([
+hostRouter.post('/saveBikeDetails', userAuth, upload.fields([
     { name: "images", maxCount: 4 },
     { name: "rcImage", maxCount: 1 },
     { name: "insuranceImage", maxCount: 1 },
@@ -29,26 +29,32 @@ hostRouter.post('/saveBikeDetails',userAuth, upload.fields([
     hostController.saveBikeDetails(req, res)
 });
 
-hostRouter.get('/isAdminVerifyUser',userAuth,(req,res)=>{
-    hostController.isAdminVerifyUser(req,res)
+hostRouter.get('/isAdminVerifyUser', userAuth, (req, res) => {
+    hostController.isAdminVerifyUser(req, res)
 })
 
-hostRouter.get('/fetchBikeData',userAuth,(req,res)=>{
-    hostController.fetchBikeData(req,res)
+hostRouter.get('/fetchBikeData', userAuth, (req, res) => {
+    hostController.fetchBikeData(req, res)
 })
 
-hostRouter.get('/bikeSingleView',userAuth,(req,res)=>{
-    hostController.bikeSingleView(req,res)
+hostRouter.get('/bikeSingleView', userAuth, (req, res) => {
+    hostController.bikeSingleView(req, res)
 })
 
-hostRouter.delete('/deleteBike',userAuth,(req,res)=>{    
-    hostController.deleteBike(req,res)
+hostRouter.delete('/deleteBike', userAuth, (req, res) => {
+    hostController.deleteBike(req, res)
 })
 
-hostRouter.delete('/editBike',userAuth,(req,res)=>{    
-    hostController.editBike(req,res)
-})
+// hostRouter.put('/editBike', userAuth, (req, res) => {
+//     hostController.editBike(req, res)
+// })
 
+hostRouter.put("/editBike", userAuth, upload.fields([
+    { name: "insuranceImage", maxCount: 1 },
+    { name: "polutionImage", maxCount: 1 }
+]), (req, res) => {
+        hostController.editBike(req, res)
+    });
 
 
 

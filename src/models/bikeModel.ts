@@ -35,6 +35,10 @@ const bikeSchema: Schema<BikeData> = new Schema({
         type: Boolean,
         default: false
     },
+    isEdit :{
+        type:Boolean,
+        default:false
+    },
     registerNumber: {
         type: String,
         required:true

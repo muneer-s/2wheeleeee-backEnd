@@ -15,4 +15,5 @@ export interface BikeData {
     insuranceImage: string | null; 
     isBlocked?: boolean; 
     isHost?: boolean; 
+    isEdit:boolean
 }

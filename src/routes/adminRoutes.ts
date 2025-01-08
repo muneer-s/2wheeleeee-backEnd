@@ -48,6 +48,10 @@ adminRouter.put('/verifyHost/:id', adminAuthMiddleware, (req, res) => {
         adminController.verifyHost(req, res)
 })
 
+adminRouter.put('/isEditOn/:id', adminAuthMiddleware, (req, res) => {
+        adminController.isEditOn(req, res);
+});
+
 
 
 

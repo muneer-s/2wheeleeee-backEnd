@@ -21,7 +21,7 @@ class AdminServices {
 
         } catch (error) {
             console.log(error);
-
+            throw error
         }
     }
 
@@ -30,6 +30,7 @@ class AdminServices {
             return await this.adminRepository.userVerify(userId)
         } catch (error) {
             console.log(error);
+            throw error
         }
     }
 
@@ -38,6 +39,7 @@ class AdminServices {
             return await this.adminRepository.userBlockUnblock(userId)
         } catch (error) {
             console.log(error);
+            throw error
         }
     }
 
@@ -46,6 +48,7 @@ class AdminServices {
             return await this.adminRepository.getAllBikeDetails(query, options)
         } catch (error) {
             console.log(error);
+            throw error
         }
     }
 
@@ -58,6 +61,7 @@ class AdminServices {
 
         } catch (error) {
             console.log(error);
+            throw error
 
         }
     }
@@ -68,7 +72,17 @@ class AdminServices {
 
         } catch (error) {
             console.log(error);
+            throw error
 
+        }
+    }
+
+    async isEditOn(bikeId:string){
+        try {
+            return await this.adminRepository.isEditOn(bikeId)
+        } catch (error) {
+            console.log("error is is edit on : ",error)
+            throw error
         }
     }
 

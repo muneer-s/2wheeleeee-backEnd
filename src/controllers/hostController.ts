@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import HostServices from '../services/hostServices';
+import { error } from 'console';
+import bikeModel from '../models/bikeModel';
+import cloudinary from '../config/cloudinaryConfig';
 
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 
@@ -11,11 +14,21 @@ export class HostController {
 
     async saveBikeDetails(req: Request, res: Response) {
         try {
+            const { insuranceExpDate, polutionExpDate } = req.body;
+
+            if (!insuranceExpDate || !polutionExpDate) {
+                return res.status(BAD_REQUEST).json({ message: "Insurance and Pollution expiration dates are required." });
+            }
+
+            const sixMonthsFromNow = new Date();
+            sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
+
+            if (new Date(insuranceExpDate) <= sixMonthsFromNow || new Date(polutionExpDate) <= sixMonthsFromNow) {
+                return res.status(BAD_REQUEST).json({ message: "Insurance and Pollution expiration dates must be greater than six months from today's date." });
+            }
             const updatedUserDocuments = await this.HostServices.saveBikeDetails(req, res)
-            return res.status(OK).json({
-                message: "Bike details saved successfully",
-                data: updatedUserDocuments,
-            });
+
+            return res.status(OK).json({ message: "Bike details saved successfully", data: updatedUserDocuments });
 
         } catch (error) {
             console.log(error);
@@ -77,7 +90,7 @@ export class HostController {
             if (!bikeId) {
                 return res.status(BAD_REQUEST).json({ success: false, message: "Bike Id is required" })
             }
-            const bike =  await this.HostServices.deleteBike(bikeId as string)
+            const bike = await this.HostServices.deleteBike(bikeId as string)
             return res.status(OK).json({ success: true })
 
         } catch (error) {
@@ -86,12 +99,17 @@ export class HostController {
         }
     }
 
-    async editBike(req:Request,res:Response){
+    async editBike(req: Request, res: Response) {
         try {
-            const bikeId = req.query.bikeId
-            console.log("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",bikeId);
+            const { bikeId } = req.query;
+            
+            if (!bikeId) {
+                return res.status(400).json({ success: false, message: "Bike ID is required." });
+            }
 
-
+            const bike = await this.HostServices.editBike(req, res)
+            return res.status(200).json({ success: true, bike });
+            
         } catch (error) {
             console.error("Error editing bike  data:", error);
             return res.status(500).json({ success: false, message: "Failed to editing  bike data" });

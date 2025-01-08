@@ -74,7 +74,7 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
 
         if (decoded?.success) {
             let user = await userRepository.getUserById(decoded.decoded?.data?.toString());
-            console.log("user :",user);
+            // console.log("user :",user);
             
 
             if (user?.isBlocked) {

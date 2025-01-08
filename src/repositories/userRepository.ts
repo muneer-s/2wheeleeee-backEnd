@@ -44,6 +44,7 @@ class UserRepository {
         console.log('OTP record not found');
         return false;
       }
+      
       const isMatch = await bcrypt.compare(otp.toString(), otpRecord.hashedOTP);
 
       if (!isMatch) {

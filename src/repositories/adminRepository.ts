@@ -217,6 +217,27 @@ class AdminRepository {
         }
     }
 
+    async isEditOn(bikeId:string){
+        try {            
+            const bike = await bikeModel.findById(bikeId)
+
+            if (!bike) {
+                throw new Error("Bike not found");
+              }
+
+
+              bike.isEdit = true;
+              bike.isHost = false
+              await bike.save()              
+              return bike
+
+              
+        } catch (error) {
+            console.log("error is repository is edit on : ",error);
+            throw error
+        }
+    }
+
 
 
 
