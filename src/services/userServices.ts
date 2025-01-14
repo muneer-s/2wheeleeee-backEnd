@@ -217,10 +217,8 @@ class UserServices {
 
     async GetBikeList(){
         try {
-
             const result = await this.userRepository.getBikeList()
             return result
-            
         } catch (error) {
             console.error("Error in getbikelist service layer:", error);
             throw error;  

@@ -246,7 +246,6 @@ export class UserController {
 
     async GetBikeList(req:Request,res:Response){
         try {
-
         const bikeList = await this.UserServices.GetBikeList()
         res.status(OK).json({success:true,bikeList})
             

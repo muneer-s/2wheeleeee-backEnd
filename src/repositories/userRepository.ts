@@ -129,13 +129,7 @@ class UserRepository {
   async getBikeList() {
     try {
       const bikeList = await bikeModel.find({ isHost: true })
-      console.log('verified bikes are : ');
-      console.log(bikeList);
-      
-      
       return bikeList
-
-
     } catch (error) {
       console.log("errro in getting data from db", error);
       throw error

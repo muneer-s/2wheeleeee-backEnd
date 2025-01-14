@@ -23,6 +23,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 hostRouter.post('/saveBikeDetails', userAuth, upload.fields([
     { name: "images", maxCount: 4 },
     { name: "rcImage", maxCount: 1 },
+    { name: "PolutionImage", maxCount: 1 },
     { name: "insuranceImage", maxCount: 1 },
 ]), (req, res) => {
 
@@ -53,8 +54,8 @@ hostRouter.put("/editBike", userAuth, upload.fields([
     { name: "insuranceImage", maxCount: 1 },
     { name: "polutionImage", maxCount: 1 }
 ]), (req, res) => {
-        hostController.editBike(req, res)
-    });
+    hostController.editBike(req, res)
+});
 
 
 

@@ -57,6 +57,11 @@ const bikeSchema: Schema<BikeData> = new Schema({
         required:true,
         default: ''
     },
+    PolutionImage: {
+        type: String,
+        required:true,
+        default: ''
+    },
     insuranceImage: {
         type: String,
         required:true,

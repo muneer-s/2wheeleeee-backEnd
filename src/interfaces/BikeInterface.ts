@@ -12,6 +12,7 @@ export interface BikeData {
     polutionExpDate: Date;
     images: string[]; 
     rcImage: string | null; 
+    PolutionImage: string | null; 
     insuranceImage: string | null; 
     isBlocked?: boolean; 
     isHost?: boolean; 
