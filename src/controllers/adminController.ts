@@ -182,6 +182,7 @@ export class AdminController {
             
 
             let bikeDetails = await this.AdminServices.getAllBikeDetails(query, options)
+            console.log(1111,bikeDetails)
             res.status(OK).json({ success: true, bikeDetails })
         } catch (error) {
             console.log(error);

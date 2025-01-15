@@ -8,6 +8,7 @@ import upload from '../config/multer';
 import userAuth from '../Middleware/userAuthMiddleware';
 
 import multer from 'multer';
+import bikeModel from '../models/bikeModel';
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploads/"); 
@@ -69,14 +70,40 @@ userRouter.put('/editUser',userAuth,upload.single("profile_picture"),(req,res)=>
 })
 
 userRouter.put('/editUserDocuments',userAuth,uploads.fields([{ name: 'frontImage' }, { name: 'backImage' }]),(req,res)=>{
-    // console.log("Files received:", req.files); 
-    // console.log("Form fields:", req.body); 
     userController.editUserDocuments(req,res)
 })
 
-userRouter.get('/getAllBikes',(req,res)=>{
-    userController.GetBikeList(req,res)
-})
+// userRouter.get('/getAllBikes',(req,res)=>{
+//     userController.GetBikeList(req,res)
+// })
+
+userRouter.get('/getAllBikes', (req, res) => {
+    userController.GetBikeList(req, res);
+  });
+
+
+// userRouter.get('/getAllBikes', async (req, res) => {
+    
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 userRouter.get('/getBikeDeatils/:id', (req, res) => {
     console.log("Route hit with ID:", req.params.id);

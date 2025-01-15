@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import HostServices from '../services/hostServices';
-import { error } from 'console';
-import bikeModel from '../models/bikeModel';
-import cloudinary from '../config/cloudinaryConfig';
+
 
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 
@@ -62,7 +60,7 @@ export class HostController {
             return res.status(OK).json({ success: true, userAndbikes: findUserAndBikes })
         } catch (error) {
             console.error("Error fetching bike data:", error);
-            return res.status(500).json({ success: false, message: "Failed to fetch bike data" });
+            return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: "Failed to fetch bike data" });
         }
     }
 
@@ -78,7 +76,7 @@ export class HostController {
             return res.status(OK).json({ success: true, bike: findBike })
         } catch (error) {
             console.error("Error fetching single bike  data:", error);
-            return res.status(500).json({ success: false, message: "Failed to fetch single bike data" });
+            return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: "Failed to fetch single bike data" });
         }
     }
 
@@ -95,7 +93,7 @@ export class HostController {
 
         } catch (error) {
             console.error("Error deleting bike  data:", error);
-            return res.status(500).json({ success: false, message: "Failed to delete  bike data" });
+            return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: "Failed to delete  bike data" });
         }
     }
 
@@ -104,15 +102,15 @@ export class HostController {
             const { bikeId } = req.query;
             
             if (!bikeId) {
-                return res.status(400).json({ success: false, message: "Bike ID is required." });
+                return res.status(BAD_REQUEST).json({ success: false, message: "Bike ID is required." });
             }
 
             const bike = await this.HostServices.editBike(req, res)
-            return res.status(200).json({ success: true, bike });
+            return res.status(OK).json({ success: true, bike });
             
         } catch (error) {
             console.error("Error editing bike  data:", error);
-            return res.status(500).json({ success: false, message: "Failed to editing  bike data" });
+            return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: "Failed to editing  bike data" });
         }
     }
 

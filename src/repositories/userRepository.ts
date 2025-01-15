@@ -126,15 +126,38 @@ class UserRepository {
   }
 
 
-  async getBikeList() {
+  // async getBikeList() {
+  //   try {
+
+
+  //     const bikeList = await bikeModel.find(query).skip(skip).limit(Number(limit));
+
+  //     const bikeList = await bikeModel.find({ isHost: true })
+  //     return bikeList
+  //   } catch (error) {
+  //     console.log("errro in getting data from db", error);
+  //     throw error
+  //   }
+  // }
+  async getBikeList(query: object, skip: number, limit: number) {
     try {
-      const bikeList = await bikeModel.find({ isHost: true })
-      return bikeList
+      return await bikeModel.find(query).skip(skip).limit(limit).exec();
     } catch (error) {
-      console.log("errro in getting data from db", error);
-      throw error
+      console.error('Error in repository getBikeList:', error);
+      throw error;
     }
   }
+
+  async countBikes(query: object) {
+    try {
+      return await bikeModel.countDocuments(query).exec();
+    } catch (error) {
+      console.error('Error in repository countBikes:', error);
+      throw error;
+    }
+  }
+
+
 
   async getBikeDeatils(id: string) {
     try {

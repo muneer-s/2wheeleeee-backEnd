@@ -61,7 +61,6 @@ class HostRepository {
         throw new Error("Bike not found");
       }
 
-      console.log("Bike deleted:", result);
       return result;
 
     } catch (error) {

@@ -4,11 +4,12 @@ import { generateAndSendOTP } from "../utils/otpGenerator";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import userModel from '../models/userModels';
 import { CreateJWT } from '../utils/generateToken';
+import bikeModel from '../models/bikeModel';
 
 
 
 
-const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR ,NOT_FOUND} = STATUS_CODES;
+const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
 
@@ -47,7 +48,7 @@ export class UserController {
 
             if (otpMatched) {
                 const userEmail = data.userId
-                
+
                 let userDetails = await userModel.findOne(
                     { email: userEmail },
                     'email name profile_picture _id'
@@ -63,7 +64,7 @@ export class UserController {
 
 
                 const time = this.milliseconds(0, 30, 0);
-                const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); 
+                const refreshTokenExpiryTime = this.milliseconds(48, 0, 0);
 
                 const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
                 const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
@@ -100,13 +101,13 @@ export class UserController {
                 return res.status(BAD_REQUEST).json({ success: false, message: 'Incorrect password. Please try again.' });
             }
 
-            console.log(111,isUserPresent);
-            if(isUserPresent.isBlocked){
-                return res.status(BAD_REQUEST).json({success:false,message:"User is Blocked by the Admin"})
+            console.log(111, isUserPresent);
+            if (isUserPresent.isBlocked) {
+                return res.status(BAD_REQUEST).json({ success: false, message: "User is Blocked by the Admin" })
             }
-            
 
-            
+
+
 
             const time = this.milliseconds(0, 30, 0);
             const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
@@ -169,18 +170,18 @@ export class UserController {
         }
     }
 
-    async forgotPassword(req:Request,res:Response){
+    async forgotPassword(req: Request, res: Response) {
         try {
-            const {email} = req.body
+            const { email } = req.body
 
-            if(!email){
-                return res.status(400).json({success:false,message:"Email is required."})
+            if (!email) {
+                return res.status(400).json({ success: false, message: "Email is required." })
             }
-            
-            
+
+
         } catch (error) {
             console.log(error);
-            
+
         }
     }
 
@@ -188,7 +189,7 @@ export class UserController {
 
     async getProfile(req: Request, res: Response) {
         try {
-            const email = req.query.email ?? ''; 
+            const email = req.query.email ?? '';
 
             if (!email || typeof email !== 'string') {
                 return res.status(BAD_REQUEST).json({ success: false, message: 'Invalid email provided' });
@@ -233,7 +234,7 @@ export class UserController {
 
     async editUserDocuments(req: Request, res: Response) {
         try {
-            const updatedUserDocuments = await this.UserServices.editUserDocuments(req,res)
+            const updatedUserDocuments = await this.UserServices.editUserDocuments(req, res)
             res.status(OK).json({
                 message: "User profile updated successfully",
                 data: updatedUserDocuments,
@@ -244,34 +245,110 @@ export class UserController {
         }
     }
 
-    async GetBikeList(req:Request,res:Response){
+    // async GetBikeList(req:Request,res:Response){
+    //     try {
+    //         const { page = 1, limit = 10, search = '', fuelType, minRent, maxRent } = req.query;
+
+    //         const query: any = {
+    //             isHost: true,
+    //         };
+
+
+    //     // Add search filter (modelName or companyName)
+    //     if (search) {
+    //         query.$or = [
+    //             { modelName: { $regex: search, $options: 'i' } },
+    //             { companyName: { $regex: search, $options: 'i' } },
+    //         ];
+    //     }
+
+    //     // Add fuel type filter
+    //     if (fuelType) {
+    //         query.fuelType = fuelType;
+    //     }
+
+    //     // Add rent amount filter
+    //     if (minRent && maxRent) {
+    //         query.rentAmount = { $gte: Number(minRent), $lte: Number(maxRent) };
+    //     }
+
+    //     // Pagination
+    //     const skip = (Number(page) - 1) * Number(limit);
+    //     console.log(2111111111,query)
+
+
+
+    //     const bikeList = await this.UserServices.GetBikeList(query,skip,limit)
+    //     //const bikeList = await bikeModel.find(query).skip(skip).limit(Number(limit));
+
+
+    //     // Count total documents for pagination
+    //     const totalBikes = await bikeModel.countDocuments(query);
+
+
+    //     res.status(200).json({
+    //         success: true,
+    //         bikeList,
+    //         totalBikes,
+    //         totalPages: Math.ceil(totalBikes / Number(limit)),
+    //     });
+
+    //     // const bikeList = await this.UserServices.GetBikeList()
+    //     // res.status(OK).json({success:true,bikeList})
+
+    //     } catch (error) {
+    //         console.error("Error getting bike list:", error);
+    //         return res.status(500).json({ success: false, message: "Failed to get bike Lists" });            
+    //     }
+    // }
+    async GetBikeList(req: Request, res: Response): Promise<void> {
         try {
-        const bikeList = await this.UserServices.GetBikeList()
-        res.status(OK).json({success:true,bikeList})
-            
+            const { page = 1, limit = 10, search = '', fuelType, minRent, maxRent } = req.query;
+
+            const result = await this.UserServices.GetBikeList({
+                page: Number(page),
+                limit: Number(limit),
+                search: String(search),
+                fuelType: String(fuelType),
+                minRent: Number(minRent),
+                maxRent: Number(maxRent),
+            });
+
+            res.status(200).json({
+                success: true,
+                bikeList: result.bikeList,
+                totalBikes: result.totalBikes,
+                totalPages: result.totalPages,
+            });
         } catch (error) {
-            console.error("Error getting bike list:", error);
-            return res.status(500).json({ success: false, message: "Failed to get bike Lists" });            
+            console.error('Error in controller GetBikeList:', error);
+            res.status(500).json({ success: false, message: 'Failed to get bike list' });
         }
     }
 
-    async getBikeDeatils(req:Request,res:Response){
+
+
+
+
+
+
+    async getBikeDeatils(req: Request, res: Response) {
         try {
 
             const { id } = req.params;
-        console.log("Bike ID received in controller:", id);
+            console.log("Bike ID received in controller:", id);
 
 
-            const bike = await  this.UserServices.getbikeDeatils(id)
+            const bike = await this.UserServices.getbikeDeatils(id)
 
-            if (!bike) return res.status(404).json({success:false, message: 'Bike not found' });
+            if (!bike) return res.status(404).json({ success: false, message: 'Bike not found' });
 
-            res.status(200).json({success:true, bike });
+            res.status(200).json({ success: true, bike });
 
-            
+
         } catch (error) {
             console.error("Error getting bike details :", error);
-            return res.status(500).json({ success: false, message: "Failed to get bike Deatils" });  
+            return res.status(500).json({ success: false, message: "Failed to get bike Deatils" });
         }
     }
 

@@ -3,11 +3,13 @@ import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { Request, Response } from "express";
 import cloudinary from "../config/cloudinaryConfig";
 import { UploadApiResponse } from "cloudinary";
-const { OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 import HostRepository from "../repositories/hostRepository";
 import { Readable } from "stream";
 import { error } from "console";
 import mongoose from "mongoose";
+
+
+const { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } = STATUS_CODES;
 
 
 class HostServices {
@@ -86,7 +88,7 @@ class HostServices {
                 : null;
 
             if (!req.userId) {
-                return res.status(400).json({ message: "User ID is required" });
+                return res.status(BAD_REQUEST).json({ message: "User ID is required" });
             }
 
 
@@ -172,7 +174,7 @@ class HostServices {
             const { bikeId } = req.query;
 
             if (!bikeId || typeof bikeId !== "string") {
-                return res.status(400).json({ success: false, message: "Bike ID is required and must be a string." });
+                return res.status(BAD_REQUEST).json({ success: false, message: "Bike ID is required and must be a string." });
             }
 
             const { insuranceExpDate, polutionExpDate } = req.body;

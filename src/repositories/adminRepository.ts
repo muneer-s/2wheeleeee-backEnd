@@ -146,6 +146,7 @@ class AdminRepository {
                         polutionExpDate: 1,
                         rcImage: 1,
                         insuranceImage: 1,
+                        PolutionImage: 1,
                         "userDetails._id": 1,
                         "userDetails.name": 1,
                         "userDetails.email": 1,

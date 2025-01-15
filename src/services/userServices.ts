@@ -15,7 +15,7 @@ const uploadToCloudinary = async (file: UploadedFile, folder: string): Promise<s
             {
                 folder,
                 transformation: [
-                    { width: 500, height: 500, crop: "limit" } 
+                    { width: 500, height: 500, crop: "limit" }
                 ]
             },
             (error, result) => {
@@ -28,15 +28,15 @@ const uploadToCloudinary = async (file: UploadedFile, folder: string): Promise<s
             }
         );
 
-         if (file?.path) {
+        if (file?.path) {
             const fs = require("fs");
             const stream = fs.createReadStream(file.path);
-            stream.pipe(uploadStream); 
+            stream.pipe(uploadStream);
         } else {
             reject(new Error("File path is undefined"));
         }
 
-        
+
     });
 };
 
@@ -151,7 +151,7 @@ class UserServices {
 
 
             const updatedUser = await this.userRepository.editProfile(email, userData);
-            
+
             if (!updatedUser) {
                 throw new Error("User not found");
             }
@@ -166,7 +166,7 @@ class UserServices {
         try {
             const frontImage = (req.files as { [fieldname: string]: UploadedFile[] })?.frontImage?.[0];
             const backImage = (req.files as { [fieldname: string]: UploadedFile[] })?.backImage?.[0];
-            
+
 
             const userId = req.body.userId;
             const licenseNumber = req.body.license_number;
@@ -174,8 +174,8 @@ class UserServices {
 
             const existingUser = await this.userRepository.getUserById(userId);
 
-            console.log(1,existingUser);
-            
+            console.log(1, existingUser);
+
 
 
             if (!existingUser) {
@@ -183,7 +183,7 @@ class UserServices {
             }
 
             let frontImageUrl = existingUser.license_picture_front;
-        let backImageUrl = existingUser.license_picture_back;
+            let backImageUrl = existingUser.license_picture_back;
 
 
 
@@ -194,8 +194,8 @@ class UserServices {
             if (backImage) {
                 backImageUrl = await uploadToCloudinary(backImage, "user_documents");
             }
-            
-            
+
+
 
 
             const documentData = {
@@ -215,28 +215,90 @@ class UserServices {
 
     }
 
-    async GetBikeList(){
+    // async GetBikeList(query: undefined,skip: number,limit: string){
+    //     try {
+    //         //const bikeList = await bikeModel.find(query).skip(skip).limit(Number(limit));
+
+    //         const result = await this.userRepository.getBikeList()
+    //         return result
+    //     } catch (error) {
+    //         console.error("Error in getbikelist service layer:", error);
+    //         throw error;  
+    //     }
+    // }
+
+    async GetBikeList(filters: {
+        page: number;
+        limit: number;
+        search: string;
+        fuelType: string;
+        minRent: number;
+        maxRent: number;
+    }) {
         try {
-            const result = await this.userRepository.getBikeList()
-            return result
+            const { page, limit, search, fuelType, minRent, maxRent } = filters;
+
+            const query: any = { isHost: true };
+
+            // Add search filter
+            if (search) {
+                query.$or = [
+                    { modelName: { $regex: search, $options: 'i' } },
+                    { companyName: { $regex: search, $options: 'i' } },
+                ];
+            }
+            // Add fuel type filter
+            if (fuelType) {
+                query.fuelType = fuelType;
+            }
+
+            // Add rent amount filter
+            if (minRent && maxRent) {
+                query.rentAmount = { $gte: minRent, $lte: maxRent };
+            }
+
+            const skip = (page - 1) * limit;
+
+            // Call the repository for data
+            const bikeList = await this.userRepository.getBikeList(query, skip, limit);
+
+
+            // Count total documents for pagination
+            const totalBikes = await this.userRepository.countBikes(query);
+
+            return {
+                bikeList,
+                totalBikes,
+                totalPages: Math.ceil(totalBikes / limit),
+            };
+
+
         } catch (error) {
             console.error("Error in getbikelist service layer:", error);
-            throw error;  
+            throw error;
         }
     }
 
-    async getbikeDeatils(id:string){
+
+
+
+
+
+
+
+
+    async getbikeDeatils(id: string) {
         try {
             const result = await this.userRepository.getBikeDeatils(id)
             return result
-            
+
         } catch (error) {
             console.error("Error in getbikedetails service layer:", error);
             throw error;
         }
     }
 
-    
+
 
 
 }
