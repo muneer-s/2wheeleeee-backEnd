@@ -8,7 +8,7 @@ import upload from '../config/multer';
 import userAuth from '../Middleware/userAuthMiddleware';
 
 import multer from 'multer';
-import bikeModel from '../models/bikeModel';
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploads/"); 

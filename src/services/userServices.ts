@@ -240,30 +240,24 @@ class UserServices {
 
             const query: any = { isHost: true };
 
-            // Add search filter
             if (search) {
                 query.$or = [
                     { modelName: { $regex: search, $options: 'i' } },
                     { companyName: { $regex: search, $options: 'i' } },
                 ];
             }
-            // Add fuel type filter
             if (fuelType) {
                 query.fuelType = fuelType;
             }
 
-            // Add rent amount filter
             if (minRent && maxRent) {
                 query.rentAmount = { $gte: minRent, $lte: maxRent };
             }
 
             const skip = (page - 1) * limit;
 
-            // Call the repository for data
             const bikeList = await this.userRepository.getBikeList(query, skip, limit);
 
-
-            // Count total documents for pagination
             const totalBikes = await this.userRepository.countBikes(query);
 
             return {
