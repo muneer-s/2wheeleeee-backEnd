@@ -6,13 +6,13 @@ import { UploadApiResponse } from "cloudinary";
 import HostRepository from "../repositories/hostRepository";
 import { Readable } from "stream";
 import mongoose from "mongoose";
-
-
+import IHostRepository from "../interfaces/host/IHostRepository";
+import IHostService from "../interfaces/host/IHostService";
 const { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } = STATUS_CODES;
 
 
-class HostServices {
-    constructor(private hostRepository: HostRepository) { }
+class HostServices implements IHostService {
+    constructor(private hostRepository: IHostRepository) { }
 
 
     async saveBikeDetails(req: Request, res: Response) {

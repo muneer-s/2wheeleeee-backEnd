@@ -1,9 +1,9 @@
 import { BikeData } from '../interfaces/BikeInterface';
 import bikeModel from '../models/bikeModel';
 import userModel from '../models/userModels';
+import IHostRepository from '../interfaces/host/IHostRepository';
 
-
-class HostRepository{
+class HostRepository implements IHostRepository{
 
   async saveBikeDetails(documentData: BikeData) {
     try {
