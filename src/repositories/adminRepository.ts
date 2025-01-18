@@ -2,7 +2,7 @@ import bikeModel from '../models/bikeModel';
 import userModel from '../models/userModels';
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
-
+import { IAdminRepository } from '../interfaces/admin/IAdminRepository';
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
@@ -13,7 +13,8 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-class AdminRepository {
+
+class AdminRepository implements IAdminRepository{
 
     async getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string | undefined }) {
         try {
@@ -62,7 +63,7 @@ class AdminRepository {
             const findUser = await userModel.findById(userId)
 
             if (!findUser) {
-                return 'User not found'
+                return { success: false, message: "User not found" }; 
             }
 
             findUser.isBlocked = !findUser.isBlocked;
@@ -90,9 +91,6 @@ class AdminRepository {
 
         }
     }
-
-
-
 
     async getAllBikeDetails(query: object, options: { skip: number; limit: number; sort: object,search?: string }) {
         try {
@@ -167,8 +165,6 @@ class AdminRepository {
             throw error;
         }
     }
-    
-
 
     async verifyHost(bikeId: string) {
         try {

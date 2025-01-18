@@ -1,9 +1,10 @@
-import { UserInterface } from "../interfaces/IUser";
 
-import AdminRepository from "../repositories/adminRepository";
+import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
+import { IAdminService } from "../interfaces/admin/IAdminService";
 
-class AdminServices {
-    constructor(private adminRepository: AdminRepository) { }
+
+class AdminServices implements IAdminService{
+    constructor(private adminRepository: IAdminRepository) { }
 
     async getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string | undefined }) {
         try {

@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import cors from 'cors'; 
 import hostRouter from './routes/hostRoutes';
-
+import otpRouter from './routes/otpRoutes';
 
 
 const corsOptions = {
@@ -31,6 +31,7 @@ app.use(cookieParser());
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/host', hostRouter);
+app.use('/api/otp',otpRouter)
 
 const port = process.env.PORT || 2000;
 

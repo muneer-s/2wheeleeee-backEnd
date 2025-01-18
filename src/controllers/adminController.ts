@@ -11,9 +11,7 @@ const jwtHandler = new CreateJWT()
 
 export class AdminController {
 
-    constructor(private AdminServices: AdminServices) {
-
-    }
+    constructor(private AdminServices: AdminServices) {}
 
     milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
 
@@ -68,7 +66,11 @@ export class AdminController {
             res.cookie('admin_access_token', '', {
                 httpOnly: true,
                 expires: new Date(0)
+            }).cookie('admin_refresh_token', '', {
+                httpOnly: true,
+                expires: new Date(0)
             })
+
             res.status(OK).json({ success: true, message: 'Logged out successfully' });
         } catch (error) {
             console.error('Admin logout error:', error);
@@ -133,6 +135,7 @@ export class AdminController {
         try {
             const userId = req.params.id
             const user = await this.AdminServices.userBlockUnblock(userId)
+
             res.status(200).json({ success: true, user })
 
         } catch (error) {

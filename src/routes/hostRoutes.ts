@@ -3,10 +3,7 @@ import HostController from '../controllers/hostController';
 import HostServices from '../services/hostServices';
 import HostRepository from '../repositories/hostRepository';
 import multer from 'multer';
-import userAuth from '../Middleware/userAuthMiddleware';
-
-
-
+import userAuth from '../middleware/userAuthMiddleware';
 
 
 

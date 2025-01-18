@@ -1,9 +1,7 @@
 import mongoose from 'mongoose';
 import { UserInterface } from '../interfaces/IUser';
 import bikeModel from '../models/bikeModel';
-import OTPModel from '../models/otpModels';
 import userModel from '../models/userModels';
-import bcrypt from 'bcrypt';
 
 
 
@@ -36,30 +34,30 @@ class UserRepository {
     }
   }
 
-  async checkOtp(email: string, otp: number) {
-    try {
-      const otpRecord = await OTPModel.findOne({ email })
+  // async checkOtp(email: string, otp: number) {
+  //   try {
+  //     const otpRecord = await OTPModel.findOne({ email })
 
-      if (!otpRecord) {
-        console.log('OTP record not found');
-        return false;
-      }
-      
-      const isMatch = await bcrypt.compare(otp.toString(), otpRecord.hashedOTP);
+  //     if (!otpRecord) {
+  //       console.log('OTP record not found');
+  //       return false;
+  //     }
 
-      if (!isMatch) {
-        console.log('Invalid OTP');
-        return false;
-      }
-      await userModel.updateOne({ email }, { $set: { isVerified: true } })
-      return true;
+  //     const isMatch = await bcrypt.compare(otp.toString(), otpRecord.hashedOTP);
+
+  //     if (!isMatch) {
+  //       console.log('Invalid OTP');
+  //       return false;
+  //     }
+  //     await userModel.updateOne({ email }, { $set: { isVerified: true } })
+  //     return true;
 
 
-    } catch (error) {
-      console.log("error showing when check otp is correct ",error);
-      throw error;
-    }
-  }
+  //   } catch (error) {
+  //     console.log("error showing when check otp is correct ", error);
+  //     throw error;
+  //   }
+  // }
 
   async login(email: string) {
     try {
@@ -81,11 +79,6 @@ class UserRepository {
 
   async editProfile(email: string, userData: Partial<UserInterface>) {
     try {
-      
-
-      console.log(11111111111, userData);
-
-
       const updatedUser = await userModel.findOneAndUpdate(
         { email },
         { $set: userData },
@@ -126,19 +119,6 @@ class UserRepository {
   }
 
 
-  // async getBikeList() {
-  //   try {
-
-
-  //     const bikeList = await bikeModel.find(query).skip(skip).limit(Number(limit));
-
-  //     const bikeList = await bikeModel.find({ isHost: true })
-  //     return bikeList
-  //   } catch (error) {
-  //     console.log("errro in getting data from db", error);
-  //     throw error
-  //   }
-  // }
   async getBikeList(query: object, skip: number, limit: number) {
     try {
       return await bikeModel.find(query).skip(skip).limit(limit).exec();
@@ -161,40 +141,34 @@ class UserRepository {
 
   async getBikeDeatils(id: string) {
     try {
-        const bikeDetails = await bikeModel.aggregate([
-            {
-                $match: { _id: new mongoose.Types.ObjectId(id) } 
-            },
-            {
-                $lookup: {
-                    from: "users", 
-                    localField: "userId", 
-                    foreignField: "_id", 
-                    as: "userDetails" 
-                }
-            },
-            {
-                $unwind: "$userDetails" 
-            }
-        ]);
-
-        if (!bikeDetails || bikeDetails.length === 0) {
-            console.log("Bike not found");
-            return null;
+      const bikeDetails = await bikeModel.aggregate([
+        {
+          $match: { _id: new mongoose.Types.ObjectId(id) }
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userDetails"
+          }
+        },
+        {
+          $unwind: "$userDetails"
         }
+      ]);
 
-        console.log("Bike and User Details:", bikeDetails[0]);
+      if (!bikeDetails || bikeDetails.length === 0) {
+        console.log("Bike not found");
+        return null;
+      }
 
-
-        return bikeDetails[0]; 
+      return bikeDetails[0];
     } catch (error) {
-        console.error("Error fetching bike and user details:", error);
-        throw error;
+      console.error("Error fetching bike and user details:", error);
+      throw error;
     }
-}
-
-
-
+  }
 
 
 

@@ -5,6 +5,7 @@ import { STATUS_CODES } from "../constants/httpStatusCodes";
 import userModel from '../models/userModels';
 import { CreateJWT } from '../utils/generateToken';
 import bikeModel from '../models/bikeModel';
+import OtpServices from '../services/otpServices';
 
 
 
@@ -15,7 +16,7 @@ const jwtHandler = new CreateJWT()
 
 export class UserController {
 
-    constructor(private UserServices: UserServices) {
+    constructor(private UserServices: UserServices,private OtpServices:OtpServices) {
 
     }
 
@@ -27,9 +28,12 @@ export class UserController {
             const userFound = await this.UserServices.userSignup(userData);
 
 
+
             if (userFound == false) {
-                await generateAndSendOTP(req.body.email);
-                const saveData = await this.UserServices.saveUser(req.body);
+                //    await generateAndSendOTP(req.body.email);
+                await this.OtpServices.generateAndSendOtp(req.body.email)
+
+                await this.UserServices.saveUser(req.body);
                 res.status(OK).json({ email: req.body.email, success: true, message: 'OTP sent for verification...' });
             } else {
                 res.status(BAD_REQUEST).json({ success: false, message: 'The email is already in use!' });
@@ -41,51 +45,51 @@ export class UserController {
     }
 
 
-    async verifyOtp(req: Request, res: Response) {
-        try {
-            let data = req.body
-            const otpMatched = await this.UserServices.verifyOtp(data)
+    // async verifyOtp(req: Request, res: Response) {
+    //     try {
+    //         let data = req.body
+    //         const otpMatched = await this.UserServices.verifyOtp(data)
 
-            if (otpMatched) {
-                const userEmail = data.userId
+    //         if (otpMatched) {
+    //             const userEmail = data.userId
 
-                let userDetails = await userModel.findOne(
-                    { email: userEmail },
-                    'email name profile_picture _id'
-                );
-
-
-                if (!userDetails) {
-                    return res.status(BAD_REQUEST).json({
-                        success: false,
-                        message: 'User not found!',
-                    });
-                }
+    //             let userDetails = await userModel.findOne(
+    //                 { email: userEmail },
+    //                 'email name profile_picture _id'
+    //             );
 
 
-                const time = this.milliseconds(0, 30, 0);
-                const refreshTokenExpiryTime = this.milliseconds(48, 0, 0);
-
-                const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
-                const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
-
-                res.status(OK).cookie('user_access_token', userAccessToken, {
-                    expires: new Date(Date.now() + time),
-                    sameSite: 'strict',
-                }).cookie('user_refresh_token', userRefreshToken, {
-                    expires: new Date(Date.now() + refreshTokenExpiryTime),
-                    sameSite: 'strict',
-                }).json({ userData: userDetails, userAccessToken: userAccessToken, userRefreshToken: userRefreshToken, success: true, message: 'OTP verification successful, account verified.' });
+    //             if (!userDetails) {
+    //                 return res.status(BAD_REQUEST).json({
+    //                     success: false,
+    //                     message: 'User not found!',
+    //                 });
+    //             }
 
 
-            } else {
-                res.status(BAD_REQUEST).json({ success: false, message: 'OTP verification failed!' });
-            }
-        } catch (error) {
-            console.log(error);
-            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
-        }
-    }
+    //             const time = this.milliseconds(0, 30, 0);
+    //             const refreshTokenExpiryTime = this.milliseconds(48, 0, 0);
+
+    //             const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
+    //             const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
+
+    //             res.status(OK).cookie('user_access_token', userAccessToken, {
+    //                 expires: new Date(Date.now() + time),
+    //                 sameSite: 'strict',
+    //             }).cookie('user_refresh_token', userRefreshToken, {
+    //                 expires: new Date(Date.now() + refreshTokenExpiryTime),
+    //                 sameSite: 'strict',
+    //             }).json({ userData: userDetails, userAccessToken: userAccessToken, userRefreshToken: userRefreshToken, success: true, message: 'OTP verification successful, account verified.' });
+
+
+    //         } else {
+    //             res.status(BAD_REQUEST).json({ success: false, message: 'OTP verification failed!' });
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //         res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
+    //     }
+    // }
 
     async login(req: Request, res: Response) {
         try {
@@ -140,20 +144,7 @@ export class UserController {
         }
     }
 
-    async resendOtp(req: Request, res: Response) {
-        try {
-            const email = req.body.email
-
-            const otp = await generateAndSendOTP(email);
-            return res.status(200).json({ success: true, message: 'OTP resent successfully' });
-
-
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ success: false, message: 'Internal server error' });
-
-        }
-    }
+ 
 
     async logout(req: Request, res: Response) {
         try {
@@ -326,25 +317,12 @@ export class UserController {
         }
     }
 
-
-
-
-
-
-
     async getBikeDeatils(req: Request, res: Response) {
         try {
-
             const { id } = req.params;
-            console.log("Bike ID received in controller:", id);
-
-
             const bike = await this.UserServices.getbikeDeatils(id)
-
             if (!bike) return res.status(404).json({ success: false, message: 'Bike not found' });
-
-            res.status(200).json({ success: true, bike });
-
+            res.status(200).json({ success: true, bike })
 
         } catch (error) {
             console.error("Error getting bike details :", error);

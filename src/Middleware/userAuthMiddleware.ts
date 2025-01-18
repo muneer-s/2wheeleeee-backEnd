@@ -33,7 +33,7 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
 
     // If the refresh_token is not found, the response indicates that the token is expired or unavailable.
     if (!refresh_token) {
-        res.json({ success: false, message: 'Token expired or not available' });
+        res.json({ success: false, message: 'User Token expired or not available' });
         return
     }
 

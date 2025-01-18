@@ -1,7 +1,7 @@
 
 import express from 'express';
 import { AdminController } from '../controllers/adminController';
-import { adminAuthMiddleware } from '../Middleware/adminAuthMiddleware';
+import { adminAuthMiddleware } from '../middleware/adminAuthMiddleware';
 import AdminServices from '../services/adminServices';
 import AdminRepository from '../repositories/adminRepository';
 
@@ -20,6 +20,8 @@ adminRouter.get('/logout', (req, res) => {
 });
 
 adminRouter.get('/getAllUsers', adminAuthMiddleware, (req, res) => {
+        console.log("---------------------------");
+        
         adminController.getAllUsers(req, res)
 })
 

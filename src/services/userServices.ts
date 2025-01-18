@@ -1,12 +1,26 @@
 import { UserInterface } from "../interfaces/IUser";
 import UserRepository from "../repositories/userRepository";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
-import { CreateJWT } from "../utils/generateToken";
-import Encrypt from "../utils/comparePassword";
 import { Request, Response } from "express";
 import cloudinary from "../config/cloudinaryConfig";
 import { UploadApiResponse } from "cloudinary";
+import { generateRandomOTP } from "../utils/otpGenerator";
 const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
+import nodemailer from 'nodemailer'
+import dotenv from 'dotenv';
+import { error } from "console";
+
+dotenv.config();
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.TRANSPORTER_EMAIL,
+        pass: process.env.TRANSPORTER_PASS,
+    }
+})
+
+
 
 const uploadToCloudinary = async (file: UploadedFile, folder: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
@@ -53,11 +67,10 @@ interface UploadedFile {
 
 
 class UserServices {
-    constructor(private userRepository: UserRepository,
-        private encrypt: Encrypt,
-        private createjwt: CreateJWT,
+    constructor(private userRepository: UserRepository) { }
 
-    ) { }
+
+    
 
     async userSignup(userData: UserInterface): Promise<boolean | null> {
         try {
@@ -71,7 +84,6 @@ class UserServices {
 
     async saveUser(userData: any) {
         try {
-            console.log("servicil", userData);
 
             return await this.userRepository.saveUser(userData)
         } catch (error) {
@@ -80,18 +92,7 @@ class UserServices {
         }
     }
 
-    async verifyOtp(data: { otp: number, userId: string }) {
-        try {
-            let email = data.userId
-            let otp = data.otp
-
-            return await this.userRepository.checkOtp(email, otp)
-
-        } catch (error) {
-            console.log(error);
-
-        }
-    }
+   
 
     async login(email: string) {
         try {

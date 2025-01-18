@@ -41,7 +41,9 @@ export const generateAndSendOTP = async (toEmail: string): Promise<string> => {
     return otp
 }
 
-function generateRandomOTP(): string {
+
+
+export function generateRandomOTP(): string {
     const otpLength = 6
     const min = Math.pow(10, otpLength - 1)
     const max = Math.pow(10, otpLength) - 1

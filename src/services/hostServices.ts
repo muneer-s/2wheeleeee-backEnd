@@ -5,7 +5,6 @@ import cloudinary from "../config/cloudinaryConfig";
 import { UploadApiResponse } from "cloudinary";
 import HostRepository from "../repositories/hostRepository";
 import { Readable } from "stream";
-import { error } from "console";
 import mongoose from "mongoose";
 
 

@@ -15,7 +15,7 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
     
 
     if (!refreshToken) {
-        res.status(401).json({ success: false, message: 'Token expired or not available' });
+        res.status(401).json({ success: false, message: 'Admin Token expired or not available' });
         return;
     }
 
