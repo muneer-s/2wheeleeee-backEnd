@@ -1,14 +1,12 @@
 import OTPModel from '../models/otpModels';
 import userModel from '../models/userModels';
 import bcrypt from 'bcrypt';
+import { IOtpRepository } from '../interfaces/otp/IOtpRepository';
 
-
-
-class OtpRepository {
+class OtpRepository implements IOtpRepository{
 
     async saveOtp(email: string, hashedOTP: string) {
         try {
-
             await OTPModel.findOneAndUpdate(
                 { email: email },
                 {

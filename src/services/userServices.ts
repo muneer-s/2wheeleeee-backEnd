@@ -8,7 +8,9 @@ import { generateRandomOTP } from "../utils/otpGenerator";
 const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
-import { error } from "console";
+import { IUserRepository } from "../interfaces/user/IUserRepository";
+import { IUserService } from "../interfaces/user/IUserService";
+
 
 dotenv.config();
 
@@ -66,11 +68,11 @@ interface UploadedFile {
 }
 
 
-class UserServices {
-    constructor(private userRepository: UserRepository) { }
+class UserServices implements IUserService {
+    constructor(private userRepository: IUserRepository) { }
 
 
-    
+
 
     async userSignup(userData: UserInterface): Promise<boolean | null> {
         try {
@@ -84,22 +86,21 @@ class UserServices {
 
     async saveUser(userData: any) {
         try {
-
             return await this.userRepository.saveUser(userData)
         } catch (error) {
             console.log(error);
-
+throw error
         }
     }
 
-   
+
 
     async login(email: string) {
         try {
             return await this.userRepository.login(email)
         } catch (error) {
             console.log(error);
-
+throw error
         }
     }
 
@@ -108,7 +109,7 @@ class UserServices {
             return await this.userRepository.getProfile(email)
         } catch (error) {
             console.log(error);
-
+throw error
         }
     }
 
@@ -168,7 +169,6 @@ class UserServices {
             const frontImage = (req.files as { [fieldname: string]: UploadedFile[] })?.frontImage?.[0];
             const backImage = (req.files as { [fieldname: string]: UploadedFile[] })?.backImage?.[0];
 
-
             const userId = req.body.userId;
             const licenseNumber = req.body.license_number;
             const licenseExpDate = req.body.license_Exp_Date;
@@ -196,9 +196,6 @@ class UserServices {
                 backImageUrl = await uploadToCloudinary(backImage, "user_documents");
             }
 
-
-
-
             const documentData = {
                 license_number: licenseNumber,
                 license_Exp_Date: licenseExpDate,
@@ -207,11 +204,12 @@ class UserServices {
             };
 
             const result = await this.userRepository.saveUserDocuments(userId, documentData);
+            return result
 
 
         } catch (error) {
             console.log(error);
-
+            throw error
         }
 
     }

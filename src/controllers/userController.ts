@@ -236,62 +236,7 @@ export class UserController {
         }
     }
 
-    // async GetBikeList(req:Request,res:Response){
-    //     try {
-    //         const { page = 1, limit = 10, search = '', fuelType, minRent, maxRent } = req.query;
-
-    //         const query: any = {
-    //             isHost: true,
-    //         };
-
-
-    //     // Add search filter (modelName or companyName)
-    //     if (search) {
-    //         query.$or = [
-    //             { modelName: { $regex: search, $options: 'i' } },
-    //             { companyName: { $regex: search, $options: 'i' } },
-    //         ];
-    //     }
-
-    //     // Add fuel type filter
-    //     if (fuelType) {
-    //         query.fuelType = fuelType;
-    //     }
-
-    //     // Add rent amount filter
-    //     if (minRent && maxRent) {
-    //         query.rentAmount = { $gte: Number(minRent), $lte: Number(maxRent) };
-    //     }
-
-    //     // Pagination
-    //     const skip = (Number(page) - 1) * Number(limit);
-    //     console.log(2111111111,query)
-
-
-
-    //     const bikeList = await this.UserServices.GetBikeList(query,skip,limit)
-    //     //const bikeList = await bikeModel.find(query).skip(skip).limit(Number(limit));
-
-
-    //     // Count total documents for pagination
-    //     const totalBikes = await bikeModel.countDocuments(query);
-
-
-    //     res.status(200).json({
-    //         success: true,
-    //         bikeList,
-    //         totalBikes,
-    //         totalPages: Math.ceil(totalBikes / Number(limit)),
-    //     });
-
-    //     // const bikeList = await this.UserServices.GetBikeList()
-    //     // res.status(OK).json({success:true,bikeList})
-
-    //     } catch (error) {
-    //         console.error("Error getting bike list:", error);
-    //         return res.status(500).json({ success: false, message: "Failed to get bike Lists" });            
-    //     }
-    // }
+    
     async GetBikeList(req: Request, res: Response): Promise<void> {
         try {
             const { page = 1, limit = 10, search = '', fuelType, minRent, maxRent } = req.query;

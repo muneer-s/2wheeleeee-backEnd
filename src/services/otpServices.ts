@@ -1,10 +1,10 @@
-import OtpRepository from "../repositories/otpRepository";
 import { generateRandomOTP } from "../utils/otpGenerator";
 import bcrypt from "bcrypt";
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
 import { error } from "console";
-
+import { IOtpService } from "../interfaces/otp/IOtpService";
+import { IOtpRepository } from "../interfaces/otp/IOtpRepository";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
@@ -15,8 +15,8 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-class OtpServices {
-    constructor(private otpRepository: OtpRepository) { }
+class OtpServices implements IOtpService{
+    constructor(private otpRepository: IOtpRepository) { }
 
     async generateAndSendOtp(email: string) {
         try {
@@ -49,13 +49,14 @@ class OtpServices {
 
     
 
-    async verifyOtp(data: { otp: number, userId: string }) {
+    async verifyOtp(data: { otp: number, userId: string }): Promise<boolean> {
         try {
             let email = data.userId
             let otp = data.otp
             return await this.otpRepository.checkOtp(email, otp)
         } catch (error) {
             console.log(error);
+            return false;
 
         }
     }

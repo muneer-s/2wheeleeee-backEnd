@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 import { UserInterface } from '../interfaces/IUser';
 import bikeModel from '../models/bikeModel';
 import userModel from '../models/userModels';
+import { IUserRepository } from '../interfaces/user/IUserRepository';
 
 
-
-class UserRepository {
+class UserRepository implements IUserRepository {
 
   async emailExistCheck(email: string): Promise<boolean | null> {
     try {
@@ -34,36 +34,12 @@ class UserRepository {
     }
   }
 
-  // async checkOtp(email: string, otp: number) {
-  //   try {
-  //     const otpRecord = await OTPModel.findOne({ email })
-
-  //     if (!otpRecord) {
-  //       console.log('OTP record not found');
-  //       return false;
-  //     }
-
-  //     const isMatch = await bcrypt.compare(otp.toString(), otpRecord.hashedOTP);
-
-  //     if (!isMatch) {
-  //       console.log('Invalid OTP');
-  //       return false;
-  //     }
-  //     await userModel.updateOne({ email }, { $set: { isVerified: true } })
-  //     return true;
-
-
-  //   } catch (error) {
-  //     console.log("error showing when check otp is correct ", error);
-  //     throw error;
-  //   }
-  // }
-
   async login(email: string) {
     try {
       return await userModel.findOne({ email: email, isVerified: true })
     } catch (error) {
       console.log(error);
+      throw error
     }
   }
 
@@ -73,7 +49,7 @@ class UserRepository {
       return await userModel.findOne({ email: email })
     } catch (error) {
       console.log(error);
-
+      throw error
     }
   }
 
