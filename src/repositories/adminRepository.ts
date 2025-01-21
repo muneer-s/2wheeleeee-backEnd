@@ -117,7 +117,10 @@ class AdminRepository implements IAdminRepository {
         }
     }
 
-    async getAllBikeDetails(query: object, options: { skip: number; limit: number; sort: object, search?: string }) {
+    async getAllBikeDetails(
+        query: object, 
+        options: { skip: number; limit: number; sort: object, search?: string }
+    ) {
         try {
             const { skip, limit, sort, search } = options;
 
@@ -180,9 +183,20 @@ class AdminRepository implements IAdminRepository {
                 }
             );
 
-            const result = await bikeModel.aggregate(pipeline);
-            const total = await bikeModel.countDocuments(query);
+            // const result = await bikeModel.aggregate(pipeline);
+            const bikesWithUserDetails = await this.bikeRepository.aggregate(pipeline);
 
+            // const total = await bikeModel.countDocuments(query);
+            const total = await this.bikeRepository.count(query)
+
+            const result = bikesWithUserDetails.map((bike: any) => {
+                return {
+                    ...bike,
+                    userDetails: bike.userDetails, 
+                };
+            });
+            console.log(222222222,result);
+            
 
             return { bikes: result, total };
         } catch (error) {
@@ -246,7 +260,7 @@ class AdminRepository implements IAdminRepository {
             if (!bike) {
                 throw new Error("Bike not found");
             }
-            
+
             bike.isEdit = true;
             bike.isHost = false
             await bike.save()

@@ -3,13 +3,23 @@ import { UserInterface } from '../interfaces/IUser';
 import bikeModel from '../models/bikeModel';
 import userModel from '../models/userModels';
 import { IUserRepository } from '../interfaces/user/IUserRepository';
+import BaseRepository from './baseRepository';
+import { BikeData } from '../interfaces/BikeInterface';
 
 
 class UserRepository implements IUserRepository {
 
+  private userRepository: BaseRepository<UserInterface>;
+  private bikeRepository: BaseRepository<BikeData>;
+
+  constructor() {
+    this.userRepository = new BaseRepository(userModel);
+    this.bikeRepository = new BaseRepository(bikeModel);
+  }
+
   async emailExistCheck(email: string): Promise<boolean | null> {
     try {
-      const userFound = await userModel.findOne({ email: email });
+      const userFound = await this.userRepository.findOne({ email: email });
 
       if (userFound) {
         return true
@@ -25,9 +35,11 @@ class UserRepository implements IUserRepository {
 
   async saveUser(userData: any) {
     try {
-      const newUser = new userModel(userData);
-      await newUser.save();
-      return newUser as UserInterface
+      // const newUser = new userModel(userData);
+      // await newUser.save();
+      // return newUser as UserInterface
+      const newUser = await this.userRepository.create(userData);
+      return newUser;
     } catch (error) {
       console.log(error as Error);
       return null;
@@ -36,7 +48,7 @@ class UserRepository implements IUserRepository {
 
   async login(email: string) {
     try {
-      return await userModel.findOne({ email: email, isVerified: true })
+      return await this.userRepository.findOne({ email: email, isVerified: true })
     } catch (error) {
       console.log(error);
       throw error
@@ -46,7 +58,7 @@ class UserRepository implements IUserRepository {
 
   async getProfile(email: string) {
     try {
-      return await userModel.findOne({ email: email })
+      return await this.userRepository.findOne({ email: email })
     } catch (error) {
       console.log(error);
       throw error
@@ -55,11 +67,17 @@ class UserRepository implements IUserRepository {
 
   async editProfile(email: string, userData: Partial<UserInterface>) {
     try {
-      const updatedUser = await userModel.findOneAndUpdate(
-        { email },
-        { $set: userData },
-        { new: true, runValidators: true }
+      // const updatedUser = await userModel.findOneAndUpdate(
+      //   { email },
+      //   { $set: userData },
+      //   { new: true, runValidators: true }
+      // );
+      const updatedUser = await this.userRepository.findOneAndUpdate(
+        { email }, 
+        { $set: userData }, 
+        { new: true, runValidators: true } 
       );
+
 
       return updatedUser;
     } catch (error) {
@@ -91,9 +109,8 @@ class UserRepository implements IUserRepository {
   }
 
   async getUserById(userId: string) {
-    return await userModel.findById(userId);
+    return await this.userRepository.findById(userId);
   }
-
 
   async getBikeList(query: object, skip: number, limit: number) {
     try {
@@ -106,7 +123,9 @@ class UserRepository implements IUserRepository {
 
   async countBikes(query: object) {
     try {
-      return await bikeModel.countDocuments(query).exec();
+      // return await bikeModel.countDocuments(query).exec();
+      return await this.bikeRepository.countDocuments(query);
+
     } catch (error) {
       console.error('Error in repository countBikes:', error);
       throw error;

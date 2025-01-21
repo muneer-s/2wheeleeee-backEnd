@@ -19,7 +19,7 @@ class OtpRepository implements IOtpRepository{
     async saveOtp(email: string, hashedOTP: string) {
         try {
             await this.otpRepository.findOneAndUpdate(
-                { email: email },
+                { email },
                 {
                     $set: {
                         hashedOTP,

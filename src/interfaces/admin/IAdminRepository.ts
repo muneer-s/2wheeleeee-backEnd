@@ -1,11 +1,12 @@
 import { UserInterface } from "../IUser";
 import { BikeData } from "../BikeInterface";
 
-interface ICarWithUserDetails extends BikeData {
+interface IBikeWithUserDetails extends BikeData {
     userDetails: UserInterface;
 }
 
 export interface IAdminRepository {
+    
     getAllUsers(filters: {
         page: number;
         limit: number;
@@ -30,7 +31,7 @@ export interface IAdminRepository {
         query: object,
         options: { skip: number; limit: number; sort: object; search?: string }
     ): Promise<{
-        bikes: ICarWithUserDetails[];
+        bikes: IBikeWithUserDetails[];
         total: number;
     }>;
 

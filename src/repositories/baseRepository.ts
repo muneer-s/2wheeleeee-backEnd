@@ -1,6 +1,8 @@
 import mongoose, { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
 import { SortOrder } from "mongoose";
 import { Query } from "mongoose";
+import { PipelineStage } from "mongoose";
+
 
 class BaseRepository<T extends Document> {
     private model: Model<T>;
@@ -9,7 +11,6 @@ class BaseRepository<T extends Document> {
         this.model = model;
     }
 
-    // Create a new document
     async create(data: Partial<T>): Promise<T> {
         try {
             const document = new this.model(data);
@@ -20,7 +21,6 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    // Find a single document by query
     async findOne(query: FilterQuery<T>): Promise<T | null> {
         try {
             return await this.model.findOne(query);
@@ -41,7 +41,6 @@ class BaseRepository<T extends Document> {
     //     }
     // }
 
-    // Find a document by ID
     async findById(id: string): Promise<T | null> {
         try {
             return await this.model.findById(id);
@@ -51,7 +50,6 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    // Update a document by query
     async updateOne(query: FilterQuery<T>, updateData: UpdateQuery<T>): Promise<T | null> {
         try {
             return await this.model.findOneAndUpdate(query, updateData, { new: true });
@@ -61,7 +59,6 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    // Update a document by ID
     async updateById(id: string, updateData: UpdateQuery<T>): Promise<T | null> {
         try {
             return await this.model.findByIdAndUpdate(id, updateData, { new: true });
@@ -71,7 +68,6 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    // Delete a document by query
     async deleteOne(query: FilterQuery<T>): Promise<{ deletedCount?: number }> {
         try {
             return await this.model.deleteOne(query);
@@ -81,7 +77,6 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    // Find multiple documents with optional filters
     async find(
         query: FilterQuery<T>,
         options: {
@@ -111,7 +106,6 @@ class BaseRepository<T extends Document> {
 
 
 
-    // Delete a document by ID
     async deleteById(id: string): Promise<{ deletedCount?: number }> {
         try {
             return await this.model.deleteOne({ _id: id });
@@ -121,7 +115,6 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    // Count documents matching a query
     async count(query: FilterQuery<T> = {}): Promise<number> {
         try {
             return await this.model.countDocuments(query);
@@ -133,12 +126,32 @@ class BaseRepository<T extends Document> {
 
     async findOneAndUpdate(query: object, update: object, options: object) {
         try {
-          return await this.model.findOneAndUpdate(query, update, options);
+            return await this.model.findOneAndUpdate(query, update, options);
         } catch (error) {
-          console.error("Error in findOneAndUpdate:", error);
-          throw new Error("Failed to find and update the document");
+            console.error("Error in findOneAndUpdate:", error);
+            throw new Error("Failed to find and update the document");
         }
-      }
+    }
+
+    async countDocuments(query: object): Promise<number> {
+        try {
+            return await this.model.countDocuments(query).exec();
+        } catch (error) {
+            console.error('Error in BaseRepository - countDocuments:', error);
+            throw new Error('Failed to count documents');
+        }
+    }
+
+    async aggregate(pipeline: PipelineStage[]): Promise<T[]> {
+        try {
+            return await this.model.aggregate(pipeline).exec();
+        } catch (error) {
+            console.error("Error in BaseRepository - aggregate:", error);
+            throw new Error("Failed to execute aggregation pipeline");
+        }
+    }
+
+
 }
 
 export default BaseRepository;
