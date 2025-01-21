@@ -59,14 +59,27 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    async updateById(id: string, updateData: UpdateQuery<T>): Promise<T | null> {
+    // async updateById(id: string, updateData: UpdateQuery<T>): Promise<T | null> {
+    //     try {
+    //         return await this.model.findByIdAndUpdate(id, updateData, { new: true });
+    //     } catch (error) {
+    //         console.error("Error in BaseRepository - updateById:", error);
+    //         throw new Error("Failed to update the document by ID");
+    //     }
+    // }
+
+    async updateById(
+        id: string,
+        updateData: Partial<T>
+      ): Promise<T | null> {
         try {
-            return await this.model.findByIdAndUpdate(id, updateData, { new: true });
+          return await this.model.findByIdAndUpdate(id, updateData, { new: true });
         } catch (error) {
-            console.error("Error in BaseRepository - updateById:", error);
-            throw new Error("Failed to update the document by ID");
+          console.error("Error in BaseRepository - updateById:", error);
+          throw new Error("Failed to update the document by ID");
         }
-    }
+      }
+      
 
     async deleteOne(query: FilterQuery<T>): Promise<{ deletedCount?: number }> {
         try {
@@ -150,6 +163,15 @@ class BaseRepository<T extends Document> {
             throw new Error("Failed to execute aggregation pipeline");
         }
     }
+
+    async getList(query: object, skip: number, limit: number): Promise<T[]> {
+        try {
+          return await this.model.find(query).skip(skip).limit(limit).exec();
+        } catch (error) {
+          console.error("Error in BaseRepository - getList:", error);
+          throw error;
+        }
+      }
 
 
 }

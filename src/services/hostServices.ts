@@ -1,4 +1,4 @@
-import { BikeData } from "../interfaces/BikeInterface";
+import { BikeData, BikeDataInput } from "../interfaces/BikeInterface";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { Request, Response } from "express";
 import cloudinary from "../config/cloudinaryConfig";
@@ -91,7 +91,7 @@ class HostServices implements IHostService {
             }
 
 
-            const bikeData: BikeData = {
+            const bikeData: BikeDataInput = {
                 userId: new mongoose.Types.ObjectId(req.userId),
                 companyName: req.body.companyName,
                 modelName: req.body.modelName,
@@ -179,7 +179,7 @@ class HostServices implements IHostService {
             const { insuranceExpDate, polutionExpDate } = req.body;
 
             let insuranceImageUrl = "";
-            let pollutionImageUrl = "";
+            let PolutionImageUrl = "";
 
             const files = req.files as {
                 [fieldname: string]: Express.Multer.File[] | undefined;
@@ -200,8 +200,8 @@ class HostServices implements IHostService {
                 insuranceImageUrl = (result as any).secure_url;
             }
 
-            if (files?.polutionImage?.[0]) {
-                const pollutionImage = files.polutionImage[0];
+            if (files?.PolutionImage?.[0]) {
+                const PolutionImage = files.PolutionImage[0];
                 const result = await new Promise((resolve, reject) => {
                     cloudinary.uploader.upload_stream(
                         { folder: "bike-pollution" },
@@ -209,16 +209,16 @@ class HostServices implements IHostService {
                             if (error) reject(error);
                             else resolve(result);
                         }
-                    ).end(pollutionImage.buffer);
+                    ).end(PolutionImage.buffer);
                 });
-                pollutionImageUrl = (result as any).secure_url;
+                PolutionImageUrl = (result as any).secure_url;
             }
 
             const bike = await this.hostRepository.editBike(
                 new Date(insuranceExpDate),
                 new Date(polutionExpDate),
                 insuranceImageUrl,
-                pollutionImageUrl,
+                PolutionImageUrl,
                 bikeId
             )
 

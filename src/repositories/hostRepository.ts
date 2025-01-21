@@ -5,14 +5,14 @@ import IHostRepository from '../interfaces/host/IHostRepository';
 import BaseRepository from './baseRepository';
 import { UserInterface } from '../interfaces/IUser';
 
-class HostRepository implements IHostRepository{
+class HostRepository implements IHostRepository {
   private userRepository: BaseRepository<UserInterface>;
-    private bikeRepository: BaseRepository<BikeData>;
+  private bikeRepository: BaseRepository<BikeData>;
 
-    constructor() {
-        this.userRepository = new BaseRepository(userModel);
-        this.bikeRepository = new BaseRepository(bikeModel);
-    }
+  constructor() {
+    this.userRepository = new BaseRepository(userModel);
+    this.bikeRepository = new BaseRepository(bikeModel);
+  }
 
   async saveBikeDetails(documentData: BikeData) {
     try {
@@ -20,7 +20,7 @@ class HostRepository implements IHostRepository{
       // const savedBike = await newBike.save();
       // return savedBike;
 
-      return await this.bikeRepository.create(documentData); 
+      return await this.bikeRepository.create(documentData);
 
 
     } catch (error) {
@@ -86,19 +86,54 @@ class HostRepository implements IHostRepository{
     }
   }
 
-  async editBike(insuranceExpDate: Date, polutionExpDate: Date, insuranceImageUrl: string, pollutionImageUrl: string, bikeId: string) {
+  // async editBike(
+  //   insuranceExpDate: Date, 
+  //   polutionExpDate: Date, 
+  //   insuranceImageUrl: string, 
+  //   pollutionImageUrl: string, 
+  //   bikeId: string
+  // ) {
+  //   try {
+  //     const updatedBike = await bikeModel.findByIdAndUpdate(
+  //       bikeId,
+  //       {
+  //         insuranceExpDate,
+  //         polutionExpDate,
+  //         insuranceImage: insuranceImageUrl || undefined,
+  //         pollutionImage: pollutionImageUrl || undefined,
+  //       },
+  //       { new: true }
+  //     );
+
+
+  //     if (!updatedBike) {
+  //       throw new Error("Bike not found.");
+  //     }
+  //     return updatedBike;
+
+  //   } catch (error) {
+  //     console.error("Error in repository layer edit bike:", error);
+  //     throw error;
+  //   }
+  // }
+
+
+  async editBike(
+    insuranceExpDate: Date,
+    polutionExpDate: Date,
+    insuranceImageUrl: string,
+    PolutionImageUrl: string,
+    bikeId: string
+  ): Promise<BikeData | null> {
     try {
-      const updatedBike = await bikeModel.findByIdAndUpdate(
-        bikeId,
-        {
-          insuranceExpDate,
-          polutionExpDate,
-          insuranceImage: insuranceImageUrl || undefined,
-          pollutionImage: pollutionImageUrl || undefined,
-        },
-        { new: true }
-      );
-      
+      const updateData: Partial<BikeData> = {
+        insuranceExpDate,
+        polutionExpDate,
+        insuranceImage: insuranceImageUrl || undefined,
+        PolutionImage: PolutionImageUrl || undefined,
+      };
+      const updatedBike = await this.bikeRepository.updateById(bikeId, updateData);
+
 
       if (!updatedBike) {
         throw new Error("Bike not found.");
@@ -112,7 +147,9 @@ class HostRepository implements IHostRepository{
   }
 
 
-  
+
+
+
 }
 
 export default HostRepository;

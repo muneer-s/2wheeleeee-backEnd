@@ -17,3 +17,6 @@ export interface BikeData  extends Document{
     isHost?: boolean; 
     isEdit:boolean
 }
+
+
+export type BikeDataInput = Omit<BikeData, "_id" | "__v" | keyof Document>;

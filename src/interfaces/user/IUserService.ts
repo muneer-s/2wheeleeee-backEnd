@@ -23,5 +23,5 @@ export interface IUserService {
         totalBikes: number;
         totalPages: number;
     }>;
-    getbikeDeatils(id: string): Promise<any | null>;
+    getBikeDetails(id: string): Promise<any | null>;
 }

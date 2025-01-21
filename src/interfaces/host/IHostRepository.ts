@@ -1,7 +1,7 @@
-import { BikeData } from "../BikeInterface";
+import { BikeData, BikeDataInput } from "../BikeInterface";
 
 interface IHostRepository {
-  saveBikeDetails(documentData: BikeData): Promise<BikeData>;
+  saveBikeDetails(documentData: BikeDataInput): Promise<BikeData>;
   isAdminVerifyUser(userId: string): Promise<any>;
   fetchBikeData(userId: string | undefined): Promise<any>;
   bikeSingleView(bikeId: string): Promise<any>;
@@ -10,7 +10,7 @@ interface IHostRepository {
     insuranceExpDate: Date,
     polutionExpDate: Date,
     insuranceImageUrl: string,
-    pollutionImageUrl: string,
+    PolutionImageUrl: string,
     bikeId: string
   ): Promise<any>;
 }

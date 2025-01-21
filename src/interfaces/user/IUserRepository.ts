@@ -10,5 +10,5 @@ export interface IUserRepository {
   getUserById(userId: string): Promise<UserInterface | null>;
   getBikeList(query: object, skip: number, limit: number): Promise<any[]>;
   countBikes(query: object): Promise<number>;
-  getBikeDeatils(id: string): Promise<any | null>;
+  getBikeDetails(id: string): Promise<any | null>;
 }

@@ -230,6 +230,7 @@ class UserServices implements IUserService {
             const skip = (page - 1) * limit;
 
             const bikeList = await this.userRepository.getBikeList(query, skip, limit);
+            
 
             const totalBikes = await this.userRepository.countBikes(query);
 
@@ -246,9 +247,9 @@ class UserServices implements IUserService {
         }
     }
 
-    async getbikeDeatils(id: string) {
+    async getBikeDetails(id: string) {
         try {
-            const result = await this.userRepository.getBikeDeatils(id)
+            const result = await this.userRepository.getBikeDetails(id)
             return result
 
         } catch (error) {

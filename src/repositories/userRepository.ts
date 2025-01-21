@@ -88,18 +88,24 @@ class UserRepository implements IUserRepository {
 
   async saveUserDocuments(userId: string, documentData: Partial<UserInterface>) {
     try {
-      const updatedUser = await userModel.findByIdAndUpdate(
-        userId,
-        {
-          $set: {
-            license_number: documentData.license_number,
-            license_Exp_Date: documentData.license_Exp_Date,
-            license_picture_front: documentData.license_picture_front,
-            license_picture_back: documentData.license_picture_back,
-          }
-        },
-        { new: true }
-      );
+      // const updatedUser = await this.userRepository.updateById(
+      //   userId,
+      //   {
+      //     $set: {
+      //       license_number: documentData.license_number,
+      //       license_Exp_Date: documentData.license_Exp_Date,
+      //       license_picture_front: documentData.license_picture_front,
+      //       license_picture_back: documentData.license_picture_back,
+      //     }
+      //   }
+      // );
+
+      const updatedUser = await this.userRepository.updateById(userId, {
+        license_number: documentData.license_number,
+        license_Exp_Date: documentData.license_Exp_Date,
+        license_picture_front: documentData.license_picture_front,
+        license_picture_back: documentData.license_picture_back,
+      });
 
       return updatedUser;
     } catch (error) {
@@ -114,7 +120,8 @@ class UserRepository implements IUserRepository {
 
   async getBikeList(query: object, skip: number, limit: number) {
     try {
-      return await bikeModel.find(query).skip(skip).limit(limit).exec();
+      //return await bikeModel.find(query).skip(skip).limit(limit).exec();
+      return await this.bikeRepository.getList(query, skip, limit);
     } catch (error) {
       console.error('Error in repository getBikeList:', error);
       throw error;
@@ -132,36 +139,72 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async getBikeDeatils(id: string) {
+  // async getBikeDetails(id: string):Promise<any | null> {
+  //   try {
+  //     const bikeDetails = await bikeModel.aggregate([
+  //       {
+  //         $match: { _id: new mongoose.Types.ObjectId(id) }
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "users",
+  //           localField: "userId",
+  //           foreignField: "_id",
+  //           as: "userDetails"
+  //         }
+  //       },
+  //       {
+  //         $unwind: "$userDetails"
+  //       }
+  //     ]);
+
+  //     if (!bikeDetails || bikeDetails.length === 0) {
+  //       console.log("Bike not found");
+  //       return null;
+  //     }
+
+  //     return bikeDetails[0];
+  //   } catch (error) {
+  //     console.error("Error fetching bike and user details:", error);
+  //     throw error;
+  //   }
+  // }
+  
+  async getBikeDetails(id: string): Promise<any | null> {
     try {
-      const bikeDetails = await bikeModel.aggregate([
+      const pipeline = [
         {
-          $match: { _id: new mongoose.Types.ObjectId(id) }
+          $match: { _id: new mongoose.Types.ObjectId(id) }, 
         },
         {
           $lookup: {
-            from: "users",
-            localField: "userId",
-            foreignField: "_id",
-            as: "userDetails"
-          }
+            from: "users", 
+            localField: "userId", 
+            foreignField: "_id", 
+            as: "userDetails", 
+          },
         },
         {
-          $unwind: "$userDetails"
-        }
-      ]);
-
+          $unwind: "$userDetails", 
+        },
+      ];
+  
+      const bikeDetails = await this.bikeRepository.aggregate(pipeline);
+  
       if (!bikeDetails || bikeDetails.length === 0) {
         console.log("Bike not found");
         return null;
       }
-
+  
       return bikeDetails[0];
     } catch (error) {
       console.error("Error fetching bike and user details:", error);
       throw error;
     }
   }
+  
+
+
 
 
 

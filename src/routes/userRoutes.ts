@@ -78,7 +78,7 @@ userRouter.get('/getAllBikes', (req, res) => {
 
 userRouter.get('/getBikeDeatils/:id', (req, res) => {
     // console.log("Route hit with ID:", req.params.id);
-    userController.getBikeDeatils(req, res);
+    userController.getBikeDetails(req, res);
 });
 
 

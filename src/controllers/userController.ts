@@ -262,10 +262,10 @@ export class UserController {
         }
     }
 
-    async getBikeDeatils(req: Request, res: Response) {
+    async getBikeDetails(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const bike = await this.UserServices.getbikeDeatils(id)
+            const bike = await this.UserServices.getBikeDetails(id)
             if (!bike) return res.status(404).json({ success: false, message: 'Bike not found' });
             res.status(200).json({ success: true, bike })
 
