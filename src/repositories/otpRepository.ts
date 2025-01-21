@@ -2,12 +2,23 @@ import OTPModel from '../models/otpModels';
 import userModel from '../models/userModels';
 import bcrypt from 'bcrypt';
 import { IOtpRepository } from '../interfaces/otp/IOtpRepository';
+import BaseRepository from './baseRepository';
+import { UserInterface } from '../interfaces/IUser';
+import { OTPInterface } from '../interfaces/IOtp';
 
 class OtpRepository implements IOtpRepository{
 
+    private userRepository: BaseRepository<UserInterface>;
+    private otpRepository : BaseRepository<OTPInterface>;
+
+    constructor() {
+        this.userRepository = new BaseRepository(userModel);
+        this.otpRepository = new BaseRepository(OTPModel);
+    }
+
     async saveOtp(email: string, hashedOTP: string) {
         try {
-            await OTPModel.findOneAndUpdate(
+            await this.otpRepository.findOneAndUpdate(
                 { email: email },
                 {
                     $set: {
@@ -27,7 +38,7 @@ class OtpRepository implements IOtpRepository{
 
     async checkOtp(email: string, otp: number) {
         try {
-            const otpRecord = await OTPModel.findOne({ email })
+            const otpRecord = await this.otpRepository.findOne({ email })
 
             if (!otpRecord) {
                 console.log('OTP record not found');
@@ -40,9 +51,8 @@ class OtpRepository implements IOtpRepository{
                 console.log('Invalid OTP');
                 return false;
             }
-            await userModel.updateOne({ email }, { $set: { isVerified: true } })
+            await this.userRepository.updateOne({ email }, { $set: { isVerified: true } })
             return true;
-
 
         } catch (error) {
             console.log("error showing when check otp is correct ", error);

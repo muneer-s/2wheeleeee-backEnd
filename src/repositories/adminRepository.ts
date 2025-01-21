@@ -3,6 +3,11 @@ import userModel from '../models/userModels';
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
 import { IAdminRepository } from '../interfaces/admin/IAdminRepository';
+import BaseRepository from './baseRepository';
+import { UserInterface } from '../interfaces/IUser';
+import { BikeData } from '../interfaces/BikeInterface';
+import { SortOrder } from 'mongoose';
+
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
@@ -14,9 +19,24 @@ const transporter = nodemailer.createTransport({
 })
 
 
-class AdminRepository implements IAdminRepository{
+class AdminRepository implements IAdminRepository {
 
-    async getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string | undefined }) {
+    private userRepository: BaseRepository<UserInterface>;
+    private bikeRepository: BaseRepository<BikeData>;
+
+    constructor() {
+        this.userRepository = new BaseRepository(userModel);
+        this.bikeRepository = new BaseRepository(bikeModel);
+    }
+
+
+    async getAllUsers(filters: { 
+        page: number; 
+        limit: number; 
+        search: string; 
+        isBlocked?: string | undefined; 
+        isUser?: string | undefined 
+    }) {
         try {
             const { page, limit, search, isBlocked, isUser } = filters;
             const query: any = {};
@@ -25,22 +45,26 @@ class AdminRepository implements IAdminRepository{
             if (isUser !== undefined) query.isUser = isUser;
             if (search) query.name = { $regex: search, $options: 'i' };
 
-
             const skip = (page - 1) * limit;
-            const users = await userModel.find(query).skip(skip).limit(limit);
-            const totalUsers = await userModel.countDocuments(query);
+
+            const sort: { [key: string]: SortOrder } = { name: 1 };
+
+            const users = await this.userRepository.find(query, { sort, skip, limit });    
+
+            // const totalUsers = await userModel.countDocuments(query);
+            const totalUsers = await this.userRepository.count(query);
+
             const totalPages = Math.ceil(totalUsers / limit)
 
             return { users, totalUsers, totalPages }
         } catch (error) {
             console.log(error);
-
         }
     }
 
     async getSingleUser(userId: string) {
         try {
-            return await userModel.findById(userId)
+            return await this.userRepository.findById(userId)
         } catch (error) {
             console.log(error);
         }
@@ -48,7 +72,7 @@ class AdminRepository implements IAdminRepository{
 
     async userVerify(userId: string) {
         try {
-            const user = await userModel.findById(userId);
+            const user = await this.userRepository.findById(userId);
             if (!user) return 'User not found'
             user.isUser = !user.isUser;
             await user.save();
@@ -60,10 +84,11 @@ class AdminRepository implements IAdminRepository{
 
     async userBlockUnblock(userId: string) {
         try {
-            const findUser = await userModel.findById(userId)
+            const findUser = await this.userRepository.findById(userId)
+            console.log("usere kitti : ", findUser);
 
             if (!findUser) {
-                return { success: false, message: "User not found" }; 
+                return { success: false, message: "User not found" };
             }
 
             findUser.isBlocked = !findUser.isBlocked;
@@ -92,10 +117,10 @@ class AdminRepository implements IAdminRepository{
         }
     }
 
-    async getAllBikeDetails(query: object, options: { skip: number; limit: number; sort: object,search?: string }) {
+    async getAllBikeDetails(query: object, options: { skip: number; limit: number; sort: object, search?: string }) {
         try {
             const { skip, limit, sort, search } = options;
-    
+
             const pipeline: any[] = [
 
                 { $match: query },
@@ -119,13 +144,13 @@ class AdminRepository implements IAdminRepository{
                     },
                 });
             }
-    
+
             if (Object.keys(sort).length > 0) {
                 pipeline.push({ $sort: sort });
             } else {
                 pipeline.push({ $sort: { _id: 1 } });
             }
-    
+
             pipeline.push(
                 { $skip: skip },
                 { $limit: limit },
@@ -154,11 +179,11 @@ class AdminRepository implements IAdminRepository{
                     },
                 }
             );
-    
+
             const result = await bikeModel.aggregate(pipeline);
             const total = await bikeModel.countDocuments(query);
-    
-    
+
+
             return { bikes: result, total };
         } catch (error) {
             console.error("Error fetching bike details with user details:", error);
@@ -168,12 +193,12 @@ class AdminRepository implements IAdminRepository{
 
     async verifyHost(bikeId: string) {
         try {
-            const bike = await bikeModel.findById(bikeId);
+            const bike = await this.bikeRepository.findById(bikeId);
 
             if (!bike) return 'User not found'
 
             bike.isHost = !bike.isHost;
-            const user = await userModel.findById(bike.userId)
+            const user = await this.userRepository.findById(bike.userId.toString())
 
             if (bike.isHost) {
                 const mailOptions = {
@@ -206,7 +231,7 @@ class AdminRepository implements IAdminRepository{
 
     async findUserByEmail(email: string) {
         try {
-            const user = await userModel.findOne({ email });
+            const user = await this.userRepository.findOne({ email });
             return user
 
         } catch (error) {
@@ -214,23 +239,22 @@ class AdminRepository implements IAdminRepository{
         }
     }
 
-    async isEditOn(bikeId:string){
-        try {            
-            const bike = await bikeModel.findById(bikeId)
+    async isEditOn(bikeId: string) {
+        try {
+            const bike = await this.bikeRepository.findById(bikeId)
 
             if (!bike) {
                 throw new Error("Bike not found");
-              }
+            }
+            
+            bike.isEdit = true;
+            bike.isHost = false
+            await bike.save()
+            return bike
 
 
-              bike.isEdit = true;
-              bike.isHost = false
-              await bike.save()              
-              return bike
-
-              
         } catch (error) {
-            console.log("error is repository is edit on : ",error);
+            console.log("error is repository is edit on : ", error);
             throw error
         }
     }

@@ -113,8 +113,6 @@ class UserRepository implements IUserRepository {
     }
   }
 
-
-
   async getBikeDeatils(id: string) {
     try {
       const bikeDetails = await bikeModel.aggregate([

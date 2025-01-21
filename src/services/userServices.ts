@@ -71,9 +71,6 @@ interface UploadedFile {
 class UserServices implements IUserService {
     constructor(private userRepository: IUserRepository) { }
 
-
-
-
     async userSignup(userData: UserInterface): Promise<boolean | null> {
         try {
             return await this.userRepository.emailExistCheck(userData.email);
@@ -89,18 +86,16 @@ class UserServices implements IUserService {
             return await this.userRepository.saveUser(userData)
         } catch (error) {
             console.log(error);
-throw error
+            throw error
         }
     }
-
-
 
     async login(email: string) {
         try {
             return await this.userRepository.login(email)
         } catch (error) {
             console.log(error);
-throw error
+            throw error
         }
     }
 
@@ -109,7 +104,7 @@ throw error
             return await this.userRepository.getProfile(email)
         } catch (error) {
             console.log(error);
-throw error
+            throw error
         }
     }
 
@@ -150,8 +145,6 @@ throw error
 
             }
 
-
-
             const updatedUser = await this.userRepository.editProfile(email, userData);
 
             if (!updatedUser) {
@@ -175,19 +168,12 @@ throw error
 
             const existingUser = await this.userRepository.getUserById(userId);
 
-            console.log(1, existingUser);
-
-
-
             if (!existingUser) {
                 return res.status(404).json({ message: "User not found" });
             }
 
             let frontImageUrl = existingUser.license_picture_front;
             let backImageUrl = existingUser.license_picture_back;
-
-
-
 
             if (frontImage) {
                 frontImageUrl = await uploadToCloudinary(frontImage, "user_documents");
@@ -213,18 +199,6 @@ throw error
         }
 
     }
-
-    // async GetBikeList(query: undefined,skip: number,limit: string){
-    //     try {
-    //         //const bikeList = await bikeModel.find(query).skip(skip).limit(Number(limit));
-
-    //         const result = await this.userRepository.getBikeList()
-    //         return result
-    //     } catch (error) {
-    //         console.error("Error in getbikelist service layer:", error);
-    //         throw error;  
-    //     }
-    // }
 
     async GetBikeList(filters: {
         page: number;
@@ -271,14 +245,6 @@ throw error
             throw error;
         }
     }
-
-
-
-
-
-
-
-
 
     async getbikeDeatils(id: string) {
         try {

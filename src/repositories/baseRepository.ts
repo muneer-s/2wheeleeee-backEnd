@@ -1,86 +1,144 @@
-import { Model, Document, FilterQuery, UpdateQuery } from 'mongoose';
+import mongoose, { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
+import { SortOrder } from "mongoose";
+import { Query } from "mongoose";
 
-export interface IBaseRepository<T extends Document> {
-  create(data: Partial<T>): Promise<T>;
-  findById(id: string): Promise<T | null>;
-  findOne(filter: FilterQuery<T>): Promise<T | null>;
-  find(filter: FilterQuery<T>, skip?: number, limit?: number): Promise<T[]>;
-  update(filter: FilterQuery<T>, data: UpdateQuery<T>): Promise<T | null>;
-  delete(filter: FilterQuery<T>): Promise<boolean>;
-  count(filter: FilterQuery<T>): Promise<number>;
+class BaseRepository<T extends Document> {
+    private model: Model<T>;
+
+    constructor(model: Model<T>) {
+        this.model = model;
+    }
+
+    // Create a new document
+    async create(data: Partial<T>): Promise<T> {
+        try {
+            const document = new this.model(data);
+            return await document.save();
+        } catch (error) {
+            console.error("Error in BaseRepository - create:", error);
+            throw new Error("Failed to create the document");
+        }
+    }
+
+    // Find a single document by query
+    async findOne(query: FilterQuery<T>): Promise<T | null> {
+        try {
+            return await this.model.findOne(query);
+        } catch (error) {
+            console.error("Error in BaseRepository - findOne:", error);
+            throw new Error("Failed to find the document");
+        }
+    }
+
+    // Find multiple documents with optional filters
+    // async findAll(query: FilterQuery<T> = {}, options: { skip?: number; limit?: number; sort?: object } = {}): Promise<T[]> {
+    //     try {
+    //         const { skip = 0, limit = 0, sort = {} } = options;
+    //         return await this.model.find(query).skip(skip).limit(limit).sort(sort);
+    //     } catch (error) {
+    //         console.error("Error in BaseRepository - findAll:", error);
+    //         throw new Error("Failed to find documents");
+    //     }
+    // }
+
+    // Find a document by ID
+    async findById(id: string): Promise<T | null> {
+        try {
+            return await this.model.findById(id);
+        } catch (error) {
+            console.error("Error in BaseRepository - findById:", error);
+            throw new Error("Failed to find the document by ID");
+        }
+    }
+
+    // Update a document by query
+    async updateOne(query: FilterQuery<T>, updateData: UpdateQuery<T>): Promise<T | null> {
+        try {
+            return await this.model.findOneAndUpdate(query, updateData, { new: true });
+        } catch (error) {
+            console.error("Error in BaseRepository - updateOne:", error);
+            throw new Error("Failed to update the document");
+        }
+    }
+
+    // Update a document by ID
+    async updateById(id: string, updateData: UpdateQuery<T>): Promise<T | null> {
+        try {
+            return await this.model.findByIdAndUpdate(id, updateData, { new: true });
+        } catch (error) {
+            console.error("Error in BaseRepository - updateById:", error);
+            throw new Error("Failed to update the document by ID");
+        }
+    }
+
+    // Delete a document by query
+    async deleteOne(query: FilterQuery<T>): Promise<{ deletedCount?: number }> {
+        try {
+            return await this.model.deleteOne(query);
+        } catch (error) {
+            console.error("Error in BaseRepository - deleteOne:", error);
+            throw new Error("Failed to delete the document");
+        }
+    }
+
+    // Find multiple documents with optional filters
+    async find(
+        query: FilterQuery<T>,
+        options: {
+            sort?: string | { [key: string]: SortOrder | { $meta: any } },
+            skip?: number,
+            limit?: number
+        } = {}
+    ): Promise<T[]> {
+        try {
+            const { sort = {}, skip, limit } = options;
+            let queryBuilder = this.model.find(query).sort(sort);
+
+            if (skip !== undefined) {
+                queryBuilder = queryBuilder.skip(skip);
+            }
+
+            if (limit !== undefined) {
+                queryBuilder = queryBuilder.limit(limit);
+            }
+
+            return await queryBuilder.exec();
+        } catch (error) {
+            console.error("Error in BaseRepository - find:", error);
+            throw new Error("Failed to find documents");
+        }
+    }
+
+
+
+    // Delete a document by ID
+    async deleteById(id: string): Promise<{ deletedCount?: number }> {
+        try {
+            return await this.model.deleteOne({ _id: id });
+        } catch (error) {
+            console.error("Error in BaseRepository - deleteById:", error);
+            throw new Error("Failed to delete the document by ID");
+        }
+    }
+
+    // Count documents matching a query
+    async count(query: FilterQuery<T> = {}): Promise<number> {
+        try {
+            return await this.model.countDocuments(query);
+        } catch (error) {
+            console.error("Error in BaseRepository - count:", error);
+            throw new Error("Failed to count documents");
+        }
+    }
+
+    async findOneAndUpdate(query: object, update: object, options: object) {
+        try {
+          return await this.model.findOneAndUpdate(query, update, options);
+        } catch (error) {
+          console.error("Error in findOneAndUpdate:", error);
+          throw new Error("Failed to find and update the document");
+        }
+      }
 }
 
-
-export class BaseRepository<T extends Document> implements IBaseRepository<T> {
-
-  constructor(protected  model: Model<T>) {}
-
-  async create(data: Partial<T>): Promise<T> {
-    try {
-      const entity = new this.model(data);
-      return await entity.save();
-    } catch (error) {
-      console.error('Error in base repository create:', error);
-      throw error;
-    }
-  }
-
-  async findById(id: string): Promise<T | null> {
-    try {
-      return await this.model.findById(id);
-    } catch (error) {
-      console.error('Error in base repository findById:', error);
-      throw error;
-    }
-  }
-
-  async findOne(filter: FilterQuery<T>): Promise<T | null> {
-    try {
-      return await this.model.findOne(filter);
-    } catch (error) {
-      console.error('Error in base repository findOne:', error);
-      throw error;
-    }
-  }
-
-  async find(filter: FilterQuery<T>, skip = 0, limit = 10): Promise<T[]> {
-    try {
-      return await this.model.find(filter).skip(skip).limit(limit).exec();
-    } catch (error) {
-      console.error('Error in base repository find:', error);
-      throw error;
-    }
-  }
-
-  async update(filter: FilterQuery<T>, data: UpdateQuery<T>): Promise<T | null> {
-    try {
-      return await this.model.findOneAndUpdate(
-        filter,
-        data,
-        { new: true, runValidators: true }
-      );
-    } catch (error) {
-      console.error('Error in base repository update:', error);
-      throw error;
-    }
-  }
-
-  async delete(filter: FilterQuery<T>): Promise<boolean> {
-    try {
-      const result = await this.model.deleteOne(filter);
-      return result.deletedCount > 0;
-    } catch (error) {
-      console.error('Error in base repository delete:', error);
-      throw error;
-    }
-  }
-
-  async count(filter: FilterQuery<T>): Promise<number> {
-    try {
-      return await this.model.countDocuments(filter);
-    } catch (error) {
-      console.error('Error in base repository count:', error);
-      throw error;
-    }
-  }
-}
+export default BaseRepository;

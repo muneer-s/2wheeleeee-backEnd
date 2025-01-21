@@ -1,7 +1,6 @@
+import mongoose,{ Document } from "mongoose";
 
-import mongoose from "mongoose";
-
-export interface BikeData {
+export interface BikeData  extends Document{
     userId: mongoose.Types.ObjectId;
     companyName: string;
     modelName: string;
