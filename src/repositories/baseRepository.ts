@@ -30,17 +30,6 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    // Find multiple documents with optional filters
-    // async findAll(query: FilterQuery<T> = {}, options: { skip?: number; limit?: number; sort?: object } = {}): Promise<T[]> {
-    //     try {
-    //         const { skip = 0, limit = 0, sort = {} } = options;
-    //         return await this.model.find(query).skip(skip).limit(limit).sort(sort);
-    //     } catch (error) {
-    //         console.error("Error in BaseRepository - findAll:", error);
-    //         throw new Error("Failed to find documents");
-    //     }
-    // }
-
     async findById(id: string): Promise<T | null> {
         try {
             return await this.model.findById(id);
@@ -59,27 +48,20 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    // async updateById(id: string, updateData: UpdateQuery<T>): Promise<T | null> {
-    //     try {
-    //         return await this.model.findByIdAndUpdate(id, updateData, { new: true });
-    //     } catch (error) {
-    //         console.error("Error in BaseRepository - updateById:", error);
-    //         throw new Error("Failed to update the document by ID");
-    //     }
-    // }
+
 
     async updateById(
         id: string,
         updateData: Partial<T>
-      ): Promise<T | null> {
+    ): Promise<T | null> {
         try {
-          return await this.model.findByIdAndUpdate(id, updateData, { new: true });
+            return await this.model.findByIdAndUpdate(id, updateData, { new: true });
         } catch (error) {
-          console.error("Error in BaseRepository - updateById:", error);
-          throw new Error("Failed to update the document by ID");
+            console.error("Error in BaseRepository - updateById:", error);
+            throw new Error("Failed to update the document by ID");
         }
-      }
-      
+    }
+
 
     async deleteOne(query: FilterQuery<T>): Promise<{ deletedCount?: number }> {
         try {
@@ -166,12 +148,12 @@ class BaseRepository<T extends Document> {
 
     async getList(query: object, skip: number, limit: number): Promise<T[]> {
         try {
-          return await this.model.find(query).skip(skip).limit(limit).exec();
+            return await this.model.find(query).skip(skip).limit(limit).exec();
         } catch (error) {
-          console.error("Error in BaseRepository - getList:", error);
-          throw error;
+            console.error("Error in BaseRepository - getList:", error);
+            throw error;
         }
-      }
+    }
 
 
 }
