@@ -7,6 +7,9 @@ import express from 'express';
 import cors from 'cors'; 
 import hostRouter from './routes/hostRoutes';
 import otpRouter from './routes/otpRoutes';
+import morgan from 'morgan';
+import logger from './utils/logger';
+
 
 
 const corsOptions = {
@@ -20,12 +23,21 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
+//middleware
 app.use(cors(corsOptions));
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// app.use(morgan('dev'));
+app.use(
+  morgan('combined', {
+    stream: {
+      write: (message) => logger.info(message.trim()),
+    },
+  })
+);
 
 // Routes 
 app.use('/api/user', userRouter);

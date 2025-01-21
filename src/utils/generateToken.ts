@@ -17,13 +17,8 @@ export class CreateJWT {
 
     verifyToken(token: string): JwtPayload | null {
         try {
-            let secret = process.env.JWT_SECRET;
-            console.log("======",secret);
-            console.log("------",token);
-            
-            
+            let secret = process.env.JWT_SECRET;  
             const decoded = jwt.verify(token, secret) as JwtPayload;
-            console.log("------------------------",decoded);
             
             return { success: true, decoded };
         } catch (err: any) {
@@ -37,7 +32,6 @@ export class CreateJWT {
         try {
             let secret = process.env.JWT_SECRET
             const decoded = jwt.verify(token, secret) as JwtPayload;
-            console.log('refrsh valid aanu ',decoded);
             
             return { success: true, decoded };
         } catch (error) {
