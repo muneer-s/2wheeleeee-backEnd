@@ -10,6 +10,10 @@ import userAuth from '../middleware/userAuthMiddleware';
 import multer from 'multer';
 import OtpRepository from '../repositories/otpRepository';
 import OtpServices from '../services/otpServices';
+import morgan from 'morgan';
+import logger from '../utils/logger';
+
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -32,14 +36,27 @@ const service = new UserServices(userRepository)
 const otpService = new OtpServices(otpRepository)
 const userController = new UserController(service,otpService)
 
-
-
 const userRouter = express.Router();
 
+userRouter.use(
+    morgan('combined', {
+        stream: {
+            write: (message) => logger.info(message.trim()),
+        },
+    })
+);
  
-userRouter.post('/userSignup', (req , res) => {
-    console.log(req.body);
-    userController.userSignup(req, res)
+// userRouter.post('/userSignup', (req , res) => {
+//     console.log(req.body);
+//     userController.userSignup(req, res)
+// });
+
+userRouter.post('/userSignup', (req, res) => {
+    logger.info(`Signup request received: ${JSON.stringify(req.body)}`);
+    userController.userSignup(req, res).catch((error) => {
+        logger.error(`Error in userSignup: ${error.message}`);
+        res.status(500).send({ error: 'Internal Server Error' });
+    });
 });
 
 // userRouter.post('/verifyOtp',(req,res)=>{

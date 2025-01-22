@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import HostServices from '../services/hostServices';
-
+import IHostService from '../interfaces/host/IHostService';
 
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 
 
 export class HostController {
 
-    constructor(private HostServices: HostServices) { }
+    constructor(private HostServices: IHostService) { }
 
     async saveBikeDetails(req: Request, res: Response) {
         try {

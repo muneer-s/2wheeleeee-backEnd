@@ -3,6 +3,7 @@ import { STATUS_CODES } from '../constants/httpStatusCodes';
 import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
 import AdminServices from '../services/adminServices';
+import { IAdminService } from '../interfaces/admin/IAdminService';
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ const jwtHandler = new CreateJWT()
 
 export class AdminController {
 
-    constructor(private AdminServices: AdminServices) {}
+    constructor(private AdminServices: IAdminService) {}
 
     milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
 

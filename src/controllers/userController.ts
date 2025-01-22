@@ -6,8 +6,9 @@ import userModel from '../models/userModels';
 import { CreateJWT } from '../utils/generateToken';
 import bikeModel from '../models/bikeModel';
 import OtpServices from '../services/otpServices';
-
-
+import logger from '../utils/logger';
+import { IUserService } from '../interfaces/user/IUserService';
+import { IOtpService } from '../interfaces/otp/IOtpService';
 
 
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
@@ -16,7 +17,7 @@ const jwtHandler = new CreateJWT()
 
 export class UserController {
 
-    constructor(private UserServices: UserServices,private OtpServices:OtpServices) {
+    constructor(private UserServices: IUserService,private OtpServices:IOtpService) {
 
     }
 
@@ -26,6 +27,9 @@ export class UserController {
         try {
             const userData = req.body;
             const userFound = await this.UserServices.userSignup(userData);
+
+            logger.info(1111111111111111111111)
+            logger.error(2222222222222222)
 
 
 

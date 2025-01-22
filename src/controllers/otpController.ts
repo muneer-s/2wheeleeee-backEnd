@@ -3,14 +3,14 @@ import OtpServices from '../services/otpServices';
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import userModel from '../models/userModels';
 import { CreateJWT } from '../utils/generateToken';
-
+import { IOtpService } from '../interfaces/otp/IOtpService';
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
 
 export class OtpController {
 
-    constructor(private OtpServices: OtpServices) {}
+    constructor(private OtpServices: IOtpService) {}
 
     milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
 
