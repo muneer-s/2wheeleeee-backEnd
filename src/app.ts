@@ -41,7 +41,7 @@ app.use(
 // Routes 
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
-app.use('/api/host', hostRouter);
+app.use('/api/bike', hostRouter);
 app.use('/api/otp',otpRouter)
 
 const port = process.env.PORT || 2000;

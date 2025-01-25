@@ -1,7 +1,7 @@
 import { UserInterface } from "../IUser";
 import { BikeData } from "../BikeInterface";
 
-interface IBikeWithUserDetails extends BikeData {
+export interface IBikeWithUserDetails extends BikeData {
     userDetails: UserInterface;
 }
 
@@ -36,6 +36,10 @@ export interface IAdminRepository {
     }>;
 
     verifyHost(bikeId: string): Promise<BikeData | string | undefined>;
+
+    revokeHost(bikeId: string,reason:string): Promise<BikeData | string | undefined>;
+
+    
 
     findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
 

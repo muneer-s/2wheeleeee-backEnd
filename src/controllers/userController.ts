@@ -17,20 +17,17 @@ const jwtHandler = new CreateJWT()
 
 export class UserController {
 
-    constructor(private UserServices: IUserService,private OtpServices:IOtpService) {
-
-    }
+    constructor(private UserServices: IUserService, private OtpServices: IOtpService) { }
 
     milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
 
-    async userSignup(req: Request, res: Response): Promise<void> {
+    async userSignup(req: Request, res: Response): Promise<Response|void> {
         try {
             const userData = req.body;
             const userFound = await this.UserServices.userSignup(userData);
 
             logger.info(1111111111111111111111)
             logger.error(2222222222222222)
-
 
 
             if (userFound == false) {
@@ -48,54 +45,7 @@ export class UserController {
         }
     }
 
-
-    // async verifyOtp(req: Request, res: Response) {
-    //     try {
-    //         let data = req.body
-    //         const otpMatched = await this.UserServices.verifyOtp(data)
-
-    //         if (otpMatched) {
-    //             const userEmail = data.userId
-
-    //             let userDetails = await userModel.findOne(
-    //                 { email: userEmail },
-    //                 'email name profile_picture _id'
-    //             );
-
-
-    //             if (!userDetails) {
-    //                 return res.status(BAD_REQUEST).json({
-    //                     success: false,
-    //                     message: 'User not found!',
-    //                 });
-    //             }
-
-
-    //             const time = this.milliseconds(0, 30, 0);
-    //             const refreshTokenExpiryTime = this.milliseconds(48, 0, 0);
-
-    //             const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
-    //             const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
-
-    //             res.status(OK).cookie('user_access_token', userAccessToken, {
-    //                 expires: new Date(Date.now() + time),
-    //                 sameSite: 'strict',
-    //             }).cookie('user_refresh_token', userRefreshToken, {
-    //                 expires: new Date(Date.now() + refreshTokenExpiryTime),
-    //                 sameSite: 'strict',
-    //             }).json({ userData: userDetails, userAccessToken: userAccessToken, userRefreshToken: userRefreshToken, success: true, message: 'OTP verification successful, account verified.' });
-
-
-    //         } else {
-    //             res.status(BAD_REQUEST).json({ success: false, message: 'OTP verification failed!' });
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //         res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
-    //     }
-    // }
-
-    async login(req: Request, res: Response) {
+    async login(req: Request, res: Response): Promise<Response|void> {
         try {
             const { email, password } = req.body
             const isUserPresent = await this.UserServices.login(email)
@@ -148,9 +98,7 @@ export class UserController {
         }
     }
 
- 
-
-    async logout(req: Request, res: Response) {
+    async logout(req: Request, res: Response): Promise<Response|void> {
         try {
             res.cookie('user_access_token', '', {
                 httpOnly: true,
@@ -165,7 +113,7 @@ export class UserController {
         }
     }
 
-    async forgotPassword(req: Request, res: Response) {
+    async forgotPassword(req: Request, res: Response): Promise<Response|void> {
         try {
             const { email } = req.body
 
@@ -180,9 +128,7 @@ export class UserController {
         }
     }
 
-
-
-    async getProfile(req: Request, res: Response) {
+    async getProfile(req: Request, res: Response): Promise<Response|void> {
         try {
             const email = req.query.email ?? '';
 
@@ -199,7 +145,7 @@ export class UserController {
         }
     }
 
-    async editUser(req: Request, res: Response) {
+    async editUser(req: Request, res: Response): Promise<Response|void> {
         try {
             const { email, ...userData } = req.body;
             if (!email) {
@@ -225,9 +171,7 @@ export class UserController {
         }
     }
 
-
-
-    async editUserDocuments(req: Request, res: Response) {
+    async editUserDocuments(req: Request, res: Response): Promise<Response|void> {
         try {
             const updatedUserDocuments = await this.UserServices.editUserDocuments(req, res)
             res.status(OK).json({
@@ -240,7 +184,6 @@ export class UserController {
         }
     }
 
-    
     async GetBikeList(req: Request, res: Response): Promise<void> {
         try {
             const { page = 1, limit = 10, search = '', fuelType, minRent, maxRent } = req.query;
@@ -266,7 +209,7 @@ export class UserController {
         }
     }
 
-    async getBikeDetails(req: Request, res: Response) {
+    async getBikeDetails(req: Request, res: Response): Promise<Response|void> {
         try {
             const { id } = req.params;
             const bike = await this.UserServices.getBikeDetails(id)

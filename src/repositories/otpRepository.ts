@@ -16,7 +16,7 @@ class OtpRepository implements IOtpRepository{
         this.otpRepository = new BaseRepository(OTPModel);
     }
 
-    async saveOtp(email: string, hashedOTP: string) {
+    async saveOtp(email: string, hashedOTP: string): Promise<boolean> {
         try {
             await this.otpRepository.findOneAndUpdate(
                 { email },
@@ -36,7 +36,7 @@ class OtpRepository implements IOtpRepository{
         }
     }
 
-    async checkOtp(email: string, otp: number) {
+    async checkOtp(email: string, otp: number): Promise<boolean> {
         try {
             const otpRecord = await this.otpRepository.findOne({ email })
 

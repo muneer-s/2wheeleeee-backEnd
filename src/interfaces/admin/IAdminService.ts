@@ -1,7 +1,7 @@
 import { UserInterface } from "../IUser";
 import { BikeData } from "../BikeInterface";
 
-interface ICarWithUserDetails extends BikeData {
+export interface IBikeWithUserDetails extends BikeData {
   userDetails: UserInterface;
 }
 
@@ -30,11 +30,12 @@ export interface IAdminService {
     query: object,
     options: { skip: number; limit: number; sort: object; search?: string }
   ): Promise<{
-    bikes: ICarWithUserDetails[];
+    bikes: IBikeWithUserDetails[];
     total: number;
   }>;
 
   verifyHost(bikeId: string): Promise<BikeData | string | undefined>;
+  revokeHost(bikeId:string,reason:string):Promise<BikeData | string | undefined>;
 
   findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
 

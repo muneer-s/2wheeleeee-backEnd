@@ -33,7 +33,7 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async saveUser(userData: any) {
+  async saveUser(userData: any): Promise<UserInterface | null> {
     try {
       // const newUser = new userModel(userData);
       // await newUser.save();
@@ -46,7 +46,7 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async login(email: string) {
+  async login(email: string): Promise<UserInterface | null> {
     try {
       return await this.userRepository.findOne({ email: email, isVerified: true })
     } catch (error) {
@@ -56,7 +56,7 @@ class UserRepository implements IUserRepository {
   }
 
 
-  async getProfile(email: string) {
+  async getProfile(email: string): Promise<UserInterface | null> {
     try {
       return await this.userRepository.findOne({ email: email })
     } catch (error) {
@@ -65,7 +65,7 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async editProfile(email: string, userData: Partial<UserInterface>) {
+  async editProfile(email: string, userData: Partial<UserInterface>): Promise<UserInterface | null> {
     try {
       // const updatedUser = await userModel.findOneAndUpdate(
       //   { email },
@@ -86,20 +86,8 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async saveUserDocuments(userId: string, documentData: Partial<UserInterface>) {
+  async saveUserDocuments(userId: string, documentData: Partial<UserInterface>): Promise<UserInterface | null> {
     try {
-      // const updatedUser = await this.userRepository.updateById(
-      //   userId,
-      //   {
-      //     $set: {
-      //       license_number: documentData.license_number,
-      //       license_Exp_Date: documentData.license_Exp_Date,
-      //       license_picture_front: documentData.license_picture_front,
-      //       license_picture_back: documentData.license_picture_back,
-      //     }
-      //   }
-      // );
-
       const updatedUser = await this.userRepository.updateById(userId, {
         license_number: documentData.license_number,
         license_Exp_Date: documentData.license_Exp_Date,
@@ -114,13 +102,12 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async getUserById(userId: string) {
+  async getUserById(userId: string): Promise<UserInterface | null> {
     return await this.userRepository.findById(userId);
   }
 
-  async getBikeList(query: object, skip: number, limit: number) {
+  async getBikeList(query: object, skip: number, limit: number): Promise<BikeData[]> {
     try {
-      //return await bikeModel.find(query).skip(skip).limit(limit).exec();
       return await this.bikeRepository.getList(query, skip, limit);
     } catch (error) {
       console.error('Error in repository getBikeList:', error);
@@ -128,9 +115,8 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async countBikes(query: object) {
+  async countBikes(query: object): Promise<number> {
     try {
-      // return await bikeModel.countDocuments(query).exec();
       return await this.bikeRepository.countDocuments(query);
 
     } catch (error) {
@@ -138,37 +124,6 @@ class UserRepository implements IUserRepository {
       throw error;
     }
   }
-
-  // async getBikeDetails(id: string):Promise<any | null> {
-  //   try {
-  //     const bikeDetails = await bikeModel.aggregate([
-  //       {
-  //         $match: { _id: new mongoose.Types.ObjectId(id) }
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: "users",
-  //           localField: "userId",
-  //           foreignField: "_id",
-  //           as: "userDetails"
-  //         }
-  //       },
-  //       {
-  //         $unwind: "$userDetails"
-  //       }
-  //     ]);
-
-  //     if (!bikeDetails || bikeDetails.length === 0) {
-  //       console.log("Bike not found");
-  //       return null;
-  //     }
-
-  //     return bikeDetails[0];
-  //   } catch (error) {
-  //     console.error("Error fetching bike and user details:", error);
-  //     throw error;
-  //   }
-  // }
   
   async getBikeDetails(id: string): Promise<any | null> {
     try {
@@ -202,10 +157,6 @@ class UserRepository implements IUserRepository {
       throw error;
     }
   }
-  
-
-
-
 
 
 }

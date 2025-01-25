@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 class OtpServices implements IOtpService{
     constructor(private otpRepository: IOtpRepository) { }
 
-    async generateAndSendOtp(email: string) {
+    async generateAndSendOtp(email: string): Promise<string | null> {
         try {
             const otp: string | null = generateRandomOTP()
             const hashedOTP = await bcrypt.hash(otp, 10);

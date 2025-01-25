@@ -12,30 +12,31 @@ const jwtHandler = new CreateJWT()
 
 export class AdminController {
 
-    constructor(private AdminServices: IAdminService) {}
+    constructor(private AdminServices: IAdminService) { }
 
     milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
 
 
-    async login(req: Request, res: Response) {
+    async login(req: Request, res: Response): Promise<void> {
         try {
-
             const { email, password } = req.body;
 
             if (!email || !password) {
-                return res.status(UNAUTHORIZED).json({ success: false, message: 'Email and password are required' });
+                res.status(UNAUTHORIZED).json({ success: false, message: 'Email and password are required' });
+                return
             }
 
             const adminEmail = process.env.ADMIN_EMAIL;
             const adminPassword = process.env.ADMIN_PASSWORD;
 
             if (email !== adminEmail || password !== adminPassword) {
-                return res.status(UNAUTHORIZED).json({ success: false, message: 'Invalid email or password' });
+                res.status(UNAUTHORIZED).json({ success: false, message: 'Invalid email or password' });
+                return
             }
 
             const time = this.milliseconds(0, 30, 0);
             // const time = 30 * 60 * 1000;
-            const refreshTokenExpires = 48 * 60 * 60 * 1000; 
+            const refreshTokenExpires = 48 * 60 * 60 * 1000;
 
             const token = jwtHandler.generateToken(adminEmail);
             const refreshToken = jwtHandler.generateRefreshToken(adminEmail);
@@ -58,11 +59,12 @@ export class AdminController {
                 });
         } catch (error) {
             console.error('Admin login error:', error);
-            return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error', });
+            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error', });
+
         }
     }
 
-    async logout(req: Request, res: Response) {
+    async logout(req: Request, res: Response): Promise<void> {
         try {
             res.cookie('admin_access_token', '', {
                 httpOnly: true,
@@ -79,11 +81,10 @@ export class AdminController {
         }
     }
 
-    async getAllUsers(req: Request, res: Response) {
+    async getAllUsers(req: Request, res: Response): Promise<void> {
         try {
 
             const { page = 1, limit = 10, search = '', isBlocked, isUser } = req.query;
-
 
             const findUsers = await this.AdminServices.getAllUsers({
                 page: Number(page),
@@ -106,7 +107,7 @@ export class AdminController {
         }
     }
 
-    async getSingleUser(req: Request, res: Response) {
+    async getSingleUser(req: Request, res: Response): Promise<void> {
         try {
 
             const userId = req.params.id;
@@ -119,20 +120,18 @@ export class AdminController {
         }
     }
 
-    async userVerify(req: Request, res: Response) {
+    async userVerify(req: Request, res: Response): Promise<void> {
         try {
             const userId = req.params.id
             const user = await this.AdminServices.userVerify(userId)
             res.status(200).json({ success: true, user });
-
-
         } catch (error) {
             console.log();
 
         }
     }
 
-    async userBlockUnBlock(req: Request, res: Response) {
+    async userBlockUnBlock(req: Request, res: Response): Promise<void> {
         try {
             const userId = req.params.id
             const user = await this.AdminServices.userBlockUnblock(userId)
@@ -145,13 +144,14 @@ export class AdminController {
         }
     }
 
-    async checkBlockedStatus(req: Request, res: Response) {
+    async checkBlockedStatus(req: Request, res: Response): Promise<void> {
         try {
             const { email } = req.body;
             const user = await this.AdminServices.findUserByEmail(email)
 
             if (!user) {
-                return res.status(404).json({ success: false, message: 'User not found' });
+                res.status(404).json({ success: false, message: 'User not found' });
+                return
             }
 
             res.status(200).json({ success: true, isBlocked: user.isBlocked });
@@ -161,7 +161,7 @@ export class AdminController {
         }
     }
 
-    async getAllBikeDetails(req: Request, res: Response) {
+    async getAllBikeDetails(req: Request, res: Response): Promise<void> {
         try {
 
             const { page = 1, limit = 10, search = '', filter = '', sort = '' } = req.query as {
@@ -182,11 +182,11 @@ export class AdminController {
                 sort: sort === 'asc' ? { rentAmount: 1 } : sort === 'desc' ? { rentAmount: -1 } : {},
                 search
             };
-           
-            
+
+
 
             let bikeDetails = await this.AdminServices.getAllBikeDetails(query, options)
-            console.log(1111,bikeDetails)
+            console.log(1111, bikeDetails)
             res.status(OK).json({ success: true, bikeDetails })
         } catch (error) {
             console.log(error);
@@ -196,11 +196,22 @@ export class AdminController {
     }
 
 
-    async verifyHost(req: Request, res: Response) {
+    async verifyHost(req: Request, res: Response): Promise<void> {
         try {
             const bikeId = req.params.id
-            const bike = await this.AdminServices.verifyHost(bikeId)
-            res.status(200).json({ success: true, bike });
+            const { reason } = req.body;
+
+            console.log(11111111111111111111111, reason)
+
+            if (reason) {
+                console.log(`Revocation reason: ${reason}`);
+                const bike = await this.AdminServices.revokeHost(bikeId, reason)
+                res.status(200).json({ success: true, bike });
+
+            } else {
+                const bike = await this.AdminServices.verifyHost(bikeId)
+                res.status(200).json({ success: true, bike });
+            }
 
         } catch (error) {
             console.log(error);
@@ -209,17 +220,17 @@ export class AdminController {
         }
     }
 
-    async isEditOn(req:Request,res:Response){
+    async isEditOn(req: Request, res: Response): Promise<void> {
         try {
 
             const bikeId = req.params.id
-            console.log("nikeid   ;   ",bikeId);
+            console.log("nikeid   ;   ", bikeId);
             const bike = await this.AdminServices.isEditOn(bikeId)
-            res.status(OK).json({success:true,bike})
-            
-            
+            res.status(OK).json({ success: true, bike })
+
+
         } catch (error) {
-            console.log("error is from is edit on ",error);
+            console.log("error is from is edit on ", error);
             res.status(500).json({ success: false, message: 'Internal server error' });
         }
     }

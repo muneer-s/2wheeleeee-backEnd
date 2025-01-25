@@ -1,3 +1,4 @@
+import { BikeData } from "../BikeInterface";
 import { UserInterface } from "../IUser";
 
 export interface IUserRepository {
@@ -8,7 +9,7 @@ export interface IUserRepository {
   editProfile(email: string, userData: Partial<UserInterface>): Promise<UserInterface | null>;
   saveUserDocuments(userId: string, documentData: Partial<UserInterface>): Promise<UserInterface | null>;
   getUserById(userId: string): Promise<UserInterface | null>;
-  getBikeList(query: object, skip: number, limit: number): Promise<any[]>;
+  getBikeList(query: object, skip: number, limit: number): Promise<BikeData[]>;
   countBikes(query: object): Promise<number>;
   getBikeDetails(id: string): Promise<any | null>;
 }

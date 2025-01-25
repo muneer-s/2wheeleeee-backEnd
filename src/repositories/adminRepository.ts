@@ -2,7 +2,7 @@ import bikeModel from '../models/bikeModel';
 import userModel from '../models/userModels';
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
-import { IAdminRepository } from '../interfaces/admin/IAdminRepository';
+import { IAdminRepository, IBikeWithUserDetails } from '../interfaces/admin/IAdminRepository';
 import BaseRepository from './baseRepository';
 import { UserInterface } from '../interfaces/IUser';
 import { BikeData } from '../interfaces/BikeInterface';
@@ -36,7 +36,7 @@ class AdminRepository implements IAdminRepository {
         search: string; 
         isBlocked?: string | undefined; 
         isUser?: string | undefined 
-    }) {
+    }):Promise<{ users: UserInterface[]; totalUsers: number; totalPages: number } | undefined> {
         try {
             const { page, limit, search, isBlocked, isUser } = filters;
             const query: any = {};
@@ -62,7 +62,7 @@ class AdminRepository implements IAdminRepository {
         }
     }
 
-    async getSingleUser(userId: string) {
+    async getSingleUser(userId: string): Promise<UserInterface | null | undefined> {
         try {
             return await this.userRepository.findById(userId)
         } catch (error) {
@@ -70,7 +70,7 @@ class AdminRepository implements IAdminRepository {
         }
     }
 
-    async userVerify(userId: string) {
+    async userVerify(userId: string): Promise<UserInterface | string | undefined> {
         try {
             const user = await this.userRepository.findById(userId);
             if (!user) return 'User not found'
@@ -82,10 +82,9 @@ class AdminRepository implements IAdminRepository {
         }
     }
 
-    async userBlockUnblock(userId: string) {
+    async userBlockUnblock(userId: string): Promise<UserInterface | { success: boolean; message: string } | undefined> {
         try {
             const findUser = await this.userRepository.findById(userId)
-            console.log("usere kitti : ", findUser);
 
             if (!findUser) {
                 return { success: false, message: "User not found" };
@@ -120,7 +119,7 @@ class AdminRepository implements IAdminRepository {
     async getAllBikeDetails(
         query: object, 
         options: { skip: number; limit: number; sort: object, search?: string }
-    ) {
+    ): Promise<{ bikes: IBikeWithUserDetails[]; total: number }> {
         try {
             const { skip, limit, sort, search } = options;
 
@@ -205,13 +204,13 @@ class AdminRepository implements IAdminRepository {
         }
     }
 
-    async verifyHost(bikeId: string) {
+    async verifyHost(bikeId: string): Promise<BikeData | string | undefined>  {
         try {
             const bike = await this.bikeRepository.findById(bikeId);
 
             if (!bike) return 'User not found'
 
-            bike.isHost = !bike.isHost;
+            bike.isHost = true
             const user = await this.userRepository.findById(bike.userId.toString())
 
             if (bike.isHost) {
@@ -223,16 +222,7 @@ class AdminRepository implements IAdminRepository {
                 }
 
                 await transporter.sendMail(mailOptions)
-            } else {
-                const mailOptions = {
-                    from: process.env.TRANSPORTER_EMAIL,
-                    to: user?.email,
-                    subject: 'Revoke Mail',
-                    text: `Welcome to 2wheleeee. Your Host Service is Rejected`
-                }
-                await transporter.sendMail(mailOptions)
-            }
-
+            } 
 
             await bike.save();
             return bike
@@ -243,7 +233,35 @@ class AdminRepository implements IAdminRepository {
         }
     }
 
-    async findUserByEmail(email: string) {
+    async revokeHost(bikeId: string, reason: string): Promise<BikeData | string | undefined> {
+        try {
+            const bike = await this.bikeRepository.findById(bikeId);
+
+            if (!bike) return 'User not found'
+
+            bike.isHost = false
+            const user = await this.userRepository.findById(bike.userId.toString())
+
+            if (!bike.isHost) {
+                const mailOptions = {
+                    from: process.env.TRANSPORTER_EMAIL,
+                    to: user?.email,
+                    subject: 'Revoke Mail',
+                    text: `Welcome to 2wheleeee. Your Host Service is Rejected \n Reason : ${reason}`
+                }
+                await transporter.sendMail(mailOptions)
+                console.log("mailllllllllllllllll aayxhuuuuuuuuuuuuuuuuuutooooooooooooooooooooooooooo")
+            }
+
+            await bike.save();
+            return bike
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async findUserByEmail(email: string): Promise<UserInterface | null | undefined> {
         try {
             const user = await this.userRepository.findOne({ email });
             return user
@@ -253,7 +271,7 @@ class AdminRepository implements IAdminRepository {
         }
     }
 
-    async isEditOn(bikeId: string) {
+    async isEditOn(bikeId: string): Promise<BikeData | undefined> {
         try {
             const bike = await this.bikeRepository.findById(bikeId)
 
@@ -272,11 +290,6 @@ class AdminRepository implements IAdminRepository {
             throw error
         }
     }
-
-
-
-
-
 
 }
 

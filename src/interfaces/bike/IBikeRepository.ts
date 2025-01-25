@@ -1,18 +1,20 @@
 import { BikeData, BikeDataInput } from "../BikeInterface";
+import { UserInterface } from "../IUser";
+
 
 interface IHostRepository {
   saveBikeDetails(documentData: BikeDataInput): Promise<BikeData>;
-  isAdminVerifyUser(userId: string): Promise<any>;
-  fetchBikeData(userId: string | undefined): Promise<any>;
-  bikeSingleView(bikeId: string): Promise<any>;
-  deleteBike(bikeId: string): Promise<any>;
+  isAdminVerifyUser(userId: string): Promise<UserInterface | null>;
+  fetchBikeData(userId: string ): Promise<BikeData[]>;
+  bikeSingleView(bikeId: string): Promise<BikeData | null>;
+  deleteBike(bikeId: string): Promise<boolean>;
   editBike(
     insuranceExpDate: Date,
     polutionExpDate: Date,
     insuranceImageUrl: string,
     PolutionImageUrl: string,
     bikeId: string
-  ): Promise<any>;
+  ): Promise<BikeData>;
 }
 
 export default IHostRepository;

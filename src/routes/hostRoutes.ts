@@ -1,7 +1,7 @@
 import express from 'express';
-import HostController from '../controllers/hostController';
-import HostServices from '../services/hostServices';
-import HostRepository from '../repositories/hostRepository';
+import HostController from '../controllers/bikeController';
+import HostServices from '../services/bikeServices';
+import HostRepository from '../repositories/bikeRepository';
 import multer from 'multer';
 import userAuth from '../middleware/userAuthMiddleware';
 

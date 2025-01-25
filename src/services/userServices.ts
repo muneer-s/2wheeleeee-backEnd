@@ -81,7 +81,7 @@ class UserServices implements IUserService {
 
     }
 
-    async saveUser(userData: any) {
+    async saveUser(userData: any): Promise<UserInterface | null> {
         try {
             return await this.userRepository.saveUser(userData)
         } catch (error) {
@@ -90,7 +90,7 @@ class UserServices implements IUserService {
         }
     }
 
-    async login(email: string) {
+    async login(email: string): Promise<UserInterface | null> {
         try {
             return await this.userRepository.login(email)
         } catch (error) {
@@ -99,7 +99,7 @@ class UserServices implements IUserService {
         }
     }
 
-    async getProfile(email: string) {
+    async getProfile(email: string): Promise<UserInterface | null> {
         try {
             return await this.userRepository.getProfile(email)
         } catch (error) {
@@ -108,7 +108,7 @@ class UserServices implements IUserService {
         }
     }
 
-    async editProfile(email: string, userData: Partial<UserInterface>, req: Request) {
+    async editProfile(email: string, userData: Partial<UserInterface>, req: Request): Promise<UserInterface | null> {
         try {
             let cloudinaryUrl = null;
 
@@ -157,7 +157,7 @@ class UserServices implements IUserService {
         }
     }
 
-    async editUserDocuments(req: Request, res: Response) {
+    async editUserDocuments(req: Request, res: Response): Promise<Response<any, Record<string, any>> | UserInterface | null> {
         try {
             const frontImage = (req.files as { [fieldname: string]: UploadedFile[] })?.frontImage?.[0];
             const backImage = (req.files as { [fieldname: string]: UploadedFile[] })?.backImage?.[0];
@@ -207,7 +207,11 @@ class UserServices implements IUserService {
         fuelType: string;
         minRent: number;
         maxRent: number;
-    }) {
+    }): Promise<{
+        bikeList: any[];
+        totalBikes: number;
+        totalPages: number;
+    }> {
         try {
             const { page, limit, search, fuelType, minRent, maxRent } = filters;
 
@@ -247,7 +251,7 @@ class UserServices implements IUserService {
         }
     }
 
-    async getBikeDetails(id: string) {
+    async getBikeDetails(id: string): Promise<any | null> {
         try {
             const result = await this.userRepository.getBikeDetails(id)
             return result

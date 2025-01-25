@@ -1,7 +1,7 @@
 import { BikeData } from '../interfaces/BikeInterface';
 import bikeModel from '../models/bikeModel';
 import userModel from '../models/userModels';
-import IHostRepository from '../interfaces/host/IHostRepository';
+import IHostRepository from '../interfaces/bike/IBikeRepository';
 import BaseRepository from './baseRepository';
 import { UserInterface } from '../interfaces/IUser';
 
@@ -14,36 +14,29 @@ class HostRepository implements IHostRepository {
     this.bikeRepository = new BaseRepository(bikeModel);
   }
 
-  async saveBikeDetails(documentData: BikeData) {
+  async saveBikeDetails(documentData: BikeData): Promise<BikeData> {
     try {
-      // const newBike = new bikeModel(documentData);
-      // const savedBike = await newBike.save();
-      // return savedBike;
-
       return await this.bikeRepository.create(documentData);
-
-
     } catch (error) {
       console.error("Error updating user documents in the repository:", error);
       throw new Error("Failed to update user documents in the database");
     }
   }
 
-  async isAdminVerifyUser(userId: string) {
+  async isAdminVerifyUser(userId: string): Promise<UserInterface | null> {
     try {
-      // const user = await userModel.findById(userId)
       const user = await this.userRepository.findById(userId)
       return user
     } catch (error) {
       console.log(error);
+      throw new Error('Failed to verify user');
 
     }
   }
 
-  async fetchBikeData(userId: string | undefined) {
+  async fetchBikeData(userId: string | undefined) : Promise<BikeData[]> {
     try {
       if (!userId) throw new Error("User ID is undefined");
-      // const bikes = await bikeModel.find({ userId });
       const bikes = await this.bikeRepository.find({ userId });
       return bikes
     } catch (error) {
@@ -52,39 +45,33 @@ class HostRepository implements IHostRepository {
     }
   }
 
-  async bikeSingleView(bikeId: string) {
+  async bikeSingleView(bikeId: string): Promise<BikeData | null> {
     try {
       if (!bikeId) throw new Error("User ID is undefined");
-
-      // const bike = await bikeModel.findById(bikeId);
       const bike = await this.bikeRepository.findById(bikeId);
-      console.log("Bike kitti: ", bike);
       return bike
     } catch (error) {
-      console.error("Error in repository layer:", error);
+      console.error('Error fetching single bike view in the repository:', error);
       throw error;
     }
   }
 
-  async deleteBike(bikeId: string) {
+  async deleteBike(bikeId: string): Promise<boolean>{
     try {
+      if (!bikeId) throw new Error('Bike ID is undefined');
 
-      if (!bikeId) throw new Error("User ID is undefined");
-
-      // const result = await bikeModel.deleteOne({ _id: bikeId });
       const result = await this.bikeRepository.deleteOne({ _id: bikeId });
-
+      
       if (result.deletedCount === 0) {
-        throw new Error("Bike not found");
+        throw new Error('Bike not found');
       }
-
-      return result;
-
+      return true;
     } catch (error) {
-      console.error("Error in repository layer:", error);
+      console.error('Error deleting bike in the repository:', error);
       throw error;
     }
   }
+
 
   // async editBike(
   //   insuranceExpDate: Date, 
@@ -124,7 +111,7 @@ class HostRepository implements IHostRepository {
     insuranceImageUrl: string,
     PolutionImageUrl: string,
     bikeId: string
-  ): Promise<BikeData | null> {
+  ): Promise<BikeData > {
     try {
       const updateData: Partial<BikeData> = {
         insuranceExpDate,

@@ -1,12 +1,20 @@
 
 import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
 import { IAdminService } from "../interfaces/admin/IAdminService";
-
+import { UserInterface } from "../interfaces/IUser";
+import { IBikeWithUserDetails } from "../interfaces/admin/IAdminRepository";
+import { BikeData } from "../interfaces/BikeInterface";
 
 class AdminServices implements IAdminService{
     constructor(private adminRepository: IAdminRepository) { }
 
-    async getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string | undefined }) {
+    async getAllUsers(filters: { 
+        page: number; 
+        limit: number; 
+        search: string; 
+        isBlocked?: string | undefined; 
+        isUser?: string | undefined 
+    }):Promise<{ users: UserInterface[]; totalUsers: number; totalPages: number } | undefined> {
         try {
             return await this.adminRepository.getAllUsers(filters)
         } catch (error) {
@@ -16,7 +24,7 @@ class AdminServices implements IAdminService{
         }
     }
 
-    async getSingleUser(userId: string) {
+    async getSingleUser(userId: string): Promise<UserInterface | null | undefined> {
         try {
             return await this.adminRepository.getSingleUser(userId)
 
@@ -26,7 +34,7 @@ class AdminServices implements IAdminService{
         }
     }
 
-    async userVerify(userId: string) {
+    async userVerify(userId: string): Promise<UserInterface | string | undefined> {
         try {
             return await this.adminRepository.userVerify(userId)
         } catch (error) {
@@ -35,7 +43,7 @@ class AdminServices implements IAdminService{
         }
     }
 
-    async userBlockUnblock(userId: string) {
+    async userBlockUnblock(userId: string): Promise<UserInterface | { success: boolean; message: string } | undefined> {
         try {
             return await this.adminRepository.userBlockUnblock(userId)
         } catch (error) {
@@ -44,7 +52,10 @@ class AdminServices implements IAdminService{
         }
     }
 
-    async getAllBikeDetails(query: object, options: { skip: number; limit: number; sort: object ,search:string}) {
+    async getAllBikeDetails(
+        query: object, 
+        options: { skip: number; limit: number; sort: object ,search:string}
+    ): Promise<{ bikes: IBikeWithUserDetails[]; total: number }> {
         try {
             return await this.adminRepository.getAllBikeDetails(query, options)
         } catch (error) {
@@ -53,10 +64,7 @@ class AdminServices implements IAdminService{
         }
     }
 
-
-    
-
-    async verifyHost(bikeId: string) {
+    async verifyHost(bikeId: string): Promise<BikeData | string | undefined> {
         try {
             return await this.adminRepository.verifyHost(bikeId)
 
@@ -67,7 +75,17 @@ class AdminServices implements IAdminService{
         }
     }
 
-    async findUserByEmail(email: string) {
+    async revokeHost(bikeId:string,reason:string): Promise<BikeData | string | undefined>{
+        try {
+            return await this.adminRepository.revokeHost(bikeId,reason)
+            
+        } catch (error) {
+            console.log(error);
+            throw error
+        }
+    }
+
+    async findUserByEmail(email: string): Promise<UserInterface | null | undefined> {
         try {
             return await this.adminRepository.findUserByEmail(email)
 
@@ -78,7 +96,7 @@ class AdminServices implements IAdminService{
         }
     }
 
-    async isEditOn(bikeId:string){
+    async isEditOn(bikeId:string): Promise<BikeData | undefined>{
         try {
             return await this.adminRepository.isEditOn(bikeId)
         } catch (error) {

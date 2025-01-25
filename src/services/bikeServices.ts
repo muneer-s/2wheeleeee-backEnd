@@ -3,11 +3,12 @@ import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { Request, Response } from "express";
 import cloudinary from "../config/cloudinaryConfig";
 import { UploadApiResponse } from "cloudinary";
-import HostRepository from "../repositories/hostRepository";
+import HostRepository from "../repositories/bikeRepository";
 import { Readable } from "stream";
 import mongoose from "mongoose";
-import IHostRepository from "../interfaces/host/IHostRepository";
-import IHostService from "../interfaces/host/IHostService";
+import IHostRepository from "../interfaces/bike/IBikeRepository";
+import IHostService from "../interfaces/bike/IBikeService";
+import { UserInterface } from "../interfaces/IUser";
 const { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } = STATUS_CODES;
 
 
@@ -15,7 +16,7 @@ class HostServices implements IHostService {
     constructor(private hostRepository: IHostRepository) { }
 
 
-    async saveBikeDetails(req: Request, res: Response) {
+    async saveBikeDetails(req: Request, res: Response): Promise<Response | undefined> {
         try {
 
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -110,10 +111,7 @@ class HostServices implements IHostService {
 
             console.log('-------------', bikeData);
             const savedBike = await this.hostRepository.saveBikeDetails(bikeData);
-            console.log("00000000000", savedBike);
-
-
-            return savedBike
+            return res.status(OK).json({ message: "Bike details saved successfully", data: savedBike });
 
         } catch (error) {
             console.error("Error uploading images or saving bike details:", error);
@@ -124,19 +122,18 @@ class HostServices implements IHostService {
         }
     }
 
-    async isAdminVerifyUser(userId: string) {
+    async isAdminVerifyUser(userId: string): Promise<UserInterface | null> {
         try {
             const findUser = await this.hostRepository.isAdminVerifyUser(userId);
             return findUser
-
         } catch (error) {
             console.log(error);
-
+            throw error
         }
     }
 
 
-    async fetchBikeData(userId: string | undefined) {
+    async fetchBikeData(userId: string | undefined): Promise<BikeData[]> {
         try {
             if (!userId) throw new Error("User ID is undefined");
 
@@ -148,7 +145,7 @@ class HostServices implements IHostService {
         }
     }
 
-    async bikeSingleView(bikeId: string) {
+    async bikeSingleView(bikeId: string) : Promise<BikeData | null>{
         try {
             const bike = await this.hostRepository.bikeSingleView(bikeId)
             return bike
@@ -158,17 +155,17 @@ class HostServices implements IHostService {
         }
     }
 
-    async deleteBike(bikeId: string) {
+    async deleteBike(bikeId: string): Promise<boolean> {
         try {
-            const bike = await this.hostRepository.deleteBike(bikeId)
-            return bike
+            const result = await this.hostRepository.deleteBike(bikeId)
+            return result
         } catch (error) {
             console.error("Error in service layer:", error);
             throw error;
         }
     }
 
-    async editBike(req: Request, res: Response) {
+    async editBike(req: Request, res: Response): Promise< Response> {
         try {
             const { bikeId } = req.query;
 
@@ -222,8 +219,7 @@ class HostServices implements IHostService {
                 bikeId
             )
 
-            return bike
-
+            return res.status(OK).json({ success: true, bike });
         } catch (error) {
             console.error("Error in service layer edit bike:", error);
             throw error;

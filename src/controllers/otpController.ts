@@ -10,11 +10,11 @@ const jwtHandler = new CreateJWT()
 
 export class OtpController {
 
-    constructor(private OtpServices: IOtpService) {}
+    constructor(private OtpServices: IOtpService) { }
 
     milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
 
-    async verifyOtp(req: Request, res: Response) {
+    async verifyOtp(req: Request, res: Response): Promise<Response | void> {
         try {
             let data = req.body
             const otpMatched = await this.OtpServices.verifyOtp(data)
@@ -35,7 +35,6 @@ export class OtpController {
                     });
                 }
 
-
                 const time = this.milliseconds(0, 30, 0);
                 const refreshTokenExpiryTime = this.milliseconds(48, 0, 0);
 
@@ -50,7 +49,6 @@ export class OtpController {
                     sameSite: 'strict',
                 }).json({ userData: userDetails, userAccessToken: userAccessToken, userRefreshToken: userRefreshToken, success: true, message: 'OTP verification successful, account verified.' });
 
-
             } else {
                 res.status(BAD_REQUEST).json({ success: false, message: 'OTP verification failed!' });
             }
@@ -60,16 +58,12 @@ export class OtpController {
         }
     }
 
-    async resendOtp(req: Request, res: Response) {
+    async resendOtp(req: Request, res: Response): Promise<Response | void> {
         try {
             const email = req.body.email
-
             //const otp = await generateAndSendOTP(email);
-             await this.OtpServices.generateAndSendOtp(email)
-
+            await this.OtpServices.generateAndSendOtp(email);
             return res.status(200).json({ success: true, message: 'OTP resent successfully' });
-
-
         } catch (error) {
             console.log(error);
             res.status(500).json({ success: false, message: 'Internal server error' });
