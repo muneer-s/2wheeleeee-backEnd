@@ -53,6 +53,9 @@ class OtpServices implements IOtpService{
         try {
             let email = data.userId
             let otp = data.otp
+            console.log(2,email);
+            console.log(3,otp);
+            
             return await this.otpRepository.checkOtp(email, otp)
         } catch (error) {
             console.log(error);

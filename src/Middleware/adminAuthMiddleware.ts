@@ -6,7 +6,7 @@ dotenv.config();
 
 const jwtHandler = new CreateJWT();
 
-export const adminAuthMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const adminAuthMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
     let token = req.cookies.admin_access_token;
     let refreshToken = req.cookies.admin_refresh_token;
 
@@ -15,8 +15,8 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
     
 
     if (!refreshToken) {
-        res.status(401).json({ success: false, message: 'Admin Token expired or not available' });
-        return;
+        return res.status(401).json({ success: false, message: 'Admin Token expired or not available' });
+        
     }
 
     if (!token) {
@@ -32,8 +32,7 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
 
             token = newAccessToken;
         } catch (error) {
-            res.status(401).json({ success: false, message: 'Failed to refresh token' });
-            return;
+            return res.status(401).json({ success: false, message: 'Failed to refresh token' });
         }
     }
 
@@ -43,13 +42,13 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
         if (decoded?.success && decoded.decoded?.data === process.env.ADMIN_EMAIL) {
             next(); // Proceed to the next middleware or route handler
         } else {
-            res.status(401).json({ success: false, message: 'Invalid token' });
+           return res.status(401).json({ success: false, message: 'Invalid token' });
         }
     } catch (error: any) {
         if (error.name === 'TokenExpiredError') {
-            res.status(401).json({ success: false, message: 'Token expired' });
+            return res.status(401).json({ success: false, message: 'Token expired' });
         } else {
-            res.status(401).json({ success: false, message: 'Token verification failed' });
+            return res.status(401).json({ success: false, message: 'Token verification failed' });
         }
     }
 };

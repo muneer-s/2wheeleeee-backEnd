@@ -11,15 +11,33 @@ const otpController = new OtpController(service)
 const otpRouter = express.Router();
 
 
-otpRouter.post('/verifyOtp',(req,res)=>{
-    console.log(`otp is ${req.body.otp}  `);
-    otpController.verifyOtp(req,res)
-    // userController.verifyOtp(req,res)
-    
-})              
-otpRouter.post('/resendOtp',(req,res)=>{
-    otpController.resendOtp(req,res)
-})
+
+
+
+otpRouter
+  .post('/verifyOtp', (req, res) => {
+    console.log(`otp is ${req.body.otp}`);
+    otpController.verifyOtp(req, res);
+  })
+  .post('/resendOtp', (req, res) => {
+    otpController.resendOtp(req, res);
+  });
+
+
+
+
 
 export default otpRouter;
 
+
+
+
+
+// otpRouter.post('/verifyOtp',(req,res)=>{
+//     console.log(`otp is ${req.body.otp}  `);
+//     otpController.verifyOtp(req,res)
+    
+// })              
+// otpRouter.post('/resendOtp',(req,res)=>{
+//     otpController.resendOtp(req,res)
+// })

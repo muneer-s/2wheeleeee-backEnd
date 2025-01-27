@@ -10,6 +10,8 @@ import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
 import { IUserRepository } from "../interfaces/user/IUserRepository";
 import { IUserService } from "../interfaces/user/IUserService";
+import { error } from "console";
+import { ResponseModel } from "../utils/responseModel";
 
 
 dotenv.config();
@@ -79,6 +81,13 @@ class UserServices implements IUserService {
             return null;
         }
 
+    }
+    async createWallet() {
+        try {
+            return await this.userRepository.createWallet()
+        } catch (error) {
+            throw error
+        }
     }
 
     async saveUser(userData: any): Promise<UserInterface | null> {
@@ -169,9 +178,10 @@ class UserServices implements IUserService {
             const existingUser = await this.userRepository.getUserById(userId);
 
             if (!existingUser) {
-                return res.status(404).json({ message: "User not found" });
+                return res.status(STATUS_CODES.NOT_FOUND).json(ResponseModel.error("User not found"));
             }
 
+            
             let frontImageUrl = existingUser.license_picture_front;
             let backImageUrl = existingUser.license_picture_back;
 
@@ -191,8 +201,6 @@ class UserServices implements IUserService {
 
             const result = await this.userRepository.saveUserDocuments(userId, documentData);
             return result
-
-
         } catch (error) {
             console.log(error);
             throw error
@@ -234,7 +242,7 @@ class UserServices implements IUserService {
             const skip = (page - 1) * limit;
 
             const bikeList = await this.userRepository.getBikeList(query, skip, limit);
-            
+
 
             const totalBikes = await this.userRepository.countBikes(query);
 

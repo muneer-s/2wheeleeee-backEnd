@@ -17,13 +17,65 @@ const hostRouter = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 
+hostRouter
+  .post(
+    '/saveBikeDetails',
+    userAuth,
+    upload.fields([
+      { name: 'images', maxCount: 4 },
+      { name: 'rcImage', maxCount: 1 },
+      { name: 'PolutionImage', maxCount: 1 },
+      { name: 'insuranceImage', maxCount: 1 },
+    ]),
+    (req, res) => {hostController.saveBikeDetails(req, res)}
+  )
+  .get('/isAdminVerifyUser', userAuth, (req, res) =>{hostController.isAdminVerifyUser(req, res)})
+  .get('/fetchBikeData', userAuth, (req, res) =>{hostController.fetchBikeData(req, res)})
+  .get('/bikeSingleView', userAuth, (req, res) =>{hostController.bikeSingleView(req, res)})
+  .delete('/deleteBike', userAuth, (req, res) =>{hostController.deleteBike(req, res)})
+  .put('/editBike',userAuth,upload.fields([{ name: 'insuranceImage', maxCount: 1 },{ name: 'polutionImage', maxCount: 1 }]),(req, res) => {hostController.editBike(req, res)})
+
+
+
+export default hostRouter;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 hostRouter.post('/saveBikeDetails', userAuth, upload.fields([
     { name: "images", maxCount: 4 },
     { name: "rcImage", maxCount: 1 },
     { name: "PolutionImage", maxCount: 1 },
     { name: "insuranceImage", maxCount: 1 },
 ]), (req, res) => {
-
     hostController.saveBikeDetails(req, res)
 });
 
@@ -54,6 +106,5 @@ hostRouter.put("/editBike", userAuth, upload.fields([
     hostController.editBike(req, res)
 });
 
+*/
 
-
-export default hostRouter;

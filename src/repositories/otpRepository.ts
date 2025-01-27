@@ -41,14 +41,14 @@ class OtpRepository implements IOtpRepository{
             const otpRecord = await this.otpRepository.findOne({ email })
 
             if (!otpRecord) {
-                console.log('OTP record not found');
+                console.log(4,'OTP record not found');
                 return false;
             }
 
             const isMatch = await bcrypt.compare(otp.toString(), otpRecord.hashedOTP);
 
             if (!isMatch) {
-                console.log('Invalid OTP');
+                console.log(5,'Invalid OTP');
                 return false;
             }
             await this.userRepository.updateOne({ email }, { $set: { isVerified: true } })

@@ -4,6 +4,7 @@ import { STATUS_CODES } from "../constants/httpStatusCodes";
 import userModel from '../models/userModels';
 import { CreateJWT } from '../utils/generateToken';
 import { IOtpService } from '../interfaces/otp/IOtpService';
+import { ResponseModel } from '../utils/responseModel';
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
@@ -17,6 +18,7 @@ export class OtpController {
     async verifyOtp(req: Request, res: Response): Promise<Response | void> {
         try {
             let data = req.body
+
             const otpMatched = await this.OtpServices.verifyOtp(data)
 
             if (otpMatched) {
@@ -27,12 +29,8 @@ export class OtpController {
                     'email name profile_picture _id'
                 );
 
-
                 if (!userDetails) {
-                    return res.status(BAD_REQUEST).json({
-                        success: false,
-                        message: 'User not found!',
-                    });
+                    return res.status(BAD_REQUEST).json(ResponseModel.error('User not found!'));
                 }
 
                 const time = this.milliseconds(0, 30, 0);
@@ -41,33 +39,37 @@ export class OtpController {
                 const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
                 const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
 
-                res.status(OK).cookie('user_access_token', userAccessToken, {
+                return res.status(OK).cookie('user_access_token', userAccessToken, {
                     expires: new Date(Date.now() + time),
                     sameSite: 'strict',
                 }).cookie('user_refresh_token', userRefreshToken, {
                     expires: new Date(Date.now() + refreshTokenExpiryTime),
                     sameSite: 'strict',
-                }).json({ userData: userDetails, userAccessToken: userAccessToken, userRefreshToken: userRefreshToken, success: true, message: 'OTP verification successful, account verified.' });
+                }).json(
+                    ResponseModel.success('OTP verification successful, account verified.', {
+                        userData: userDetails,
+                        userAccessToken: userAccessToken,
+                        userRefreshToken: userRefreshToken
+                    })
+                );
 
             } else {
-                res.status(BAD_REQUEST).json({ success: false, message: 'OTP verification failed!' });
+                return res.status(BAD_REQUEST).json(ResponseModel.error('OTP verification failed! No matching OTP'));
             }
         } catch (error) {
             console.log(error);
-            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error', error as Error));
         }
     }
 
     async resendOtp(req: Request, res: Response): Promise<Response | void> {
         try {
             const email = req.body.email
-            //const otp = await generateAndSendOTP(email);
             await this.OtpServices.generateAndSendOtp(email);
-            return res.status(200).json({ success: true, message: 'OTP resent successfully' });
+            return res.status(OK).json(ResponseModel.success('OTP resent successfully'));
         } catch (error) {
             console.log(error);
-            res.status(500).json({ success: false, message: 'Internal server error' });
-
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error', error as Error));
         }
     }
 

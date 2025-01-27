@@ -5,16 +5,19 @@ import userModel from '../models/userModels';
 import { IUserRepository } from '../interfaces/user/IUserRepository';
 import BaseRepository from './baseRepository';
 import { BikeData } from '../interfaces/BikeInterface';
+import walletModel, { IWallet } from '../models/walletModel';
 
 
 class UserRepository implements IUserRepository {
 
   private userRepository: BaseRepository<UserInterface>;
   private bikeRepository: BaseRepository<BikeData>;
+  private hostRepository: BaseRepository<IWallet>
 
   constructor() {
     this.userRepository = new BaseRepository(userModel);
     this.bikeRepository = new BaseRepository(bikeModel);
+    this.hostRepository = new BaseRepository(walletModel)
   }
 
   async emailExistCheck(email: string): Promise<boolean | null> {
@@ -42,7 +45,21 @@ class UserRepository implements IUserRepository {
       return newUser;
     } catch (error) {
       console.log(error as Error);
-      return null;
+      throw error
+    }
+  }
+
+
+  async createWallet(): Promise<IWallet> {
+    try {
+      // const wallet = new walletModel({ balance: 0 });
+      // return wallet.save();
+
+      const wallet = await this.hostRepository.create({balance:0})
+      return wallet
+    } catch (error) {
+      console.error("error in creating wallet:", error);
+      throw error;
     }
   }
 

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
 import AdminServices from '../services/adminServices';
 import { IAdminService } from '../interfaces/admin/IAdminService';
+import { ResponseModel } from '../utils/responseModel';
 
 dotenv.config();
 
@@ -17,31 +18,28 @@ export class AdminController {
     milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
 
 
-    async login(req: Request, res: Response): Promise<void> {
+    async login(req: Request, res: Response): Promise<Response | void> {
         try {
             const { email, password } = req.body;
 
             if (!email || !password) {
-                res.status(UNAUTHORIZED).json({ success: false, message: 'Email and password are required' });
-                return
+                return res.status(UNAUTHORIZED).json(ResponseModel.error('Email and password are required'));
             }
 
             const adminEmail = process.env.ADMIN_EMAIL;
             const adminPassword = process.env.ADMIN_PASSWORD;
 
             if (email !== adminEmail || password !== adminPassword) {
-                res.status(UNAUTHORIZED).json({ success: false, message: 'Invalid email or password' });
-                return
+                return res.status(UNAUTHORIZED).json(ResponseModel.error('Invalid email or password'))
             }
 
             const time = this.milliseconds(0, 30, 0);
-            // const time = 30 * 60 * 1000;
             const refreshTokenExpires = 48 * 60 * 60 * 1000;
 
             const token = jwtHandler.generateToken(adminEmail);
             const refreshToken = jwtHandler.generateRefreshToken(adminEmail);
 
-            res.status(OK)
+            return res.status(OK)
                 .cookie('admin_access_token', token, {
                     expires: new Date(Date.now() + time),
                     httpOnly: true,
@@ -50,21 +48,19 @@ export class AdminController {
                     expires: new Date(Date.now() + refreshTokenExpires),
                     httpOnly: true,
                     sameSite: 'strict',
-                }).json({
-                    success: true,
-                    message: 'Login successful',
+                }).json(ResponseModel.success('Login successful', {
                     adminEmail: adminEmail,
                     token,
                     refreshToken
-                });
+                }))
+
         } catch (error) {
             console.error('Admin login error:', error);
-            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error', });
-
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error'));
         }
     }
 
-    async logout(req: Request, res: Response): Promise<void> {
+    async logout(req: Request, res: Response): Promise<Response | void> {
         try {
             res.cookie('admin_access_token', '', {
                 httpOnly: true,
@@ -74,14 +70,14 @@ export class AdminController {
                 expires: new Date(0)
             })
 
-            res.status(OK).json({ success: true, message: 'Logged out successfully' });
+            return res.status(OK).json({ success: true, message: 'Logged out successfully' });
         } catch (error) {
             console.error('Admin logout error:', error);
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
         }
     }
 
-    async getAllUsers(req: Request, res: Response): Promise<void> {
+    async getAllUsers(req: Request, res: Response): Promise<Response | void> {
         try {
 
             const { page = 1, limit = 10, search = '', isBlocked, isUser } = req.query;
@@ -94,29 +90,27 @@ export class AdminController {
                 isUser: isUser ? String(isUser) : undefined
             });
 
-            res.status(200).json({
-                success: true,
+            return res.status(OK).json(ResponseModel.success('All Users List', {
                 usersList: findUsers?.users,
                 totalUsers: findUsers?.totalUsers,
                 totalPages: findUsers?.totalPages,
-            });
+            }))
         } catch (error) {
             console.log(error);
-            res.status(500).json({ success: false, message: 'Internal Server Error' });
-
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal Server Error', error as Error));
         }
     }
 
-    async getSingleUser(req: Request, res: Response): Promise<void> {
+    async getSingleUser(req: Request, res: Response): Promise<Response | void> {
         try {
 
             const userId = req.params.id;
             const user = await this.AdminServices.getSingleUser(userId);
-            res.status(200).json({ success: true, user });
+            return res.status(OK).json(ResponseModel.success('Singel User Details', user));
 
         } catch (error) {
             console.log(error);
-
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error))
         }
     }
 
@@ -194,7 +188,6 @@ export class AdminController {
 
         }
     }
-
 
     async verifyHost(req: Request, res: Response): Promise<void> {
         try {

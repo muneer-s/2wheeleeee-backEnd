@@ -1,9 +1,11 @@
+import { IWallet } from "../../models/walletModel";
 import { BikeData } from "../BikeInterface";
 import { UserInterface } from "../IUser";
 
 export interface IUserRepository {
   emailExistCheck(email: string): Promise<boolean | null>;
   saveUser(userData: any): Promise<UserInterface | null>;
+  createWallet():Promise<IWallet>;
   login(email: string): Promise<UserInterface | null>;
   getProfile(email: string): Promise<UserInterface | null>;
   editProfile(email: string, userData: Partial<UserInterface>): Promise<UserInterface | null>;

@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
 
 export interface UserInterface extends Document {
@@ -16,7 +16,9 @@ export interface UserInterface extends Document {
     license_number:string;
     license_Exp_Date:Date;
     license_picture_front: string;    
-    license_picture_back: string;    
+    license_picture_back: string;   
+    wallet:ObjectId
+ 
     matchPassword: (enteredPassword: string) => Promise<boolean>;
 }
  

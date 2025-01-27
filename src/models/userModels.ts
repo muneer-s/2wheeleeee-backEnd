@@ -56,8 +56,15 @@ const userSchema: Schema<UserInterface> = new Schema({
     license_picture_back: {
         type: String,
         default: ''
+    },
+    wallet: {
+        type: Schema.Types.ObjectId,
+        ref: 'Wallet'
     }
-});
+
+},
+    { timestamps: true }
+);
 
 userSchema.pre('save', async function (this: UserInterface, next) {
     if (!this.isModified("password")) {

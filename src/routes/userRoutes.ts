@@ -17,10 +17,10 @@ import logger from '../utils/logger';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/"); 
+        cb(null, "uploads/");
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname); 
+        cb(null, Date.now() + "-" + file.originalname);
     },
 });
 const uploads = multer({ storage });
@@ -29,12 +29,10 @@ const uploads = multer({ storage });
 
 const otpRepository = new OtpRepository();
 const userRepository = new UserRepository()
-const encrypt = new Encrypt()
-const createjwt = new CreateJWT()
 
 const service = new UserServices(userRepository)
 const otpService = new OtpServices(otpRepository)
-const userController = new UserController(service,otpService)
+const userController = new UserController(service, otpService)
 
 const userRouter = express.Router();
 
@@ -45,7 +43,44 @@ userRouter.use(
         },
     })
 );
- 
+
+userRouter
+    .post('/userSignup', (req, res) => {
+        userController.userSignup(req, res)
+    })
+    .post('/login', (req, res) => {
+        userController.login(req, res);
+    })
+    .put('/logout', (req, res) => {
+        userController.logout(req, res);
+    })
+    .post('/forgotPassword', (req, res) => {
+        userController.forgotPassword(req, res);
+    })
+    .get('/getProfile', userAuth, (req, res) => {
+        userController.getProfile(req, res);
+    })
+    .put('/editUser', userAuth, upload.single('profile_picture'), (req, res) => {
+        userController.editUser(req, res);
+    })
+    .put(
+        '/editUserDocuments',
+        userAuth,
+        uploads.fields([{ name: 'frontImage' }, { name: 'backImage' }]),
+        (req, res) => {
+            userController.editUserDocuments(req, res);
+        }
+    )
+    .get('/getAllBikes', (req, res) => {
+        userController.GetBikeList(req, res);
+    })
+    .get('/getBikeDeatils/:id', (req, res) => {
+        userController.getBikeDetails(req, res);
+    });
+
+
+
+/*
 // userRouter.post('/userSignup', (req , res) => {
 //     console.log(req.body);
 //     userController.userSignup(req, res)
@@ -58,12 +93,6 @@ userRouter.post('/userSignup', (req, res) => {
         res.status(500).send({ error: 'Internal Server Error' });
     });
 });
-
-// userRouter.post('/verifyOtp',(req,res)=>{
-//     console.log(`otp is ${req.body.otp}  `);
-//     userController.verifyOtp(req,res)
-    
-// })
 
 userRouter.post('/login',(req,res)=>{    
     userController.login(req,res)
@@ -99,7 +128,7 @@ userRouter.get('/getBikeDeatils/:id', (req, res) => {
 });
 
 
-
+*/
 
 
 export default userRouter;
