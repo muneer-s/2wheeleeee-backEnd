@@ -26,4 +26,6 @@ export interface IUserService {
         totalPages: number;
     }>;
     getBikeDetails(id: string): Promise<any | null>;
+    findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
+
 }

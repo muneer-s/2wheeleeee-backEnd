@@ -76,7 +76,9 @@ userRouter
     })
     .get('/getBikeDeatils/:id', (req, res) => {
         userController.getBikeDetails(req, res);
-    });
+    })
+    .post('/checkBlockedStatus', (req, res) => {userController.checkBlockedStatus(req, res)})
+    
 
 
 

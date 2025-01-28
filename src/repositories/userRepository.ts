@@ -174,6 +174,15 @@ class UserRepository implements IUserRepository {
       throw error;
     }
   }
+  async findUserByEmail(email: string): Promise<UserInterface | null | undefined> {
+    try {
+        const user = await this.userRepository.findOne({ email });
+        return user
+
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 }

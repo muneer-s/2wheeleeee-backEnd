@@ -270,6 +270,17 @@ class UserServices implements IUserService {
         }
     }
 
+    async findUserByEmail(email: string): Promise<UserInterface | null | undefined> {
+        try {
+            return await this.userRepository.findUserByEmail(email)
+
+        } catch (error) {
+            console.log(error);
+            throw error
+
+        }
+    }
+
 
 
 

@@ -226,6 +226,23 @@ export class UserController {
         }
     }
 
+    async checkBlockedStatus(req: Request, res: Response): Promise<Response | void> {
+        try {
+            const { email } = req.body;
+            const user = await this.UserServices.findUserByEmail(email)
+
+            if (!user) {
+                return res.status(NOT_FOUND).json(ResponseModel.error('User not found'));
+                
+            }
+
+            return res.status(OK).json(ResponseModel.success('success',{isBlocked: user.isBlocked} ));
+        } catch (error) {
+            console.error('Error checking user status:', error);
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error( 'Internal server error', error as Error));
+        }
+    }
+
 
 }
 

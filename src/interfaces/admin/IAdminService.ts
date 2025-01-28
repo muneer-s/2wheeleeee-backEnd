@@ -37,7 +37,6 @@ export interface IAdminService {
   verifyHost(bikeId: string): Promise<BikeData | string | undefined>;
   revokeHost(bikeId:string,reason:string):Promise<BikeData | string | undefined>;
 
-  findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
 
   isEditOn(bikeId: string): Promise<BikeData | undefined>;
 }

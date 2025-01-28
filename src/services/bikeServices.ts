@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import IHostRepository from "../interfaces/bike/IBikeRepository";
 import IHostService from "../interfaces/bike/IBikeService";
 import { UserInterface } from "../interfaces/IUser";
+import { ResponseModel } from "../utils/responseModel";
 const { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } = STATUS_CODES;
 
 
@@ -88,7 +89,7 @@ class HostServices implements IHostService {
                 : null;
 
             if (!req.userId) {
-                return res.status(BAD_REQUEST).json({ message: "User ID is required" });
+                return res.status(BAD_REQUEST).json(ResponseModel.error("User ID is required"));
             }
 
 
@@ -109,16 +110,12 @@ class HostServices implements IHostService {
             };
 
 
-            console.log('-------------', bikeData);
             const savedBike = await this.hostRepository.saveBikeDetails(bikeData);
-            return res.status(OK).json({ message: "Bike details saved successfully", data: savedBike });
+            return res.status(OK).json(ResponseModel.success("Bike details saved successfully", {data: savedBike}));
 
         } catch (error) {
             console.error("Error uploading images or saving bike details:", error);
-            return res.status(INTERNAL_SERVER_ERROR).json({
-                message: "Failed to save bike details",
-                error: error,
-            });
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error))
         }
     }
 

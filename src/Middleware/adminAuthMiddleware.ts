@@ -6,17 +6,17 @@ dotenv.config();
 
 const jwtHandler = new CreateJWT();
 
-export const adminAuthMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<Response|void> => {
+export const adminAuthMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     let token = req.cookies.admin_access_token;
     let refreshToken = req.cookies.admin_refresh_token;
 
-    console.log("admin aces token  : " ,token);
-    console.log("admin refresh  : ",refreshToken);
-    
+    console.log("admin aces token  : ", token);
+    console.log("admin refresh  : ", refreshToken);
+
 
     if (!refreshToken) {
-        return res.status(401).json({ success: false, message: 'Admin Token expired or not available' });
-        
+        res.status(401).json({ success: false, message: 'Admin Token expired or not available' });
+        return
     }
 
     if (!token) {
@@ -32,7 +32,8 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
 
             token = newAccessToken;
         } catch (error) {
-            return res.status(401).json({ success: false, message: 'Failed to refresh token' });
+            res.status(401).json({ success: false, message: 'Failed to refresh token' });
+            return
         }
     }
 
@@ -42,13 +43,16 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
         if (decoded?.success && decoded.decoded?.data === process.env.ADMIN_EMAIL) {
             next(); // Proceed to the next middleware or route handler
         } else {
-           return res.status(401).json({ success: false, message: 'Invalid token' });
+            res.status(401).json({ success: false, message: 'Invalid token' });
+            return
         }
     } catch (error: any) {
         if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ success: false, message: 'Token expired' });
+            res.status(401).json({ success: false, message: 'Token expired' });
+            return
         } else {
-            return res.status(401).json({ success: false, message: 'Token verification failed' });
+            res.status(401).json({ success: false, message: 'Token verification failed' });
+            return
         }
     }
 };

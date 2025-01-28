@@ -8,7 +8,7 @@ import { ResponseModel } from '../utils/responseModel';
 
 dotenv.config();
 
-const { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = STATUS_CODES;
+const { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR,NOT_FOUND } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
 export class AdminController {
@@ -114,48 +114,34 @@ export class AdminController {
         }
     }
 
-    async userVerify(req: Request, res: Response): Promise<void> {
+    async userVerify(req: Request, res: Response): Promise<Response | void> {
         try {
             const userId = req.params.id
             const user = await this.AdminServices.userVerify(userId)
-            res.status(200).json({ success: true, user });
+            //res.status(200).json({ success: true, user });
+            return res.status(OK).json(ResponseModel.success('Success', user))
         } catch (error) {
-            console.log();
-
+            console.log(error);
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error))
         }
     }
 
-    async userBlockUnBlock(req: Request, res: Response): Promise<void> {
+    async userBlockUnBlock(req: Request, res: Response): Promise<Response | void> {
         try {
             const userId = req.params.id
             const user = await this.AdminServices.userBlockUnblock(userId)
 
-            res.status(200).json({ success: true, user })
+            return res.status(OK).json(ResponseModel.success('Success',user))
 
         } catch (error) {
             console.log(error);
-
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("INTERNAL SERVER ERROR",error as Error))
         }
     }
 
-    async checkBlockedStatus(req: Request, res: Response): Promise<void> {
-        try {
-            const { email } = req.body;
-            const user = await this.AdminServices.findUserByEmail(email)
+    
 
-            if (!user) {
-                res.status(404).json({ success: false, message: 'User not found' });
-                return
-            }
-
-            res.status(200).json({ success: true, isBlocked: user.isBlocked });
-        } catch (error) {
-            console.error('Error checking user status:', error);
-            res.status(500).json({ success: false, message: 'Internal server error' });
-        }
-    }
-
-    async getAllBikeDetails(req: Request, res: Response): Promise<void> {
+    async getAllBikeDetails(req: Request, res: Response): Promise<Response | void> {
         try {
 
             const { page = 1, limit = 10, search = '', filter = '', sort = '' } = req.query as {
@@ -177,66 +163,46 @@ export class AdminController {
                 search
             };
 
-
-
             let bikeDetails = await this.AdminServices.getAllBikeDetails(query, options)
-            console.log(1111, bikeDetails)
-            res.status(OK).json({ success: true, bikeDetails })
+            return res.status(OK).json(ResponseModel.success('Bike details Get successfully',bikeDetails))
         } catch (error) {
             console.log(error);
-            res.status(500).json({ success: false, message: 'Internal server error' });
-
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
         }
     }
 
-    async verifyHost(req: Request, res: Response): Promise<void> {
+    async verifyHost(req: Request, res: Response): Promise<Response | void> {
         try {
             const bikeId = req.params.id
             const { reason } = req.body;
 
-            console.log(11111111111111111111111, reason)
-
             if (reason) {
                 console.log(`Revocation reason: ${reason}`);
                 const bike = await this.AdminServices.revokeHost(bikeId, reason)
-                res.status(200).json({ success: true, bike });
-
+                return res.status(OK).json(ResponseModel.success('Revoked',bike));
             } else {
                 const bike = await this.AdminServices.verifyHost(bikeId)
-                res.status(200).json({ success: true, bike });
+                return res.status(OK).json(ResponseModel.success('Verified',bike));
             }
 
         } catch (error) {
             console.log(error);
             res.status(500).json({ success: false, message: 'Internal server error' });
-
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
         }
     }
 
-    async isEditOn(req: Request, res: Response): Promise<void> {
+    async isEditOn(req: Request, res: Response): Promise<Response | void> {
         try {
 
             const bikeId = req.params.id
-            console.log("nikeid   ;   ", bikeId);
             const bike = await this.AdminServices.isEditOn(bikeId)
-            res.status(OK).json({ success: true, bike })
-
-
+            return res.status(OK).json(ResponseModel.success('Success',bike))
         } catch (error) {
             console.log("error is from is edit on ", error);
-            res.status(500).json({ success: false, message: 'Internal server error' });
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR0',error as Error));
         }
     }
-
-
-
-
-
-
-
-
-
-
 
 
 

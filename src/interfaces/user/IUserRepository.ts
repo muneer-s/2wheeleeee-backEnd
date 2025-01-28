@@ -14,4 +14,6 @@ export interface IUserRepository {
   getBikeList(query: object, skip: number, limit: number): Promise<BikeData[]>;
   countBikes(query: object): Promise<number>;
   getBikeDetails(id: string): Promise<any | null>;
+  findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
+
 }
