@@ -118,6 +118,8 @@ class HostRepository implements IHostRepository {
         polutionExpDate,
         insuranceImage: insuranceImageUrl || undefined,
         PolutionImage: PolutionImageUrl || undefined,
+        isEdit:false,
+        isHost:false
       };
       const updatedBike = await this.bikeRepository.updateById(bikeId, updateData);
 

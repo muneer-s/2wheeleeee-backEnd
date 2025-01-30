@@ -15,16 +15,16 @@ export class HostController {
         try {
             const { insuranceExpDate, polutionExpDate } = req.body;
 
-            if (!insuranceExpDate || !polutionExpDate) {
-                return res.status(BAD_REQUEST).json(ResponseModel.error("Insurance and Polution expiration dates are required."));
-            }
+            // if (!insuranceExpDate || !polutionExpDate) {
+            //     return res.status(BAD_REQUEST).json(ResponseModel.error("Insurance and Polution expiration dates are required."));
+            // }
 
             const sixMonthsFromNow = new Date();
             sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
 
-            if (new Date(insuranceExpDate) <= sixMonthsFromNow || new Date(polutionExpDate) <= sixMonthsFromNow) {
-                return res.status(BAD_REQUEST).json(ResponseModel.error("Insurance and Polution expiration dates must be greater than six months from today's date."));
-            }
+            // if (new Date(insuranceExpDate) <= sixMonthsFromNow || new Date(polutionExpDate) <= sixMonthsFromNow) {
+            //     return res.status(BAD_REQUEST).json(ResponseModel.error("Insurance and Polution expiration dates must be greater than six months from today's date."));
+            // }
 
             await this.HostServices.saveBikeDetails(req, res)
             // return res.status(OK).json(ResponseModel.success("Bike registered successfully!"))

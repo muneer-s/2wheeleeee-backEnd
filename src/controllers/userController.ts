@@ -128,6 +128,18 @@ export class UserController {
                 return res.status(NOT_FOUND).json({ success: false, message: "Email is required." })
             }
 
+            
+
+
+            //const forgotPassword: any = await this._userUsecase.forgotPassword(req.body.email);
+
+
+            // if (forgotPassword.status == 400) {
+            //     return res.status(forgotPassword.status).json(forgotPassword.message);
+            // }
+
+            // return res.status(forgotPassword.status).json(forgotPassword.message);
+
 
         } catch (error) {
             console.log(error);
@@ -222,7 +234,7 @@ export class UserController {
             return res.status(OK).json(ResponseModel.success('Bike Details', bike))
         } catch (error) {
             console.error("Error getting bike details :", error);
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("Failed to get bike Deatils",error as Error));
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("Failed to get bike Deatils", error as Error));
         }
     }
 
@@ -233,13 +245,13 @@ export class UserController {
 
             if (!user) {
                 return res.status(NOT_FOUND).json(ResponseModel.error('User not found'));
-                
+
             }
 
-            return res.status(OK).json(ResponseModel.success('success',{isBlocked: user.isBlocked} ));
+            return res.status(OK).json(ResponseModel.success('success', { isBlocked: user.isBlocked }));
         } catch (error) {
             console.error('Error checking user status:', error);
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error( 'Internal server error', error as Error));
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error', error as Error));
         }
     }
 

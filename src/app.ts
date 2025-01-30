@@ -9,6 +9,7 @@ import hostRouter from './routes/hostRoutes';
 import otpRouter from './routes/otpRoutes';
 import morgan from 'morgan';
 import logger from './utils/logger';
+import orderRouter from './routes/orderRoutes';
 
 
 
@@ -43,6 +44,7 @@ app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/bike', hostRouter);
 app.use('/api/otp',otpRouter)
+app.use('/api/order',orderRouter)
 
 const port = process.env.PORT || 2000;
 
