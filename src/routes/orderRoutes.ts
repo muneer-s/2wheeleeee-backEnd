@@ -6,6 +6,10 @@ import orderRepository from '../repositories/orderRepository';
 import orderServices from '../services/orderServices';
 import OrderController from '../controllers/orderController';
 import userAuth from '../middleware/userAuthMiddleware';
+import walletRepository from '../repositories/walletRepository';
+import UserRepository from '../repositories/userRepository';
+import walletServices from '../services/walletServices';
+import UserServices from '../services/userServices';
 
 
 
@@ -13,27 +17,23 @@ import userAuth from '../middleware/userAuthMiddleware';
 // const service = new OtpServices(otpRepository)
 // const otpController = new OtpController(service)
 // const orderRouter = express.Router();
+const walletRep = new walletRepository()
+const userRep = new UserRepository()
 
+const walletSer = new walletServices(walletRep)
+const userSer = new UserServices(userRep)
 
 const OrderRepository = new orderRepository()
 const orderService = new orderServices(OrderRepository)
-const orderController = new OrderController(orderService)
+const orderController = new OrderController(orderService,walletSer,userSer)
 
 const orderRouter = express.Router()
 
 
 
-// orderRouter
-//   .post('/verifyOtp', (req, res) => {
-//     console.log(`otp is ${req.body.otp}`);
-//     otpController.verifyOtp(req, res);
-//   })
-//   .post('/resendOtp', (req, res) => {
-//     otpController.resendOtp(req, res);
-//   });
-
 orderRouter
-    .post('/placeOrder',userAuth, (req, res) => { orderController.saveOrder(req, res)})
+    .post('/createOrder', userAuth, (req, res) => { orderController.createOrder(req, res) })
+    .post('/placeOrder', userAuth, (req, res) => { orderController.saveOrder(req, res) })
 
 
 

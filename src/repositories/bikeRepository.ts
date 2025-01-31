@@ -59,9 +59,7 @@ class HostRepository implements IHostRepository {
   async deleteBike(bikeId: string): Promise<boolean>{
     try {
       if (!bikeId) throw new Error('Bike ID is undefined');
-
       const result = await this.bikeRepository.deleteOne({ _id: bikeId });
-      
       if (result.deletedCount === 0) {
         throw new Error('Bike not found');
       }
@@ -73,36 +71,6 @@ class HostRepository implements IHostRepository {
   }
 
 
-  // async editBike(
-  //   insuranceExpDate: Date, 
-  //   polutionExpDate: Date, 
-  //   insuranceImageUrl: string, 
-  //   pollutionImageUrl: string, 
-  //   bikeId: string
-  // ) {
-  //   try {
-  //     const updatedBike = await bikeModel.findByIdAndUpdate(
-  //       bikeId,
-  //       {
-  //         insuranceExpDate,
-  //         polutionExpDate,
-  //         insuranceImage: insuranceImageUrl || undefined,
-  //         pollutionImage: pollutionImageUrl || undefined,
-  //       },
-  //       { new: true }
-  //     );
-
-
-  //     if (!updatedBike) {
-  //       throw new Error("Bike not found.");
-  //     }
-  //     return updatedBike;
-
-  //   } catch (error) {
-  //     console.error("Error in repository layer edit bike:", error);
-  //     throw error;
-  //   }
-  // }
 
 
   async editBike(
@@ -122,13 +90,10 @@ class HostRepository implements IHostRepository {
         isHost:false
       };
       const updatedBike = await this.bikeRepository.updateById(bikeId, updateData);
-
-
       if (!updatedBike) {
         throw new Error("Bike not found.");
       }
       return updatedBike;
-
     } catch (error) {
       console.error("Error in repository layer edit bike:", error);
       throw error;
