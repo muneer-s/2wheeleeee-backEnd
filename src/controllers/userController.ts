@@ -128,7 +128,7 @@ export class UserController {
                 return res.status(NOT_FOUND).json({ success: false, message: "Email is required." })
             }
 
-            
+
 
 
             //const forgotPassword: any = await this._userUsecase.forgotPassword(req.body.email);
@@ -252,6 +252,40 @@ export class UserController {
         } catch (error) {
             console.error('Error checking user status:', error);
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error', error as Error));
+        }
+    }
+
+    async getOrderList(req: Request, res: Response): Promise<Response | void> {
+        try {
+
+            const { userId } = req.query;
+
+            if (!userId) {
+                return res.status(NOT_FOUND).json(ResponseModel.error("User ID is required"));
+            }
+
+            const orders = await this.UserServices.getOrder(userId.toString())
+
+            if (orders.length === 0) {
+                return res.status(OK).json(ResponseModel.success('No orders found for this user', { orders: [] }));
+            }
+            return res.status(OK).json(ResponseModel.success('Order List Getting Success', { order: orders || [] }))
+        } catch (error) {
+            console.log("error in admin controller getting order list : ", error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
+
+        }
+    }
+
+    async getOrderDetails(req:Request,res:Response):Promise<Response | void>{
+        try {
+            console.log("Request received for Order Details", req.params.orderId);
+            const orderDetails= await this.UserServices.orderDetails(req.params.orderId)
+
+            return res.status(OK).json(ResponseModel.success("Order Details Get",orderDetails))
+        } catch (error) {
+            console.log("error in admin controller getting order details : ",error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
         }
     }
 

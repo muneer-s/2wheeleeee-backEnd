@@ -22,7 +22,6 @@ class OtpServices implements IOtpService{
         try {
             const otp: string | null = generateRandomOTP()
             const hashedOTP = await bcrypt.hash(otp, 10);
-            // console.log("hashedOTP : ",hashedOTP)
 
             const saveOtp = await this.otpRepository.saveOtp(email, hashedOTP)
 
@@ -40,22 +39,16 @@ class OtpServices implements IOtpService{
 
             await transporter.sendMail(mailOptions)
             return otp
-
         } catch (error) {
             console.error("Error generate and send otp service layer:", error);
             throw error;
         }
     }
 
-    
-
     async verifyOtp(data: { otp: number, userId: string }): Promise<boolean> {
         try {
             let email = data.userId
             let otp = data.otp
-            console.log(2,email);
-            console.log(3,otp);
-            
             return await this.otpRepository.checkOtp(email, otp)
         } catch (error) {
             console.log(error);

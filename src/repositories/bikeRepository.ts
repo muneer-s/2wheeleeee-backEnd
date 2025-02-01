@@ -71,8 +71,6 @@ class HostRepository implements IHostRepository {
   }
 
 
-
-
   async editBike(
     insuranceExpDate: Date,
     polutionExpDate: Date,
@@ -94,6 +92,7 @@ class HostRepository implements IHostRepository {
         throw new Error("Bike not found.");
       }
       return updatedBike;
+
     } catch (error) {
       console.error("Error in repository layer edit bike:", error);
       throw error;

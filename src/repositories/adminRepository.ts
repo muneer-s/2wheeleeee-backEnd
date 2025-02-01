@@ -7,6 +7,8 @@ import BaseRepository from './baseRepository';
 import { UserInterface } from '../interfaces/IUser';
 import { BikeData } from '../interfaces/BikeInterface';
 import { SortOrder } from 'mongoose';
+import OrderModel, { IOrder } from '../models/orderModel';
+import { error } from 'console';
 
 dotenv.config();
 
@@ -23,10 +25,12 @@ class AdminRepository implements IAdminRepository {
 
     private userRepository: BaseRepository<UserInterface>;
     private bikeRepository: BaseRepository<BikeData>;
+    private orderRepository: BaseRepository<IOrder>
 
     constructor() {
         this.userRepository = new BaseRepository(userModel);
         this.bikeRepository = new BaseRepository(bikeModel);
+        this.orderRepository = new BaseRepository(OrderModel)
     }
 
 
@@ -290,6 +294,58 @@ class AdminRepository implements IAdminRepository {
             throw error
         }
     }
+
+    async getOrder():Promise <IOrder[] | undefined>{
+        try {
+            const order = await this.orderRepository.findModel()
+            return order
+        } catch (error) {
+            console.log("error in admin repository is get order : ", error);
+            throw error
+        }
+    }
+
+    async findOrder(orderId: string): Promise<IOrder | undefined> {
+        try {
+            const orderdetails = await this.orderRepository.findById(orderId)
+            if(!orderdetails){
+                throw error
+            }
+            return orderdetails
+            
+        } catch (error) {
+            console.log("error in admin repository is find order : ", error);
+            throw error
+        }
+    }
+
+    async findBike(bikeId:string): Promise<BikeData>{
+        try {
+            const bikeDetails = await this.bikeRepository.findById(bikeId)
+            if(!bikeDetails){
+                throw error 
+            }
+            return bikeDetails
+            
+        } catch (error) {
+            console.log("error in admin repository is find bike : ", error);
+            throw error
+        }
+    }
+
+    async findUser(userId:string):Promise<UserInterface>{
+        try {
+            const userDetails = await this.userRepository.findById(userId)
+            if(!userDetails){
+                throw error
+            }
+            return userDetails
+        } catch (error) {
+            console.log("error in admin repository is find user : ", error);
+            throw error
+        }
+    }
+    
 
 }
 

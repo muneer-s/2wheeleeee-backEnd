@@ -1,3 +1,4 @@
+import { IOrder } from "../../models/orderModel";
 import { IWallet } from "../../models/walletModel";
 import { UserInterface } from "../IUser";
 import { Request, Response } from "express";
@@ -27,5 +28,8 @@ export interface IUserService {
     }>;
     getBikeDetails(id: string): Promise<any | null>;
     findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
+    getOrder(userId:string):Promise<IOrder[]>;
+    orderDetails(orderId:string):Promise<any>
+
 
 }

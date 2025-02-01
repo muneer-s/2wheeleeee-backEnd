@@ -17,10 +17,6 @@ class orderServices implements IOrderService {
         }
     }
 
-
-
-
-
 }
 
 export default orderServices;

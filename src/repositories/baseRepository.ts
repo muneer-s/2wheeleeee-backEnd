@@ -155,6 +155,15 @@ class BaseRepository<T extends Document> {
         }
     }
 
+    async findModel():Promise<T[]>{
+        try {
+            return await this.model.find()
+        } catch (error) {
+            console.log("error in base repository of order list : ",error)
+            throw error
+        }
+    }
+
 
 }
 

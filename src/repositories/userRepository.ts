@@ -6,18 +6,22 @@ import { IUserRepository } from '../interfaces/user/IUserRepository';
 import BaseRepository from './baseRepository';
 import { BikeData } from '../interfaces/BikeInterface';
 import walletModel, { IWallet } from '../models/walletModel';
+import OrderModel, { IOrder } from '../models/orderModel';
+import { error } from 'console';
 
 
 class UserRepository implements IUserRepository {
 
   private userRepository: BaseRepository<UserInterface>;
   private bikeRepository: BaseRepository<BikeData>;
-  private hostRepository: BaseRepository<IWallet>
+  private hostRepository: BaseRepository<IWallet>;
+  private orderRepository: BaseRepository<IOrder>
 
   constructor() {
     this.userRepository = new BaseRepository(userModel);
     this.bikeRepository = new BaseRepository(bikeModel);
-    this.hostRepository = new BaseRepository(walletModel)
+    this.hostRepository = new BaseRepository(walletModel);
+    this.orderRepository = new BaseRepository(OrderModel)
   }
 
   async emailExistCheck(email: string): Promise<boolean | null> {
@@ -52,10 +56,9 @@ class UserRepository implements IUserRepository {
 
   async createWallet(): Promise<IWallet> {
     try {
-      // const wallet = new walletModel({ balance: 0 });
-      // return wallet.save();
 
-      const wallet = await this.hostRepository.create({balance:0})
+
+      const wallet = await this.hostRepository.create({ balance: 0 })
       return wallet
     } catch (error) {
       console.error("error in creating wallet:", error);
@@ -90,9 +93,9 @@ class UserRepository implements IUserRepository {
       //   { new: true, runValidators: true }
       // );
       const updatedUser = await this.userRepository.findOneAndUpdate(
-        { email }, 
-        { $set: userData }, 
-        { new: true, runValidators: true } 
+        { email },
+        { $set: userData },
+        { new: true, runValidators: true }
       );
 
 
@@ -141,47 +144,103 @@ class UserRepository implements IUserRepository {
       throw error;
     }
   }
-  
+
   async getBikeDetails(id: string): Promise<any | null> {
     try {
       const pipeline = [
         {
-          $match: { _id: new mongoose.Types.ObjectId(id) }, 
+          $match: { _id: new mongoose.Types.ObjectId(id) },
         },
         {
           $lookup: {
-            from: "users", 
-            localField: "userId", 
-            foreignField: "_id", 
-            as: "userDetails", 
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userDetails",
           },
         },
         {
-          $unwind: "$userDetails", 
+          $unwind: "$userDetails",
         },
       ];
-  
+
       const bikeDetails = await this.bikeRepository.aggregate(pipeline);
-  
+
       if (!bikeDetails || bikeDetails.length === 0) {
         console.log("Bike not found");
         return null;
       }
-  
+
       return bikeDetails[0];
     } catch (error) {
       console.error("Error fetching bike and user details:", error);
       throw error;
     }
   }
+  
   async findUserByEmail(email: string): Promise<UserInterface | null | undefined> {
     try {
-        const user = await this.userRepository.findOne({ email });
-        return user
+      const user = await this.userRepository.findOne({ email });
+      return user
 
     } catch (error) {
-        console.log(error);
+      console.log(error);
+      throw error
     }
+  }
+
+
+  async getOrder(userId: string): Promise<IOrder[]> {
+    try {
+      const orders = await this.orderRepository.find({ userId })
+      if (!orders || orders.length === 0) {
+        return [];      }
+      return orders
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
+  async findOrder(orderId: string): Promise<IOrder | undefined> {
+    try {
+        const orderdetails = await this.orderRepository.findById(orderId)
+        if(!orderdetails){
+            throw error
+        }
+        return orderdetails
+        
+    } catch (error) {
+        console.log("error in admin repository is find order : ", error);
+        throw error
+    }
+}
+
+async findBike(bikeId:string): Promise<BikeData>{
+    try {
+        const bikeDetails = await this.bikeRepository.findById(bikeId)
+        if(!bikeDetails){
+            throw error 
+        }
+        return bikeDetails
+        
+    } catch (error) {
+        console.log("error in admin repository is find bike : ", error);
+        throw error
+    }
+}
+
+async findUser(userId:string):Promise<UserInterface>{
+  try {
+      const userDetails = await this.userRepository.findById(userId)
+      if(!userDetails){
+          throw error
+      }
+      return userDetails
+  } catch (error) {
+      console.log("error in admin repository is find owner : ", error);
+      throw error
+  }
 }
 
 

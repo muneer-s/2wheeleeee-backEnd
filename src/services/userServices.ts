@@ -12,6 +12,7 @@ import { IUserRepository } from "../interfaces/user/IUserRepository";
 import { IUserService } from "../interfaces/user/IUserService";
 import { error } from "console";
 import { ResponseModel } from "../utils/responseModel";
+import { IOrder } from "../models/orderModel";
 
 
 dotenv.config();
@@ -180,7 +181,6 @@ class UserServices implements IUserService {
             if (!existingUser) {
                 return res.status(STATUS_CODES.NOT_FOUND).json(ResponseModel.error("User not found"));
             }
-
             
             let frontImageUrl = existingUser.license_picture_front;
             let backImageUrl = existingUser.license_picture_back;
@@ -278,6 +278,45 @@ class UserServices implements IUserService {
             console.log(error);
             throw error
 
+        }
+    }
+
+    async getOrder(userId: string): Promise<IOrder[]> {
+        try {
+            return await this.userRepository.getOrder(userId)
+        } catch (error) {
+            console.log(error)
+            throw error
+        }
+    }
+
+
+    async orderDetails(orderId:string):Promise<any>{
+        try {
+            const order = await this.userRepository.findOrder(orderId)
+
+            if (!order) {
+                throw new Error("Order not found");
+            }
+
+            const bike = await this.userRepository.findBike(order?.bikeId.toString())
+
+            if (!bike) {
+                throw new Error("Bike details not found");
+            }
+
+            const owner = await this.userRepository.findUser(bike.userId.toString())
+            if (!owner) {
+                throw new Error("Bike owner details not found");
+            }
+            return {
+                order,
+                bike,
+                owner,
+            };
+        } catch (error) {
+            console.error("Error in AdminServices.orderDetails:", error);
+            throw error
         }
     }
 

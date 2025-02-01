@@ -28,16 +28,3 @@ otpRouter
 
 
 export default otpRouter;
-
-
-
-
-
-// otpRouter.post('/verifyOtp',(req,res)=>{
-//     console.log(`otp is ${req.body.otp}  `);
-//     otpController.verifyOtp(req,res)
-    
-// })              
-// otpRouter.post('/resendOtp',(req,res)=>{
-//     otpController.resendOtp(req,res)
-// })

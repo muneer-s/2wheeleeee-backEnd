@@ -1,12 +1,13 @@
 import { UserInterface } from "../IUser";
 import { BikeData } from "../BikeInterface";
+import { IOrder } from "../../models/orderModel";
 
 export interface IBikeWithUserDetails extends BikeData {
     userDetails: UserInterface;
 }
 
 export interface IAdminRepository {
-    
+
     getAllUsers(filters: {
         page: number;
         limit: number;
@@ -37,11 +38,16 @@ export interface IAdminRepository {
 
     verifyHost(bikeId: string): Promise<BikeData | string | undefined>;
 
-    revokeHost(bikeId: string,reason:string): Promise<BikeData | string | undefined>;
+    revokeHost(bikeId: string, reason: string): Promise<BikeData | string | undefined>;
 
-    
+
 
     findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
 
     isEditOn(bikeId: string): Promise<BikeData | undefined>;
+    getOrder(): Promise<IOrder[] | undefined>;
+    findOrder(orderId:string):Promise<IOrder | undefined>;
+    findBike(bikeId:string):Promise<BikeData>;
+    findUser(userId:string):Promise<UserInterface>;
+
 }

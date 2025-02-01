@@ -16,7 +16,6 @@ const { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } = STATUS_CODES;
 class HostServices implements IHostService {
     constructor(private hostRepository: IHostRepository) { }
 
-
     async saveBikeDetails(req: Request, res: Response): Promise<Response | undefined> {
         try {
 
@@ -128,7 +127,6 @@ class HostServices implements IHostService {
             throw error
         }
     }
-
 
     async fetchBikeData(userId: string | undefined): Promise<BikeData[]> {
         try {

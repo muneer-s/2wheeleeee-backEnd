@@ -12,11 +12,6 @@ import walletServices from '../services/walletServices';
 import UserServices from '../services/userServices';
 
 
-
-// const otpRepository = new OtpRepository();
-// const service = new OtpServices(otpRepository)
-// const otpController = new OtpController(service)
-// const orderRouter = express.Router();
 const walletRep = new walletRepository()
 const userRep = new UserRepository()
 

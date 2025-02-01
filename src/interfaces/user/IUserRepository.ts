@@ -1,3 +1,4 @@
+import { IOrder } from "../../models/orderModel";
 import { IWallet } from "../../models/walletModel";
 import { BikeData } from "../BikeInterface";
 import { UserInterface } from "../IUser";
@@ -15,5 +16,9 @@ export interface IUserRepository {
   countBikes(query: object): Promise<number>;
   getBikeDetails(id: string): Promise<any | null>;
   findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
+  getOrder(userId:string):Promise<IOrder[]>;
 
+  findOrder(orderId:string):Promise<IOrder | undefined>;
+    findBike(bikeId:string):Promise<BikeData>;
+    findUser(userId:string):Promise<UserInterface>;
 }

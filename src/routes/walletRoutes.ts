@@ -12,8 +12,6 @@ const walletRouter = express.Router();
 
 walletRouter
     .get('/getWallet/:walletId', (req, res) => {
-        const { walletId } = req.params; 
-        console.log("Wallet ID received:", walletId);
         walletController.getWallet(req,res)
     })
 

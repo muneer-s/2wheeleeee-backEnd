@@ -194,13 +194,36 @@ export class AdminController {
 
     async isEditOn(req: Request, res: Response): Promise<Response | void> {
         try {
-
             const bikeId = req.params.id
             const bike = await this.AdminServices.isEditOn(bikeId)
             return res.status(OK).json(ResponseModel.success('Success',bike))
         } catch (error) {
             console.log("error is from is edit on ", error);
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR0',error as Error));
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+        }
+    }
+
+    async getOrderList(req:Request,res:Response):Promise<Response | void>{
+        try {
+            const orders = await this.AdminServices.getOrder()
+
+            return res.status(OK).json(ResponseModel.success('Order List Getting Success',{order:orders}))
+        } catch (error) {
+            console.log("error in admin controller getting order list : ",error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+
+        }
+    }
+
+    async getOrderDetails(req:Request,res:Response):Promise<Response | void>{
+        try {
+            console.log("Request received for Order Details", req.params.orderId);
+            const orderDetails= await this.AdminServices.orderDetails(req.params.orderId)
+
+            return res.status(OK).json(ResponseModel.success("Order Details Get",orderDetails))
+        } catch (error) {
+            console.log("error in admin controller getting order details : ",error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
         }
     }
 

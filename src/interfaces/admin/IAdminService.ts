@@ -1,5 +1,6 @@
 import { UserInterface } from "../IUser";
 import { BikeData } from "../BikeInterface";
+import { IOrder } from "../../models/orderModel";
 
 export interface IBikeWithUserDetails extends BikeData {
   userDetails: UserInterface;
@@ -36,7 +37,7 @@ export interface IAdminService {
 
   verifyHost(bikeId: string): Promise<BikeData | string | undefined>;
   revokeHost(bikeId:string,reason:string):Promise<BikeData | string | undefined>;
-
-
   isEditOn(bikeId: string): Promise<BikeData | undefined>;
+  getOrder():Promise <IOrder[] | undefined>;
+  orderDetails(orderId:string):Promise<any>
 }

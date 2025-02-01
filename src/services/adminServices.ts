@@ -4,17 +4,18 @@ import { IAdminService } from "../interfaces/admin/IAdminService";
 import { UserInterface } from "../interfaces/IUser";
 import { IBikeWithUserDetails } from "../interfaces/admin/IAdminRepository";
 import { BikeData } from "../interfaces/BikeInterface";
+import { IOrder } from "../models/orderModel";
 
-class AdminServices implements IAdminService{
+class AdminServices implements IAdminService {
     constructor(private adminRepository: IAdminRepository) { }
 
-    async getAllUsers(filters: { 
-        page: number; 
-        limit: number; 
-        search: string; 
-        isBlocked?: string | undefined; 
-        isUser?: string | undefined 
-    }):Promise<{ users: UserInterface[]; totalUsers: number; totalPages: number } | undefined> {
+    async getAllUsers(filters: {
+        page: number;
+        limit: number;
+        search: string;
+        isBlocked?: string | undefined;
+        isUser?: string | undefined
+    }): Promise<{ users: UserInterface[]; totalUsers: number; totalPages: number } | undefined> {
         try {
             return await this.adminRepository.getAllUsers(filters)
         } catch (error) {
@@ -53,8 +54,8 @@ class AdminServices implements IAdminService{
     }
 
     async getAllBikeDetails(
-        query: object, 
-        options: { skip: number; limit: number; sort: object ,search:string}
+        query: object,
+        options: { skip: number; limit: number; sort: object, search: string }
     ): Promise<{ bikes: IBikeWithUserDetails[]; total: number }> {
         try {
             return await this.adminRepository.getAllBikeDetails(query, options)
@@ -75,10 +76,10 @@ class AdminServices implements IAdminService{
         }
     }
 
-    async revokeHost(bikeId:string,reason:string): Promise<BikeData | string | undefined>{
+    async revokeHost(bikeId: string, reason: string): Promise<BikeData | string | undefined> {
         try {
-            return await this.adminRepository.revokeHost(bikeId,reason)
-            
+            return await this.adminRepository.revokeHost(bikeId, reason)
+
         } catch (error) {
             console.log(error);
             throw error
@@ -96,14 +97,61 @@ class AdminServices implements IAdminService{
         }
     }
 
-    async isEditOn(bikeId:string): Promise<BikeData | undefined>{
+    async isEditOn(bikeId: string): Promise<BikeData | undefined> {
         try {
             return await this.adminRepository.isEditOn(bikeId)
         } catch (error) {
-            console.log("error is is edit on : ",error)
+            console.log("error is is edit on : ", error)
             throw error
         }
     }
+
+    async getOrder(): Promise<IOrder[] | undefined> {
+        try {
+            const result = await this.adminRepository.getOrder()
+            return result
+        } catch (error) {
+            console.log("error in admin services get order list :  ", error)
+            throw error
+        }
+    }
+
+    async orderDetails(orderId:string):Promise<any>{
+        try {
+            const order = await this.adminRepository.findOrder(orderId)
+
+            if (!order) {
+                throw new Error("Order not found");
+            }
+
+            const bike = await this.adminRepository.findBike(order?.bikeId.toString())
+
+            if (!bike) {
+                throw new Error("Bike details not found");
+            }
+
+            const owner = await this.adminRepository.findUser(bike.userId.toString())
+            if (!owner) {
+                throw new Error("Bike owner details not found");
+            }
+
+            const user = await this.adminRepository.findUser(order.userId.toString())
+            if (!user) {
+                throw new Error("User details not found");
+            }
+
+            return {
+                order,
+                bike,
+                owner,
+                user
+            };
+        } catch (error) {
+            console.error("Error in AdminServices.orderDetails:", error);
+            throw error
+        }
+    }
+
 
 
 }
