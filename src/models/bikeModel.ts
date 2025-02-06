@@ -2,9 +2,9 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import { BikeData } from "../interfaces/BikeInterface";
 
 const bikeSchema: Schema<BikeData> = new Schema({
-    userId:{
-        type: mongoose.Schema.Types.ObjectId,  
-        ref: 'User',  
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     companyName: {
@@ -17,7 +17,7 @@ const bikeSchema: Schema<BikeData> = new Schema({
     },
     rentAmount: {
         type: Number,
-        required:true
+        required: true
     },
     fuelType: {
         type: String,
@@ -35,38 +35,49 @@ const bikeSchema: Schema<BikeData> = new Schema({
         type: Boolean,
         default: false
     },
-    isEdit :{
-        type:Boolean,
-        default:false
+    isEdit: {
+        type: Boolean,
+        default: false
     },
     registerNumber: {
         type: String,
-        required:true
+        required: true
     },
 
     insuranceExpDate: {
         type: Date,
-        required:true
+        required: true
     },
     polutionExpDate: {
         type: Date,
-        required:true
+        required: true
     },
     rcImage: {
         type: String,
-        required:true,
+        required: true,
         default: ''
     },
     PolutionImage: {
         type: String,
-        required:true,
+        required: true,
         default: ''
     },
     insuranceImage: {
         type: String,
-        required:true,
+        required: true,
         default: ''
-    }
+    },
+    offer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Offer",
+    },
+    offerApplied: {
+        type: Boolean,
+        default: false,
+    },
+    offerPrice: {
+        type: Number,
+    },
 });
 
 

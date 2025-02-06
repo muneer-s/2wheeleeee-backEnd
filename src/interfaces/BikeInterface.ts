@@ -15,7 +15,11 @@ export interface BikeData  extends Document{
     insuranceImage: string | null; 
     isBlocked?: boolean; 
     isHost?: boolean; 
-    isEdit:boolean
+    isEdit:boolean;
+    offer:mongoose.Types.ObjectId;
+    offerApplied:boolean;
+    offerPrice:number;
+        
 }
 
 

@@ -1,6 +1,7 @@
 import { IOfferService } from "../interfaces/offer/IOfferService";
 import { IOfferRepository } from "../interfaces/offer/IOfferRepository";
 import { IOffer } from "../models/offerModel";
+import mongoose from "mongoose";
 
 
 
@@ -35,6 +36,34 @@ class offerServices implements IOfferService {
    async updateOffer(offerId: string, updatedData: Partial<IOffer>): Promise<IOffer | null> {
        try {
         return this.offerRepository.updateOffer(offerId, updatedData);
+       } catch (error) {
+        throw error
+       }
+   }
+
+   async findBikeAndOffer(bikeId: string, offerId: string): Promise<any> {
+       try {
+        const bike = await this.offerRepository.findBike(bikeId)
+        console.log(11,bike)
+        const offer = await this.offerRepository.findOffer(offerId)
+        console.log(22,offer);
+
+        if (!bike || !offer) {
+            throw new Error("Bike or Offer not found");
+        }
+
+        const offerPrice = bike.rentAmount - (bike.rentAmount * (offer.discount / 100));
+        console.log(333,offerPrice)
+
+        const updatedBike = await this.offerRepository.updateBike(bikeId, {
+            offerApplied: true,
+            offer: new mongoose.Types.ObjectId(offerId),
+            offerPrice: offerPrice
+        });
+
+        console.log("Bike updated successfully:", updatedBike);
+        return updatedBike;
+        
        } catch (error) {
         throw error
        }

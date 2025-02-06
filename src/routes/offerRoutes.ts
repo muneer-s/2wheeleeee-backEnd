@@ -18,6 +18,7 @@ offerRouter
     .get('/Offer',userAuth,(req,res)=>{offerController.viewOffers(req,res)})
    .delete('/deleteOffer/:id',userAuth,(req,res)=>{offerController.deleteOffer(req,res)})
    .put('/updateOffer/:id',userAuth,(req,res)=>{offerController.updateOffer(req,res)})
+   .put('/applyOffer',userAuth,(req,res)=>{offerController.applyOffer(req,res)})
 
 
 
