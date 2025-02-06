@@ -4,11 +4,12 @@ import HostServices from '../services/bikeServices';
 import HostRepository from '../repositories/bikeRepository';
 import multer from 'multer';
 import userAuth from '../middleware/userAuthMiddleware';
+import UserRepository from '../repositories/userRepository';
 
 
-
+const userRepository = new UserRepository()
 const hostRepository = new HostRepository()
-const service = new HostServices(hostRepository)
+const service = new HostServices(hostRepository,userRepository)
 const hostController = new HostController(service)
 
 
@@ -34,6 +35,8 @@ hostRouter
   .get('/bikeSingleView', userAuth, (req, res) =>{hostController.bikeSingleView(req, res)})
   .delete('/deleteBike', userAuth, (req, res) =>{hostController.deleteBike(req, res)})
   .put('/editBike',userAuth,upload.fields([{ name: 'insuranceImage', maxCount: 1 },{ name: 'polutionImage', maxCount: 1 }]),(req, res) => {hostController.editBike(req, res)})
+  .get('/orderList', userAuth, (req, res) => { hostController.getOrderList(req, res) })
+  .get('/OrderDetails/:orderId', userAuth, (req, res) => { hostController.getOrderDetails(req, res) })
 
 
 

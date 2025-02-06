@@ -11,6 +11,7 @@ import morgan from 'morgan';
 import logger from './utils/logger';
 import orderRouter from './routes/orderRoutes';
 import walletRouter from './routes/walletRoutes';
+import offerRouter from './routes/offerRoutes';
 
 
 
@@ -47,6 +48,7 @@ app.use('/api/bike', hostRouter);
 app.use('/api/otp', otpRouter)
 app.use('/api/order', orderRouter)
 app.use('/api/wallet', walletRouter)
+app.use('/api/offer',offerRouter)
 
 const port = process.env.PORT || 2000;
 

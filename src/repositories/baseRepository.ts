@@ -101,14 +101,7 @@ class BaseRepository<T extends Document> {
 
 
 
-    async deleteById(id: string): Promise<{ deletedCount?: number }> {
-        try {
-            return await this.model.deleteOne({ _id: id });
-        } catch (error) {
-            console.error("Error in BaseRepository - deleteById:", error);
-            throw new Error("Failed to delete the document by ID");
-        }
-    }
+    
 
     async count(query: FilterQuery<T> = {}): Promise<number> {
         try {
@@ -161,6 +154,24 @@ class BaseRepository<T extends Document> {
         } catch (error) {
             console.log("error in base repository of order list : ",error)
             throw error
+        }
+    }
+
+
+    async deleteById(id: string): Promise<{ deletedCount?: number }> {
+        try {
+            return await this.model.deleteOne({ _id: id });
+        } catch (error) {
+            console.error("Error in BaseRepository - deleteById:", error);
+            throw new Error("Failed to delete the document by ID");
+        }
+    }
+
+    async findByIdAndDelete(Id:string):Promise<any>{
+        try {
+            return await this.model.findByIdAndDelete(Id)
+        } catch (error) {
+            throw new Error("Failed to find by id and delete")
         }
     }
 

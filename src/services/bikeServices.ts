@@ -3,18 +3,19 @@ import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { Request, Response } from "express";
 import cloudinary from "../config/cloudinaryConfig";
 import { UploadApiResponse } from "cloudinary";
-import HostRepository from "../repositories/bikeRepository";
 import { Readable } from "stream";
 import mongoose from "mongoose";
 import IHostRepository from "../interfaces/bike/IBikeRepository";
 import IHostService from "../interfaces/bike/IBikeService";
 import { UserInterface } from "../interfaces/IUser";
 import { ResponseModel } from "../utils/responseModel";
+import { IOrder } from "../models/orderModel";
+import { IUserRepository } from "../interfaces/user/IUserRepository";
 const { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } = STATUS_CODES;
 
 
 class HostServices implements IHostService {
-    constructor(private hostRepository: IHostRepository) { }
+    constructor(private hostRepository: IHostRepository, private userRepository:IUserRepository) { }
 
     async saveBikeDetails(req: Request, res: Response): Promise<Response | undefined> {
         try {
@@ -218,6 +219,44 @@ class HostServices implements IHostService {
         } catch (error) {
             console.error("Error in service layer edit bike:", error);
             throw error;
+        }
+    }
+    
+    async findOrder(userId: string): Promise<IOrder[] | undefined> {
+        try {
+            return await this.hostRepository.getOrder(userId)
+
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async orderDetails(orderId: string): Promise<any> {
+        try {
+            const order = await this.hostRepository.findOrder(orderId)
+
+            if (!order) {
+                throw new Error("Order not found");
+            }
+
+            const bike = await this.hostRepository.bikeSingleView(order?.bikeId.toString())
+
+            if (!bike) {
+                throw new Error("Bike details not found");
+            }
+
+            const user = await this.hostRepository.findUser(order?.userId.toString())
+            if(!user){
+                throw new Error("User details not found")
+            }
+
+            return {
+                order,
+                bike,
+                user,
+            };
+        } catch (error) {
+            throw error
         }
     }
 

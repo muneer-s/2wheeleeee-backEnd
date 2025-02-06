@@ -9,6 +9,7 @@ export interface IOrder extends Document {
     userId: ObjectId;
     method: string;
     status: string;
+    ownerId:ObjectId;
 }
 
 const orderSchema: Schema<IOrder> = new mongoose.Schema({
@@ -37,6 +38,10 @@ const orderSchema: Schema<IOrder> = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    ownerId:{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
     },
     method: {
         type: String,

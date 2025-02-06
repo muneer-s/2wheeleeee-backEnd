@@ -4,14 +4,18 @@ import userModel from '../models/userModels';
 import IHostRepository from '../interfaces/bike/IBikeRepository';
 import BaseRepository from './baseRepository';
 import { UserInterface } from '../interfaces/IUser';
+import OrderModel, { IOrder } from '../models/orderModel';
+import { error } from 'console';
 
 class HostRepository implements IHostRepository {
   private userRepository: BaseRepository<UserInterface>;
   private bikeRepository: BaseRepository<BikeData>;
+  private orderRepository: BaseRepository<IOrder>
 
   constructor() {
     this.userRepository = new BaseRepository(userModel);
     this.bikeRepository = new BaseRepository(bikeModel);
+    this.orderRepository = new BaseRepository(OrderModel)
   }
 
   async saveBikeDetails(documentData: BikeData): Promise<BikeData> {
@@ -34,7 +38,7 @@ class HostRepository implements IHostRepository {
     }
   }
 
-  async fetchBikeData(userId: string | undefined) : Promise<BikeData[]> {
+  async fetchBikeData(userId: string | undefined): Promise<BikeData[]> {
     try {
       if (!userId) throw new Error("User ID is undefined");
       const bikes = await this.bikeRepository.find({ userId });
@@ -56,7 +60,7 @@ class HostRepository implements IHostRepository {
     }
   }
 
-  async deleteBike(bikeId: string): Promise<boolean>{
+  async deleteBike(bikeId: string): Promise<boolean> {
     try {
       if (!bikeId) throw new Error('Bike ID is undefined');
       const result = await this.bikeRepository.deleteOne({ _id: bikeId });
@@ -77,15 +81,15 @@ class HostRepository implements IHostRepository {
     insuranceImageUrl: string,
     PolutionImageUrl: string,
     bikeId: string
-  ): Promise<BikeData > {
+  ): Promise<BikeData> {
     try {
       const updateData: Partial<BikeData> = {
         insuranceExpDate,
         polutionExpDate,
         insuranceImage: insuranceImageUrl || undefined,
         PolutionImage: PolutionImageUrl || undefined,
-        isEdit:false,
-        isHost:false
+        isEdit: false,
+        isHost: false
       };
       const updatedBike = await this.bikeRepository.updateById(bikeId, updateData);
       if (!updatedBike) {
@@ -99,6 +103,43 @@ class HostRepository implements IHostRepository {
     }
   }
 
+  async getOrder(userId: string): Promise<IOrder[]> {
+    try {
+      const orders = await this.orderRepository.find({ ownerId: userId })
+      console.log(3333333333333333333333333333333333333333333333, orders)
+      if (!orders || orders.length === 0) {
+        return [];
+      }
+      return orders
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
+  async findOrder(orderId: string): Promise<IOrder> {
+    try {
+      const order = await this.orderRepository.findById(orderId)
+      if (!order) {
+        throw error
+      }
+      return order
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async findUser(userId:string):Promise<UserInterface>{
+    try {
+      const user = await this.userRepository.findById(userId)
+      if(!user) throw error
+
+      return user
+      
+    } catch (error) {
+      throw error
+    }
+  }
 
 
 

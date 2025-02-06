@@ -4,7 +4,7 @@ import mongoose, {Document,Schema} from 'mongoose'
 export interface IWallet extends Document{
     _id:ObjectId,
     balance:number,
-
+    history:[object]
 }
 
 
@@ -13,6 +13,20 @@ const walletSchema:Schema<IWallet> = new Schema({
         type:Number,
         default:0
     },
+    history:[{
+        date:{
+            type:Date
+        },
+        type:{
+            type:String
+        },
+        amount:{
+            type:Number
+        },
+        reason:{ 
+            type:String
+        }
+    }]
     
 })
 

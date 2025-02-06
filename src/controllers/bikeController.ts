@@ -3,8 +3,9 @@ import { STATUS_CODES } from "../constants/httpStatusCodes";
 import HostServices from '../services/bikeServices';
 import IHostService from '../interfaces/bike/IBikeService';
 import { ResponseModel } from '../utils/responseModel';
+import { IOrderService } from '../interfaces/order/IOrderService';
 
-const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
+const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR,NOT_FOUND } = STATUS_CODES;
 
 
 export class HostController {
@@ -113,6 +114,46 @@ export class HostController {
         }
     }
 
+
+    async getOrderList(req: Request, res: Response): Promise<Response | void> {
+        try {
+
+            const { Id } = req.query;
+
+            console.log(1,Id)
+
+            if (!Id) {
+                return res.status(NOT_FOUND).json(ResponseModel.error("User ID is required"));
+            }
+
+            const orders = await this.HostServices.findOrder(Id.toString())
+            console.log(2,orders)
+
+            if (!orders) {
+                return res.status(OK).json(ResponseModel.success('No orders found for this user', { orders: [] }));
+            }
+            return res.status(OK).json(ResponseModel.success('Order List Getting Success', { order: orders || [] }))
+
+
+        } catch (error) {
+            console.log("error in admin controller getting order list : ", error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
+
+        }
+    }
+
+
+    async getOrderDetails(req:Request,res:Response):Promise<Response | void>{
+        try {
+
+            const orderDetails= await this.HostServices.orderDetails(req.params.orderId)
+
+            return res.status(OK).json(ResponseModel.success("Order Details Get",orderDetails))
+        } catch (error) {
+            console.log("error in admin controller getting order details : ",error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+        }
+    }
 
 }
 
