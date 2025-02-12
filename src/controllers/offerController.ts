@@ -14,7 +14,6 @@ export class OfferController {
     async createOffer(req: Request, res: Response) {
         try {
             const { offerName, discount, startDate, endDate, description, createdBy } = req.body;
-            console.log(1111111111111111, req.body)
 
             if (!offerName || !discount || !startDate || !endDate) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("All fields except description are required."));
@@ -33,12 +32,11 @@ export class OfferController {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("End date must be after the start date."));
             }
 
-
             const newOffer = new OfferModel({ offerName, discount, startDate, endDate, description, offerBy: createdBy });
 
             console.log(99999, newOffer)
 
-            const result = await this.offerServices.saveOffer(newOffer)
+            await this.offerServices.saveOffer(newOffer)
             return res.status(OK).json(ResponseModel.success("Offer created successfully"))
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error', error as Error));
@@ -48,7 +46,6 @@ export class OfferController {
 
     async viewOffers(req: Request, res: Response) {
         try {
-
             const userId = req.query.userId as string;
             if (!userId) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("User ID is required."));
@@ -63,10 +60,9 @@ export class OfferController {
 
     async deleteOffer(req: Request, res: Response) {
         try {
+            const offerId = req.params.id;
 
-            const offerId  = req.params.id;
-
-            console.log(111,offerId)
+            console.log(111, offerId)
 
             if (!offerId) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("Offer ID is required"));
@@ -87,13 +83,8 @@ export class OfferController {
 
     async updateOffer(req: Request, res: Response) {
         try {
-            const offerId  = req.params.id;
+            const offerId = req.params.id;
             const updatedData = req.body;
-
-
-            console.log(111,offerId)
-            console.log(222,updatedData);
-            
 
             if (!offerId) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("Offer ID is required."));
@@ -117,12 +108,11 @@ export class OfferController {
 
 
 
+            //await OfferModel.findByIdAndUpdate(offerId, updatedData, { new: true });
 
 
-
-
-            await OfferModel.findByIdAndUpdate(offerId, updatedData, { new: true });
             const updatedOffer = await this.offerServices.updateOffer(offerId, updatedData);
+            
             if (!updatedOffer) {
                 return res.status(NOT_FOUND).json(ResponseModel.error("Offer not found."));
             }
@@ -136,22 +126,35 @@ export class OfferController {
     }
 
 
-    async applyOffer(req:Request,res:Response){
+    async applyOffer(req: Request, res: Response) {
         try {
-
             const { bikeId, offerId } = req.body;
 
-    
+            if (!bikeId || !offerId) {
+                return res.status(400).json({ message: "Bike ID and Offer ID are required." });
+            }
 
-        if (!bikeId || !offerId) {
-            return res.status(400).json({ message: "Bike ID and Offer ID are required." });
-        }
+            await this.offerServices.findBikeAndOffer(bikeId, offerId)
+            return res.status(OK).json(ResponseModel.success("Bike updated successfully"))
 
-        await this.offerServices.findBikeAndOffer(bikeId,offerId)
-        return res.status(OK).json(ResponseModel.success("Bike updated successfully"))
-            
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("Internal server error", error as Error));
+        }
+    }
+
+
+    async removeOffer(req:Request,res:Response){
+        try {
+            const {bikeId} = req.body
+            console.log(111,bikeId)
+
+            await this.offerServices.removeOffer(bikeId)
+
+            return res.status(OK).json(ResponseModel.success("Offer remove from Bike successfully"))
+
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("Internal server error", error as Error));
+
         }
     }
 

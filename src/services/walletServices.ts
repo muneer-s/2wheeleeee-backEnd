@@ -15,6 +15,22 @@ class walletServices implements IWalletService {
             throw error
         }
     }
+
+    async saveWallet(walletId: string, newBalance:number,total:number, bikeId: string) {
+        try {
+            const historyEntry = {
+                date: new Date(),
+                type: "debit",
+                amount: total,
+                reason: bikeId
+            };
+
+            return await this.walletRepository.updateWalletBalance(walletId, newBalance, historyEntry);
+        } catch (error) {
+            console.error("Error in WalletServices - saveWallet:", error);
+            throw error;
+        }
+    }
 }
 
 export default walletServices;

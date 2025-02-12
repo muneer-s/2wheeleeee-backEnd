@@ -174,7 +174,15 @@ class BaseRepository<T extends Document> {
             throw new Error("Failed to find by id and delete")
         }
     }
-
+    async updateMany(query: FilterQuery<T>, updateData: UpdateQuery<T>): Promise<{ modifiedCount?: number }> {
+        try {
+            return await this.model.updateMany(query, updateData);
+        } catch (error) {
+            console.error("Error in BaseRepository - updateMany:", error);
+            throw new Error("Failed to update multiple documents");
+        }
+    }
+    
 
 }
 

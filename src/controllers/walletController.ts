@@ -24,7 +24,7 @@ export class WalletController {
                 return res.status(NOT_FOUND).json(ResponseModel.error("Wallet not found"))
             }
 
-            return res.status(OK).json(ResponseModel.success('Get wallet',{balance: wallet.balance }))
+            return res.status(OK).json(ResponseModel.success('Get wallet',wallet))
         } catch (error) {
             console.error("Error fetching wallet:", error);
             res.status(500).json({ success: false, message: "Internal Server Error" });

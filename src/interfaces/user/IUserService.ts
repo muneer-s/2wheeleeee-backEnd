@@ -30,6 +30,8 @@ export interface IUserService {
     findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
     getOrder(userId:string):Promise<IOrder[]>;
     orderDetails(orderId:string):Promise<any>
+    findOrderAndUpdate(orderId:string):Promise<IOrder | null>
+    returnOrder(orderId:string):Promise<IOrder | null>
 
 
 }

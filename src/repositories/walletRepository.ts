@@ -16,6 +16,10 @@ class walletRepository implements IWalletRepository {
             if (!result) {
                 throw new Error("Wallet not found");
             }
+
+            result.history = result.history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+            console.log(12345,result)
             return result
             
         } catch (error) {
@@ -23,6 +27,30 @@ class walletRepository implements IWalletRepository {
             throw error
         }
     }
+
+   
+
+
+    async updateWalletBalance(walletId: string, newBalance: number, historyEntry: object): Promise<IWallet | null> {
+        try {
+
+            console.log(99,newBalance)
+            const updatedWallet = await this.walletRepository.updateById(walletId, {
+                $set: { balance: newBalance }, 
+                $push: { history: historyEntry }, 
+            } as any); 
+    
+            if (!updatedWallet) {
+                throw new Error("Wallet not found or update failed");
+            }
+    
+            return updatedWallet;
+        } catch (error) {
+            console.error("Error in walletRepository - updateWalletBalance:", error);
+            throw error;
+        }
+    }
+    
 
 
 

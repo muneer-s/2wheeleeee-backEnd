@@ -177,7 +177,7 @@ class UserRepository implements IUserRepository {
       throw error;
     }
   }
-  
+
   async findUserByEmail(email: string): Promise<UserInterface | null | undefined> {
     try {
       const user = await this.userRepository.findOne({ email });
@@ -194,7 +194,8 @@ class UserRepository implements IUserRepository {
     try {
       const orders = await this.orderRepository.find({ userId })
       if (!orders || orders.length === 0) {
-        return [];      }
+        return [];
+      }
       return orders
     } catch (error) {
       console.log(error)
@@ -204,44 +205,80 @@ class UserRepository implements IUserRepository {
 
   async findOrder(orderId: string): Promise<IOrder | undefined> {
     try {
-        const orderdetails = await this.orderRepository.findById(orderId)
-        if(!orderdetails){
-            throw error
-        }
-        return orderdetails
-        
-    } catch (error) {
-        console.log("error in admin repository is find order : ", error);
+      const orderdetails = await this.orderRepository.findById(orderId)
+      if (!orderdetails) {
         throw error
-    }
-}
+      }
+      return orderdetails
 
-async findBike(bikeId:string): Promise<BikeData>{
+    } catch (error) {
+      console.log("error in admin repository is find order : ", error);
+      throw error
+    }
+  }
+
+  async findBike(bikeId: string): Promise<BikeData> {
     try {
-        const bikeDetails = await this.bikeRepository.findById(bikeId)
-        if(!bikeDetails){
-            throw error 
-        }
-        return bikeDetails
-        
-    } catch (error) {
-        console.log("error in admin repository is find bike : ", error);
+      const bikeDetails = await this.bikeRepository.findById(bikeId)
+      if (!bikeDetails) {
         throw error
-    }
-}
+      }
+      return bikeDetails
 
-async findUser(userId:string):Promise<UserInterface>{
-  try {
+    } catch (error) {
+      console.log("error in admin repository is find bike : ", error);
+      throw error
+    }
+  }
+
+  async findUser(userId: string): Promise<UserInterface> {
+    try {
       const userDetails = await this.userRepository.findById(userId)
-      if(!userDetails){
-          throw error
+      if (!userDetails) {
+        throw error
       }
       return userDetails
-  } catch (error) {
+    } catch (error) {
       console.log("error in admin repository is find owner : ", error);
       throw error
+    }
   }
-}
+
+  async findOrderAndUpdate(orderId: string): Promise<IOrder | null> {
+    try {
+      const result = await this.orderRepository.findOneAndUpdate(
+        { _id: orderId },
+        { status: "Early Return" },
+        { new: true }
+      );
+
+      if (!result) {
+        throw new Error("Error while return early")
+      }
+
+      return result
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async returnOrder(orderId: string): Promise<IOrder | null> {
+    try {
+      const result = await this.orderRepository.findOneAndUpdate(
+        { _id: orderId },
+        { status: "Return" },
+        { new: true }
+      );
+
+      if (!result) {
+        throw new Error("Error while return")
+      }
+
+      return result
+    } catch (error) {
+      throw error
+    }
+  }
 
 
 }

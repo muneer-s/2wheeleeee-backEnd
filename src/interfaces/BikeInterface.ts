@@ -16,9 +16,9 @@ export interface BikeData  extends Document{
     isBlocked?: boolean; 
     isHost?: boolean; 
     isEdit:boolean;
-    offer:mongoose.Types.ObjectId;
-    offerApplied:boolean;
-    offerPrice:number;
+    offer:mongoose.Types.ObjectId | null;
+    offerApplied:boolean | null;
+    offerPrice:number | null;
         
 }
 

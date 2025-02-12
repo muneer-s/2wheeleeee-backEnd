@@ -8,4 +8,5 @@ export interface IOfferService{
     updateOffer(offerId: string, updatedData: Partial<IOffer>): Promise<IOffer | null>;
     
     findBikeAndOffer(bikeId:string,offerId:string):Promise<any>;
+    removeOffer(bikeId:string):Promise<any>
 }

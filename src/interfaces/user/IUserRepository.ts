@@ -6,7 +6,7 @@ import { UserInterface } from "../IUser";
 export interface IUserRepository {
   emailExistCheck(email: string): Promise<boolean | null>;
   saveUser(userData: any): Promise<UserInterface | null>;
-  createWallet():Promise<IWallet>;
+  createWallet(): Promise<IWallet>;
   login(email: string): Promise<UserInterface | null>;
   getProfile(email: string): Promise<UserInterface | null>;
   editProfile(email: string, userData: Partial<UserInterface>): Promise<UserInterface | null>;
@@ -16,9 +16,13 @@ export interface IUserRepository {
   countBikes(query: object): Promise<number>;
   getBikeDetails(id: string): Promise<any | null>;
   findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
-  getOrder(userId:string):Promise<IOrder[]>;
+  getOrder(userId: string): Promise<IOrder[]>;
 
-  findOrder(orderId:string):Promise<IOrder | undefined>;
-    findBike(bikeId:string):Promise<BikeData>;
-    findUser(userId:string):Promise<UserInterface>;
+  findOrder(orderId: string): Promise<IOrder | undefined>;
+  findBike(bikeId: string): Promise<BikeData>;
+  findUser(userId: string): Promise<UserInterface>;
+
+  findOrderAndUpdate(orderId: string): Promise<IOrder | null>
+  returnOrder(orderId:string):Promise<IOrder | null>
+
 }

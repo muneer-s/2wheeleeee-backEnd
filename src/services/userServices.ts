@@ -320,6 +320,21 @@ class UserServices implements IUserService {
         }
     }
 
+    async findOrderAndUpdate(orderId: string): Promise<IOrder | null> {
+        try {
+            return await this.userRepository.findOrderAndUpdate(orderId)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async returnOrder(orderId: string): Promise<IOrder | null> {
+        try {
+            return await this.userRepository.returnOrder(orderId)
+        } catch (error) {
+            throw error
+        }
+    }
 
 
 

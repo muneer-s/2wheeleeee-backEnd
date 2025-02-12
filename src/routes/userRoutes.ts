@@ -78,6 +78,8 @@ userRouter
     .post('/checkBlockedStatus', (req, res) => { userController.checkBlockedStatus(req, res) })
     .get('/orderList', userAuth, (req, res) => { userController.getOrderList(req, res) })
     .get('/OrderDetails/:orderId', userAuth, (req, res) => { userController.getOrderDetails(req, res) })
+    .put('/earlyReturns/:orderId',userAuth,(req,res)=>{userController.earlyReturn(req,res)})
+    .put('/returnOrder/:orderId',userAuth,(req,res)=>{userController.returnOrder(req,res)})
 
 
 export default userRouter;

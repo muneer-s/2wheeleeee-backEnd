@@ -5,7 +5,7 @@ import IHostService from '../interfaces/bike/IBikeService';
 import { ResponseModel } from '../utils/responseModel';
 import { IOrderService } from '../interfaces/order/IOrderService';
 
-const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR,NOT_FOUND } = STATUS_CODES;
+const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
 
 
 export class HostController {
@@ -16,19 +16,19 @@ export class HostController {
         try {
             const { insuranceExpDate, polutionExpDate } = req.body;
 
-            // if (!insuranceExpDate || !polutionExpDate) {
-            //     return res.status(BAD_REQUEST).json(ResponseModel.error("Insurance and Polution expiration dates are required."));
-            // }
+            if (!insuranceExpDate || !polutionExpDate) {
+                return res.status(BAD_REQUEST).json(ResponseModel.error("Insurance and Polution expiration dates are required."));
+            }
 
             const sixMonthsFromNow = new Date();
             sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
 
-            // if (new Date(insuranceExpDate) <= sixMonthsFromNow || new Date(polutionExpDate) <= sixMonthsFromNow) {
-            //     return res.status(BAD_REQUEST).json(ResponseModel.error("Insurance and Polution expiration dates must be greater than six months from today's date."));
-            // }
+            if (new Date(insuranceExpDate) <= sixMonthsFromNow || new Date(polutionExpDate) <= sixMonthsFromNow) {
+                return res.status(BAD_REQUEST).json(ResponseModel.error("Insurance and Polution expiration dates must be greater than six months from today's date."));
+            }
 
             await this.HostServices.saveBikeDetails(req, res)
-            // return res.status(OK).json(ResponseModel.success("Bike registered successfully!"))
+            return res.status(OK).json(ResponseModel.success("Bike registered successfully!"))
 
         } catch (error) {
             console.log(error);
@@ -40,7 +40,7 @@ export class HostController {
         try {
             const userId = req.query.userId as string
             const findUser = await this.HostServices.isAdminVerifyUser(userId)
-            return res.status(OK).json(ResponseModel.success('Checked',{user: findUser }))
+            return res.status(OK).json(ResponseModel.success('Checked', { user: findUser }))
 
         } catch (error) {
             console.log(error);
@@ -58,12 +58,13 @@ export class HostController {
 
             const findUserAndBikes = await this.HostServices.fetchBikeData(userId as string)
 
-            return res.status(OK).json(ResponseModel.success('',{userAndbikes: findUserAndBikes }))
+            return res.status(OK).json(ResponseModel.success('', { userAndbikes: findUserAndBikes }))
         } catch (error) {
             console.error("Error fetching bike data:", error);
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error))
         }
     }
+
 
     async bikeSingleView(req: Request, res: Response): Promise<Response> {
         try {
@@ -74,7 +75,7 @@ export class HostController {
             }
 
             const findBike = await this.HostServices.bikeSingleView(bikeId as string)
-            return res.status(OK).json(ResponseModel.success('',{bike: findBike}))
+            return res.status(OK).json(ResponseModel.success('', { bike: findBike }))
         } catch (error) {
             console.error("Error fetching single bike  data:", error);
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error))
@@ -120,14 +121,14 @@ export class HostController {
 
             const { Id } = req.query;
 
-            console.log(1,Id)
+            console.log(1, Id)
 
             if (!Id) {
                 return res.status(NOT_FOUND).json(ResponseModel.error("User ID is required"));
             }
 
             const orders = await this.HostServices.findOrder(Id.toString())
-            console.log(2,orders)
+            console.log(2, orders)
 
             if (!orders) {
                 return res.status(OK).json(ResponseModel.success('No orders found for this user', { orders: [] }));
@@ -143,17 +144,19 @@ export class HostController {
     }
 
 
-    async getOrderDetails(req:Request,res:Response):Promise<Response | void>{
+    async getOrderDetails(req: Request, res: Response): Promise<Response | void> {
         try {
 
-            const orderDetails= await this.HostServices.orderDetails(req.params.orderId)
+            const orderDetails = await this.HostServices.orderDetails(req.params.orderId)
 
-            return res.status(OK).json(ResponseModel.success("Order Details Get",orderDetails))
+            return res.status(OK).json(ResponseModel.success("Order Details Get", orderDetails))
         } catch (error) {
-            console.log("error in admin controller getting order details : ",error)
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+            console.log("error in admin controller getting order details : ", error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
         }
     }
+
+    
 
 }
 

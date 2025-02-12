@@ -29,6 +29,8 @@ const orderRouter = express.Router()
 orderRouter
     .post('/createOrder', userAuth, (req, res) => { orderController.createOrder(req, res) })
     .post('/placeOrder', userAuth, (req, res) => { orderController.saveOrder(req, res) })
+    .put('/completeOrder/:orderId',userAuth,(req,res)=>{orderController.completeOrder(req,res)})
+
 
 
 

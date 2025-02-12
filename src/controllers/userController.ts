@@ -215,6 +215,8 @@ export class UserController {
                 maxRent: Number(maxRent),
             });
 
+            console.log(11, result)
+
             return res.status(OK).json(ResponseModel.success('Get Bike List', {
                 bikeList: result.bikeList,
                 totalBikes: result.totalBikes,
@@ -277,15 +279,50 @@ export class UserController {
         }
     }
 
-    async getOrderDetails(req:Request,res:Response):Promise<Response | void>{
+    async getOrderDetails(req: Request, res: Response): Promise<Response | void> {
         try {
-            console.log("Request received for Order Details", req.params.orderId);
-            const orderDetails= await this.UserServices.orderDetails(req.params.orderId)
+            const orderDetails = await this.UserServices.orderDetails(req.params.orderId)
 
-            return res.status(OK).json(ResponseModel.success("Order Details Get",orderDetails))
+            return res.status(OK).json(ResponseModel.success("Order Details Get", orderDetails))
         } catch (error) {
-            console.log("error in admin controller getting order details : ",error)
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+            console.log("error in admin controller getting order details : ", error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
+        }
+    }
+
+    async earlyReturn(req: Request, res: Response): Promise<Response | void> {
+        try {
+            const { orderId } = req.params;
+
+            console.log("Request received for Order Details", orderId);
+
+            const updatedOrder = await this.UserServices.findOrderAndUpdate(orderId)
+
+            if (!updatedOrder) {
+                return res.status(NOT_FOUND).json(ResponseModel.error("Order not found"));
+            }
+
+            return res.status(OK).json(ResponseModel.success("Order status updated successfully", updatedOrder));
+
+
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
+        }
+    }
+
+
+    async returnOrder(req: Request, res: Response): Promise<Response | void> {
+        try {
+            const { orderId } = req.params;
+            const updatedOrder = await this.UserServices.returnOrder(orderId)
+
+            if (!updatedOrder) {
+                return res.status(NOT_FOUND).json(ResponseModel.error("Order not found"));
+            }
+
+            return res.status(OK).json(ResponseModel.success("Order status updated successfully", updatedOrder));
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
         }
     }
 

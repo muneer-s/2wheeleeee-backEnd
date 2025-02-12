@@ -10,6 +10,8 @@ export interface IOrder extends Document {
     method: string;
     status: string;
     ownerId:ObjectId;
+    orderTimeBikeRent:number;
+    updatedAt:Date
 }
 
 const orderSchema: Schema<IOrder> = new mongoose.Schema({
@@ -51,6 +53,9 @@ const orderSchema: Schema<IOrder> = new mongoose.Schema({
         type: String,
         required: true
     },
+    orderTimeBikeRent:{
+        type:Number
+    }
 },
     { timestamps: true }
 )

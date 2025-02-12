@@ -32,6 +32,22 @@ class offerRepository implements IOfferRepository {
 
     async deleteOffer(offerId: string): Promise<IOffer> {
         try {
+            const bikesWithOffer = await this.bikeRepository.find({ offer: offerId });
+            console.log('bikes with offers : ', bikesWithOffer)
+
+            if (bikesWithOffer.length > 0) {
+                await this.bikeRepository.updateMany(
+                    { offer: offerId },
+                    {
+                        $set: {
+                            offer: null,
+                            offerApplied: false,
+                            offerPrice: null,
+                        },
+                    }
+                );
+            }
+
             return await this.offerRepository.findByIdAndDelete(offerId)
         } catch (error) {
             throw error
@@ -40,6 +56,42 @@ class offerRepository implements IOfferRepository {
 
     async updateOffer(offerId: string, updatedData: Partial<IOffer>): Promise<IOffer | null> {
         try {
+
+            const bikesWithOffer = await this.bikeRepository.find({ offer: offerId });
+            console.log('bikes with offers : ', bikesWithOffer)
+
+            if (!updatedData.discount) {
+                throw new Error("Discount value is required to update the offer price");
+            }
+
+            const newDiscount = updatedData.discount
+
+            await Promise.all(
+                bikesWithOffer.map(async (bike) => {
+                    const newOfferPrice = bike.rentAmount - (bike.rentAmount * (newDiscount / 100));
+
+                    await this.bikeRepository.updateMany(
+                        { offer: offerId },
+                        {
+                            $set: {
+                                offerPrice: newOfferPrice,
+                            },
+                        }
+                    );
+                })
+            );
+
+            // if (bikesWithOffer.length > 0) {
+            //     await this.bikeRepository.updateMany(
+            //         { offer: offerId },
+            //         {
+            //             $set: {
+            //                 offerPrice: newOfferPrice,
+            //             },
+            //         }
+            //     );
+            // }
+
             return await this.offerRepository.updateById(offerId, updatedData);
         } catch (error) {
             throw error

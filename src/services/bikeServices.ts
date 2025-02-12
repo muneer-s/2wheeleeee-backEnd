@@ -106,7 +106,10 @@ class HostServices implements IHostService {
                 rcImage: uploadedRcImage?.secure_url || null,
                 PolutionImage: uploadedPolutionImage?.secure_url || null,
                 insuranceImage: uploadedInsuranceImage?.secure_url || null,
-                isEdit: false
+                isEdit: false,
+                offer: null,
+                offerApplied: false,
+                offerPrice: null
             };
 
 
