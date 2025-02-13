@@ -1,4 +1,6 @@
 import dotenv from 'dotenv';
+dotenv.config();
+
 import connectDB from './database/mongoDB';
 import userRouter from './routes/userRoutes';
 import adminRouter from './routes/adminRoutes';
@@ -12,10 +14,13 @@ import logger from './utils/logger';
 import orderRouter from './routes/orderRoutes';
 import walletRouter from './routes/walletRoutes';
 import offerRouter from './routes/offerRoutes';
-import { Server } from "socket.io";
+import chatRouter from './routes/chatRoutes';
+import {app,server} from './socket/socket'
+import messageRouter from './routes/messageRoutes';
+
 
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
   credentials: true,
   methods: 'GET,POST,PUT,DELETE',
   allowedHeaders: 'Content-Type,Authorization',
@@ -23,10 +28,8 @@ const corsOptions = {
 
 
 
-dotenv.config();
 connectDB();
 
-const app = express();
 
 //middleware
 app.use(cors(corsOptions));
@@ -50,10 +53,12 @@ app.use('/api/otp', otpRouter)
 app.use('/api/order', orderRouter)
 app.use('/api/wallet', walletRouter)
 app.use('/api/offer',offerRouter)
+app.use('/api/chat',chatRouter)
+app.use('/api/message',messageRouter)
 
 const port = process.env.PORT || 2000;
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 

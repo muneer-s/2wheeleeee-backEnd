@@ -48,8 +48,6 @@ class BaseRepository<T extends Document> {
         }
     }
 
-
-
     async updateById(
         id: string,
         updateData: Partial<T>
@@ -61,7 +59,6 @@ class BaseRepository<T extends Document> {
             throw new Error("Failed to update the document by ID");
         }
     }
-
 
     async deleteOne(query: FilterQuery<T>): Promise<{ deletedCount?: number }> {
         try {
@@ -104,15 +101,24 @@ class BaseRepository<T extends Document> {
         sort: { [key: string]: SortOrder } = { createdAt: -1 }
     ): Promise<T[]> {
         try {
-            return await this.model.find(query).sort(sort).exec();
+            return await this.model.find(query).populate('reviewerId', 'name').sort(sort).exec();
         } catch (error) {
             console.error("Error in BaseRepository - findAndSort:", error);
             throw new Error("Failed to find and sort documents");
         }
     }
     
+    getModel(): Model<T> {
+        return this.model;
+    }
 
+    findChat(filter: any) {
+        return this.model.find(filter); // Returns a Query directly
+    }
     
+    async findByIdAndUpdate(id: string, update: Partial<T>): Promise<T | null> {
+        return this.model.findByIdAndUpdate(id, update, { new: true }).exec();
+    }
 
     async count(query: FilterQuery<T> = {}): Promise<number> {
         try {
@@ -168,7 +174,6 @@ class BaseRepository<T extends Document> {
         }
     }
 
-
     async deleteById(id: string): Promise<{ deletedCount?: number }> {
         try {
             return await this.model.deleteOne({ _id: id });
@@ -185,6 +190,7 @@ class BaseRepository<T extends Document> {
             throw new Error("Failed to find by id and delete")
         }
     }
+
     async updateMany(query: FilterQuery<T>, updateData: UpdateQuery<T>): Promise<{ modifiedCount?: number }> {
         try {
             return await this.model.updateMany(query, updateData);

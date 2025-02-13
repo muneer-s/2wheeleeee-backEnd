@@ -298,11 +298,7 @@ class UserRepository implements IUserRepository {
 
   async findReviews(bikeId: string): Promise<IReview[] | null> {
     try {
-      //return await this.reviewRepository.find
       return await this.reviewRepository.findAndSort({ bikeId }, { createdAt: -1 });
-
-      //await Review.find({ bikeId }).sort({ createdAt: -1 });
-
     } catch (error) {
       throw error
     }

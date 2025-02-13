@@ -357,7 +357,6 @@ export class UserController {
             const reviews = await this.UserServices.findReviews(bikeId)
 
             console.log(98,reviews);
-            
 
             return res.status(OK).json(ResponseModel.success('Get reviews of the bike',{data: reviews }));
 
