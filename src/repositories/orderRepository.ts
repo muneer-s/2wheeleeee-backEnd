@@ -56,29 +56,20 @@ class orderRepository implements IOrderRepository {
         }
     }
 
-    async findUser(userId:string):Promise<UserInterface>{
+    async findUser(userId: string): Promise<UserInterface> {
         try {
-          const user = await this.userRepository.findById(userId)
-          if(!user) throw error
-    
-          return user
-          
+            const user = await this.userRepository.findById(userId)
+            if (!user) throw error
+
+            return user
+
         } catch (error) {
-          throw error
+            throw error
         }
-      }
+    }
 
     async addBalance(walletId: string, refundAmount: Number): Promise<IWallet | null> {
         try {
-
-
-            console.log(1, walletId)
-            console.log(2, refundAmount)
-
-            const existingWallet = await this.walletRepository.findById(walletId);
-            console.log(4, existingWallet);
-
-
             const updateData = {
                 $inc: { balance: refundAmount },
                 $push: {
@@ -91,11 +82,7 @@ class orderRepository implements IOrderRepository {
                 }
             };
 
-            console.log("updated data : ", updateData)
-
             const a = await this.walletRepository.updateOne({ _id: walletId }, updateData);
-            console.log('updated aayo : ', a);
-
             const wallet = this.walletRepository.findOne({ _id: walletId });
             if (!wallet) {
                 throw new Error("wallet not found")
@@ -109,13 +96,11 @@ class orderRepository implements IOrderRepository {
 
     async completeOrder(orderId: string): Promise<IOrder | null> {
         try {
-
             const result = await this.orderRepository.findOneAndUpdate(
                 { _id: orderId },
                 { status: "Completed" },
                 { new: true }
             );
-            console.log(23, result);
 
             if (!result) {
                 throw new Error("Error while return early")
@@ -126,8 +111,6 @@ class orderRepository implements IOrderRepository {
             throw error
         }
     }
-
-
 
 
 

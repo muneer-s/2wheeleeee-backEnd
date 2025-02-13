@@ -8,6 +8,7 @@ import { BikeData } from '../interfaces/BikeInterface';
 import walletModel, { IWallet } from '../models/walletModel';
 import OrderModel, { IOrder } from '../models/orderModel';
 import { error } from 'console';
+import ReviewModel, { IReview } from '../models/reviewModel';
 
 
 class UserRepository implements IUserRepository {
@@ -16,12 +17,14 @@ class UserRepository implements IUserRepository {
   private bikeRepository: BaseRepository<BikeData>;
   private hostRepository: BaseRepository<IWallet>;
   private orderRepository: BaseRepository<IOrder>
+  private reviewRepository: BaseRepository<IReview>
 
   constructor() {
     this.userRepository = new BaseRepository(userModel);
     this.bikeRepository = new BaseRepository(bikeModel);
     this.hostRepository = new BaseRepository(walletModel);
     this.orderRepository = new BaseRepository(OrderModel)
+    this.reviewRepository = new BaseRepository(ReviewModel)
   }
 
   async emailExistCheck(email: string): Promise<boolean | null> {
@@ -42,9 +45,6 @@ class UserRepository implements IUserRepository {
 
   async saveUser(userData: any): Promise<UserInterface | null> {
     try {
-      // const newUser = new userModel(userData);
-      // await newUser.save();
-      // return newUser as UserInterface
       const newUser = await this.userRepository.create(userData);
       return newUser;
     } catch (error) {
@@ -280,6 +280,33 @@ class UserRepository implements IUserRepository {
     }
   }
 
+
+  async submitReview(reviewerId: string, bikeId: string, rating: number, feedback: string): Promise<IReview | null> {
+    try {
+      const newReview = {
+        reviewerId: new mongoose.Types.ObjectId(reviewerId) as any,
+        bikeId: new mongoose.Types.ObjectId(bikeId) as any,
+        rating,
+        feedback,
+      };
+      return await this.reviewRepository.create(newReview);
+
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async findReviews(bikeId: string): Promise<IReview[] | null> {
+    try {
+      //return await this.reviewRepository.find
+      return await this.reviewRepository.findAndSort({ bikeId }, { createdAt: -1 });
+
+      //await Review.find({ bikeId }).sort({ createdAt: -1 });
+
+    } catch (error) {
+      throw error
+    }
+  }
 
 }
 

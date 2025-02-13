@@ -119,10 +119,8 @@ export class OrderController {
     async completeOrder(req: Request, res: Response) {
         try {
             const { orderId } = req.params;
-            console.log(123, orderId);
 
             const findOrder = await this.OrderServices.findOrder(orderId)
-            console.log(111,findOrder)
             if(!findOrder){
                 return res.status(NOT_FOUND).json(ResponseModel.error("There is no such an order"))
             }
@@ -137,7 +135,6 @@ export class OrderController {
     
                 const refundAmount = restDays * orderTimeBikeRent;
 
-                console.log("refund amount : ",refundAmount)
                 const findUser = await this.OrderServices.findUser(userId.toString())
 
                 const walletId = findUser.wallet

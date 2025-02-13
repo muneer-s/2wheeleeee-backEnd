@@ -99,7 +99,18 @@ class BaseRepository<T extends Document> {
         }
     }
 
-
+    async findAndSort(
+        query: FilterQuery<T>,
+        sort: { [key: string]: SortOrder } = { createdAt: -1 }
+    ): Promise<T[]> {
+        try {
+            return await this.model.find(query).sort(sort).exec();
+        } catch (error) {
+            console.error("Error in BaseRepository - findAndSort:", error);
+            throw new Error("Failed to find and sort documents");
+        }
+    }
+    
 
     
 

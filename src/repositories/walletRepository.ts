@@ -18,10 +18,7 @@ class walletRepository implements IWalletRepository {
             }
 
             result.history = result.history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-            console.log(12345,result)
-            return result
-            
+            return result 
         } catch (error) {
             console.log("error in repository layer of get wallet",error)
             throw error
@@ -33,8 +30,6 @@ class walletRepository implements IWalletRepository {
 
     async updateWalletBalance(walletId: string, newBalance: number, historyEntry: object): Promise<IWallet | null> {
         try {
-
-            console.log(99,newBalance)
             const updatedWallet = await this.walletRepository.updateById(walletId, {
                 $set: { balance: newBalance }, 
                 $push: { history: historyEntry }, 

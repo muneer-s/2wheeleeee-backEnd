@@ -10,6 +10,7 @@ import OtpRepository from '../repositories/otpRepository';
 import OtpServices from '../services/otpServices';
 import morgan from 'morgan';
 import logger from '../utils/logger';
+import ReviewModel from '../models/reviewModel';
 
 
 
@@ -80,6 +81,8 @@ userRouter
     .get('/OrderDetails/:orderId', userAuth, (req, res) => { userController.getOrderDetails(req, res) })
     .put('/earlyReturns/:orderId',userAuth,(req,res)=>{userController.earlyReturn(req,res)})
     .put('/returnOrder/:orderId',userAuth,(req,res)=>{userController.returnOrder(req,res)})
+    .post('/submitReview',userAuth,(req,res)=>{userController.submitReview(req,res)})
+    .get('/getReviews/:bikeId',userAuth,(req,res)=>{userController.getReviews(req,res)})
 
 
 export default userRouter;

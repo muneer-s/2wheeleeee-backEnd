@@ -13,6 +13,7 @@ import { IUserService } from "../interfaces/user/IUserService";
 import { error } from "console";
 import { ResponseModel } from "../utils/responseModel";
 import { IOrder } from "../models/orderModel";
+import { IReview } from "../models/reviewModel";
 
 
 dotenv.config();
@@ -335,6 +336,24 @@ class UserServices implements IUserService {
             throw error
         }
     }
+
+
+    async submitReview(reviewerId: string, bikeId: string, rating: number, feedback: string): Promise<IReview | null> {
+        try {
+            return await this.userRepository.submitReview(reviewerId,bikeId,rating,feedback)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async findReviews(bikeId: string): Promise<IReview[] | null> {
+        try {
+            return await this.userRepository.findReviews(bikeId)
+        } catch (error) {
+            throw error
+        }
+    }
+
 
 
 

@@ -12,8 +12,7 @@ import logger from './utils/logger';
 import orderRouter from './routes/orderRoutes';
 import walletRouter from './routes/walletRoutes';
 import offerRouter from './routes/offerRoutes';
-
-
+import { Server } from "socket.io";
 
 const corsOptions = {
   origin: 'http://localhost:5173',
@@ -21,6 +20,8 @@ const corsOptions = {
   methods: 'GET,POST,PUT,DELETE',
   allowedHeaders: 'Content-Type,Authorization',
 };
+
+
 
 dotenv.config();
 connectDB();

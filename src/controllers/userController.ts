@@ -294,8 +294,6 @@ export class UserController {
         try {
             const { orderId } = req.params;
 
-            console.log("Request received for Order Details", orderId);
-
             const updatedOrder = await this.UserServices.findOrderAndUpdate(orderId)
 
             if (!updatedOrder) {
@@ -321,6 +319,48 @@ export class UserController {
             }
 
             return res.status(OK).json(ResponseModel.success("Order status updated successfully", updatedOrder));
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
+        }
+    }
+
+    async submitReview(req: Request, res: Response) {
+        try {
+            const { reviewerId, bikeId, rating, feedback } = req.body;
+
+            if (!reviewerId || !bikeId || !rating) {
+                return res.status(BAD_REQUEST).json(ResponseModel.error("All fields are required."));
+            }
+
+            const review = await this.UserServices.submitReview(reviewerId, bikeId, rating, feedback)
+
+            if (!review) {
+                return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("Failed to submit review."));
+
+            }
+
+            return res.status(OK).json(ResponseModel.success("Review submitted successfully!", review));
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
+        }
+    }
+
+    async getReviews(req: Request, res: Response) {
+        try {
+            const { bikeId } = req.params;
+            console.log(2121, bikeId)
+
+            if (!bikeId) {
+                return res.status(BAD_REQUEST).json(ResponseModel.error("Bike ID is required"));
+            }
+
+            const reviews = await this.UserServices.findReviews(bikeId)
+
+            console.log(98,reviews);
+            
+
+            return res.status(OK).json(ResponseModel.success('Get reviews of the bike',{data: reviews }));
+
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
         }

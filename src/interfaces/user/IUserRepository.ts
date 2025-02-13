@@ -1,4 +1,5 @@
 import { IOrder } from "../../models/orderModel";
+import { IReview } from "../../models/reviewModel";
 import { IWallet } from "../../models/walletModel";
 import { BikeData } from "../BikeInterface";
 import { UserInterface } from "../IUser";
@@ -24,5 +25,7 @@ export interface IUserRepository {
 
   findOrderAndUpdate(orderId: string): Promise<IOrder | null>
   returnOrder(orderId:string):Promise<IOrder | null>
+    submitReview(reviewerId:string, bikeId:string, rating:number, feedback:string):Promise<IReview | null>
+    findReviews(bikeId:string):Promise<IReview[] | null>
 
 }

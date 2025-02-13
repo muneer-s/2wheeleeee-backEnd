@@ -206,6 +206,8 @@ export class AdminController {
     async getOrderList(req:Request,res:Response):Promise<Response | void>{
         try {
             const orders = await this.AdminServices.getOrder()
+            console.log(11,orders);
+            
 
             return res.status(OK).json(ResponseModel.success('Order List Getting Success',{order:orders}))
         } catch (error) {
