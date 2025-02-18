@@ -96,10 +96,7 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    async findAndSort(
-        query: FilterQuery<T>,
-        sort: { [key: string]: SortOrder } = { createdAt: -1 }
-    ): Promise<T[]> {
+    async findAndSort(query: FilterQuery<T>, sort: { [key: string]: SortOrder } = { createdAt: -1 }): Promise<T[]> {
         try {
             return await this.model.find(query).populate('reviewerId', 'name').sort(sort).exec();
         } catch (error) {
@@ -107,7 +104,7 @@ class BaseRepository<T extends Document> {
             throw new Error("Failed to find and sort documents");
         }
     }
-    
+
     getModel(): Model<T> {
         return this.model;
     }
@@ -115,7 +112,7 @@ class BaseRepository<T extends Document> {
     findChat(filter: any) {
         return this.model.find(filter); // Returns a Query directly
     }
-    
+
     async findByIdAndUpdate(id: string, update: Partial<T>): Promise<T | null> {
         return this.model.findByIdAndUpdate(id, update, { new: true }).exec();
     }
@@ -165,11 +162,11 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    async findModel():Promise<T[]>{
+    async findModel(): Promise<T[]> {
         try {
-            return await this.model.find()
+            return await this.model.find().populate('bikeId')
         } catch (error) {
-            console.log("error in base repository of order list : ",error)
+            console.log("error in base repository of order list : ", error)
             throw error
         }
     }
@@ -183,7 +180,7 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    async findByIdAndDelete(Id:string):Promise<any>{
+    async findByIdAndDelete(Id: string): Promise<any> {
         try {
             return await this.model.findByIdAndDelete(Id)
         } catch (error) {
@@ -199,7 +196,7 @@ class BaseRepository<T extends Document> {
             throw new Error("Failed to update multiple documents");
         }
     }
-    
+
 
 }
 

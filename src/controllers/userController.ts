@@ -12,7 +12,7 @@ import { IOtpService } from '../interfaces/otp/IOtpService';
 import { ResponseModel } from '../utils/responseModel';
 import { error } from 'console';
 
-const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
+const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND, FORBIDDEN } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
 
@@ -26,9 +26,6 @@ export class UserController {
         try {
             const userData = req.body;
             const userFound = await this.UserServices.userSignup(userData);
-
-            // logger.info("11111111111111111")
-            // logger.error(2222222222222222)
 
             if (!userFound) {
                 await this.OtpServices.generateAndSendOtp(req.body.email)
@@ -65,16 +62,18 @@ export class UserController {
             const isPasswordMatch = await isUserPresent.matchPassword(password);
 
             if (!isPasswordMatch) {
-                return res.status(400).json(ResponseModel.error('Incorrect password. Please try again.'));
+                return res.status(BAD_REQUEST).json(ResponseModel.error('Incorrect password. Please try again.'));
             }
 
-
-            if (isUserPresent.isBlocked) {
-                return res.status(400).json(ResponseModel.error('User is blocked by the Admin.'));
+            if(isUserPresent.isBlocked){
+                return res.status(FORBIDDEN).json(ResponseModel.error('User is blocked by the admin'))
             }
 
-            const time = this.milliseconds(0, 30, 0);
+            const time = this.milliseconds(0, 30, 0); // 30 minutes
             const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
+
+        //    const time = this.milliseconds(0, 0, 15);  // 15 sec
+        //    const refreshTokenExpiryTime = this.milliseconds(0, 3, 0);  // 1 minute
 
             const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
             const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
@@ -160,7 +159,7 @@ export class UserController {
 
             return res.status(OK).json(ResponseModel.success('Success', userDetails));
         } catch (error) {
-            console.log(error);
+            console.log(11,error);
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error))
         }
     }

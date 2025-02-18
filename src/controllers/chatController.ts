@@ -10,12 +10,17 @@ export class ChatController {
 
     constructor(private ChatServices: IChatService) { }
 
-    
-    async accessChat(req:Request,res:Response):Promise<void> {
+
+    async accessChat(req:Request,res:Response) {
         try {
-            const {receiverId,senderId} = req.body            
+            const {receiverId,senderId} = req.body   
+            
+            
             const chat = await this.ChatServices.accessChat(receiverId,senderId)
-            res.json(chat)
+            
+            // res.json(chat)
+            return res.status(OK).json(ResponseModel.success("Access chat ",chat))
+
         } catch (error) {
             console.error('error in creating chat room',error);
         }
@@ -23,8 +28,12 @@ export class ChatController {
 
     async getChat(req:Request,res:Response):Promise<void> {
         try {             
-            const userId = req.query.userId as string            
-            const messages = await this.ChatServices.getChat(userId)                        
+            const userId = req.query.userId as string    
+            console.log('userid kiti',userId);
+                    
+            const messages = await this.ChatServices.getChat(userId)
+            console.log(111,messages);
+                                   
             res.json(messages)
         } catch (error) {
             console.error('erron while fetching message details',error);

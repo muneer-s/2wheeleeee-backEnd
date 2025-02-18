@@ -63,8 +63,6 @@ class chatRepository implements IChatRepository {
         }
     }
 
-  
-    
 
     async latestMessage(
         chatId: string,

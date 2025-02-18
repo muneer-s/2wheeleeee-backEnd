@@ -9,11 +9,18 @@ class chatServices implements IChatService {
     async accessChat(receiverId:string,senderId:string):Promise<IChat | undefined| null> {
         try {
             let chat = await this.chatRepository.checkChat(receiverId,senderId)
+            console.log('chat illa',chat);
+            
  
             if(!chat){
+                console.log('chat illengil');
+                
                  const createChat = await this.chatRepository.createChat(receiverId,senderId)
                  chat = await this.chatRepository.checkChat(receiverId,senderId)
             }
+
+            console.log('ipo chat vanno ',chat);
+            
             return chat 
            
         } catch (error) {

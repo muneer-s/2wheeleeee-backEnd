@@ -28,7 +28,6 @@ export class HostController {
             }
 
             await this.HostServices.saveBikeDetails(req, res)
-            return res.status(OK).json(ResponseModel.success("Bike registered successfully!"))
 
         } catch (error) {
             console.log(error);

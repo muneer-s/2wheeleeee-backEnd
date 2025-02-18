@@ -207,8 +207,6 @@ export class AdminController {
         try {
             const orders = await this.AdminServices.getOrder()
             console.log(11,orders);
-            
-
             return res.status(OK).json(ResponseModel.success('Order List Getting Success',{order:orders}))
         } catch (error) {
             console.log("error in admin controller getting order list : ",error)

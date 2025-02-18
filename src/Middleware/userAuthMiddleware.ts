@@ -6,8 +6,9 @@ import UserRepository from '../repositories/userRepository';
 import { STATUS_CODES } from '../constants/httpStatusCodes';
 
 import { UserInterface } from '../interfaces/IUser';
+import { ResponseModel } from '../utils/responseModel';
 
-const { UNAUTHORIZED } = STATUS_CODES
+const { UNAUTHORIZED , FORBIDDEN } = STATUS_CODES
 
 const jwt = new CreateJWT();
 const userRepository = new UserRepository();
@@ -23,27 +24,19 @@ declare global {
     }
 }
 
-const userAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const userAuth = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     let token = req.cookies.user_access_token;
     let refresh_token = req.cookies.user_refresh_token;
 
-    // console.log(99999999,token);
-    // console.log(88888888888,refresh_token);
-    
-
-    // If the refresh_token is not found, the response indicates that the token is expired or unavailable.
     if (!refresh_token) {
-        res.json({ success: false, message: 'User Token expired or not available' });
-        return
+        // res.json({ success: false, message: 'User Token expired or not available' });
+        return res.status(UNAUTHORIZED).json(ResponseModel.error('User Token expired or not available'))
+        
     }
 
-
-    // If the access token is missing, it attempts to generate a new one using the refreshAccessToken function.
-    // A new access token is sent back to the client in a cookie with a lifespan of 30 minutes
     if (!token) {
         try {
             const newAccessToken = await refreshAccessToken(refresh_token);
-            // console.log("token illa so new acess token undakki, ",newAccessToken);
             
             const accessTokenMaxAge = 30 * 60 * 1000;
 
@@ -56,44 +49,38 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
             token = newAccessToken;
 
         } catch (error) {
-            res.status(401).json({ success: false, message: 'Failed to refresh token' });
-            return; 
+            return res.status(UNAUTHORIZED).json(ResponseModel.error('Failed to refresh token')); 
         }
     }
 
     try {
         if(!token){
             token = req.cookies.user_access_token;
-            // console.log("new toke : ",token);
-            
         }
-        // console.log("verufy munne ,",token);
         
         const decoded = jwt.verifyToken(token);
-        // console.log("token undel : ", decoded);
 
         if (decoded?.success) {
-            let user = await userRepository.getUserById(decoded.decoded?.data?.toString());
-            // console.log("user :",user);
+            let user = await userRepository.getUserById(decoded.decoded?.data?.toString()); 
             
+            console.log(132,user);
 
             if (user?.isBlocked) {
-                res.json({ success: false, message: "User is blocked by admin!" })
-                return
+                return res.status(FORBIDDEN).json(ResponseModel.error("User is blocked by admin!"))
+                
             } else {
                 req.userId = decoded.decoded?.data?.toString();
                 req.user = user;
                 next();
             }
         } else {
-            res.json({ success: false, message: decoded?.message })
+           return res.status(UNAUTHORIZED).json(ResponseModel.error( decoded?.message))
         }
 
     } catch (err: any) {
         console.log('the error is here.');
         console.log(err);
-        res.send({ success: false, message: "Authentication failed!" });
-        return
+        return res.status(UNAUTHORIZED).json(ResponseModel.error("Authentication failed!"));
     }
 }
 
@@ -103,7 +90,6 @@ const refreshAccessToken = async (refreshToken: string): Promise<string> => {
     }
     try {
         const decoded = jwt.verifyRefreshToken(refreshToken);
-        // console.log("refresh token valid aano :?", decode);
         
         if (!decoded?.decoded?.data) {
             throw new Error('Decoded data is invalid or missing');

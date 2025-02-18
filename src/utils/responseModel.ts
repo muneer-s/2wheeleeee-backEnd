@@ -1,6 +1,6 @@
 export interface ApiResponse<T = any> {
     success: boolean;
-    message: string;
+    message: string | object;
     data?: T;
     error?: string | object;
   }
@@ -14,7 +14,7 @@ export interface ApiResponse<T = any> {
       };
     }
   
-    static error(message: string, error?: string | object): ApiResponse {
+    static error(message: string | object, error?: string | object): ApiResponse {
       return {
         success: false,
         message,

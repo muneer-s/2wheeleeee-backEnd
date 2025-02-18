@@ -22,7 +22,7 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
     if (!token) {
         try {
             const newAccessToken = await refreshAdminAccessToken(refreshToken);
-            const accessTokenExpiresIn = 30 * 60 * 1000; // 30 minutes
+            const accessTokenExpiresIn = 30 * 60 * 1000; 
 
             res.cookie('admin_access_token', newAccessToken, {
                 maxAge: accessTokenExpiresIn,

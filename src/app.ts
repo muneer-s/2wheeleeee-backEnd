@@ -16,7 +16,8 @@ import walletRouter from './routes/walletRoutes';
 import offerRouter from './routes/offerRoutes';
 import chatRouter from './routes/chatRoutes';
 import {app,server} from './socket/socket'
-import messageRouter from './routes/messageRoutes';
+import feedbackRouter from './routes/feedBackRoutes';
+// import messageRouter from './routes/messageRoutes';
 
 
 const corsOptions = {
@@ -53,8 +54,10 @@ app.use('/api/otp', otpRouter)
 app.use('/api/order', orderRouter)
 app.use('/api/wallet', walletRouter)
 app.use('/api/offer',offerRouter)
+app.use('/api/feedback',feedbackRouter)
+
 app.use('/api/chat',chatRouter)
-app.use('/api/message',messageRouter)
+// app.use('/api/message',messageRouter)
 
 const port = process.env.PORT || 2000;
 
