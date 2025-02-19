@@ -354,6 +354,14 @@ class UserServices implements IUserService {
         }
     }
 
+    async userAlreadyReviewed(userid: string): Promise<IReview | null> {
+        try {
+            return await this.userRepository.userAlreadyReviewed(userid)
+        } catch (error) {
+            throw error
+        }
+    }
+
 
 
 

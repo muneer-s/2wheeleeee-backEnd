@@ -35,5 +35,5 @@ export interface IUserService {
     returnOrder(orderId:string):Promise<IOrder | null>
     submitReview(reviewerId:string, bikeId:string, rating:number, feedback:string):Promise<IReview| null>
     findReviews(bikeId:string):Promise<IReview[] | null>
-
+    userAlreadyReviewed(userid:string):Promise<IReview | null>
 }

@@ -7,13 +7,22 @@ const server = createServer(app);
 
 // initialize Socket.IO
 const io = new Server(server, {    // io is the Socket.IO server.
-    pingTimeout: 60000,
+    pingTimeout: 60000, // if 60 seconds user didnt send any messges . then it gonna closa the connect and save the bandwidth
     cors: {
         origin: process.env.FRONTEND_URL || 'http://localhost:5173',
         methods: ["GET", "POST"],
         credentials: true,
     },
 });
+
+
+interface ActiveUsersType{
+    userId:string;
+    socketId:string;
+}
+
+let activeUsers = [] as ActiveUsersType[]
+
 
 // 5️⃣ Handling Socket.IO Connections
 
@@ -23,8 +32,15 @@ io.on("connection", (socket) => {
     socket.on("setup", (userId) => {      // User Setup (Joining)
         socket.join(userId);
         socket.emit("connected");
-
+        if(!activeUsers.some((user) => user.userId === userId)){
+            activeUsers.push({userId:userId,socketId:socket.id})
+          }
+          io.emit('get-users',activeUsers) 
     });
+
+    socket.on("join chat", (room) => {
+        socket.join(room);
+      }); 
 
     // Sending Messages
     socket.on("message", (message) => {
@@ -46,8 +62,14 @@ io.on("connection", (socket) => {
     // Handling Disconnection
     socket.on("disconnect", () => {
         console.log("user disconnected");
+        activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
+        io.emit('get-users',activeUsers)
+      });
 
-    });
+      socket.on("offline",() => { 
+        activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
+        io.emit('get-users',activeUsers)
+      })
 
 });
 

@@ -1,6 +1,7 @@
 import { UserInterface } from "../IUser";
 import { BikeData } from "../BikeInterface";
 import { IOrder } from "../../models/orderModel";
+import { IFeedback } from "../../models/feedback";
 
 export interface IBikeWithUserDetails extends BikeData {
   userDetails: UserInterface;
@@ -40,4 +41,6 @@ export interface IAdminService {
   isEditOn(bikeId: string): Promise<BikeData | undefined>;
   getOrder():Promise <IOrder[] | undefined>;
   orderDetails(orderId:string):Promise<any>
+  allFeedbacks():Promise<IFeedback[] | null >
+
 }

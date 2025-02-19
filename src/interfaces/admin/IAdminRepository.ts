@@ -1,6 +1,7 @@
 import { UserInterface } from "../IUser";
 import { BikeData } from "../BikeInterface";
 import { IOrder } from "../../models/orderModel";
+import { IFeedback } from "../../models/feedback";
 
 export interface IBikeWithUserDetails extends BikeData {
     userDetails: UserInterface;
@@ -49,5 +50,6 @@ export interface IAdminRepository {
     findOrder(orderId:string):Promise<IOrder | undefined>;
     findBike(bikeId:string):Promise<BikeData>;
     findUser(userId:string):Promise<UserInterface>;
+    allFeedbacks():Promise<IFeedback[] | null >
 
 }

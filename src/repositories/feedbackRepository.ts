@@ -1,6 +1,7 @@
 import BaseRepository from './baseRepository';
 import { IFeedbackRepository } from '../interfaces/feedback/IFeedbackRepository';
 import FeedbackModel, { IFeedback } from '../models/feedback';
+import mongoose from 'mongoose';
 
 class feedbackRepository implements IFeedbackRepository {
   
@@ -26,21 +27,33 @@ class feedbackRepository implements IFeedbackRepository {
             throw error
         }
     }
-    
-    // async getWallet(walletId:string):Promise<IWallet>{
-    //     try {
-    //         const result = await this.walletRepository.findById(walletId)
-    //         if (!result) {
-    //             throw new Error("Wallet not found");
-    //         }
 
-    //         result.history = result.history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    //         return result 
-    //     } catch (error) {
-    //         console.log("error in repository layer of get wallet",error)
-    //         throw error
-    //     }
-    // }
+    async myFeedback(userId: string): Promise<IFeedback | null> {
+        try {
+            const  id  = new mongoose.Types.ObjectId(userId)
+            return await this.feedbackRepository.findOne({userId:id})
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async deleteFeedback(id: string): Promise<IFeedback | null> {
+        try {
+            return await this.feedbackRepository.findByIdAndDelete(id)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async updateFeedback(feedbackId: string, data: Partial<IFeedback>): Promise<IFeedback | null> {
+        try {
+            return await this.feedbackRepository.findByIdAndUpdate(feedbackId,data)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    
 
 
 }

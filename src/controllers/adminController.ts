@@ -227,6 +227,18 @@ export class AdminController {
         }
     }
 
+    async getAllFeedback(req: Request, res: Response): Promise<Response | void> {
+        try {
+            const allFeedbacks = await this.AdminServices.allFeedbacks()
+            console.log(90,allFeedbacks);
+        
+            return res.status(OK).json(ResponseModel.success('Get all feedbacks',allFeedbacks))
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error'))
+
+        }
+    }
+
 
 
 }

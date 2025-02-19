@@ -24,6 +24,7 @@ adminRouter
   .put('/isEditOn/:id', adminAuthMiddleware, (req, res) => { adminController.isEditOn(req, res) })
   .get('/orderList', adminAuthMiddleware, (req, res) => { adminController.getOrderList(req, res) })
   .get('/OrderDetails/:orderId', adminAuthMiddleware, (req, res) => { adminController.getOrderDetails(req, res) })
+  .get('/getAllFeedbacks',adminAuthMiddleware,(req,res)=>{adminController.getAllFeedback(req,res)})
 
 
 

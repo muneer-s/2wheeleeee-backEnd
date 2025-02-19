@@ -5,6 +5,7 @@ import { UserInterface } from "../interfaces/IUser";
 import { IBikeWithUserDetails } from "../interfaces/admin/IAdminRepository";
 import { BikeData } from "../interfaces/BikeInterface";
 import { IOrder } from "../models/orderModel";
+import { IFeedback } from "../models/feedback";
 
 class AdminServices implements IAdminService {
     constructor(private adminRepository: IAdminRepository) { }
@@ -152,6 +153,14 @@ class AdminServices implements IAdminService {
         }
     }
 
+
+    async allFeedbacks(): Promise<IFeedback[] | null> {
+        try {
+            return await this.adminRepository.allFeedbacks()
+        } catch (error) {
+            throw error
+        }
+    }
 
 
 }

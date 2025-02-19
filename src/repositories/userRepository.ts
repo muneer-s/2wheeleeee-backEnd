@@ -304,6 +304,14 @@ class UserRepository implements IUserRepository {
     }
   }
 
+
+  async userAlreadyReviewed(userid: string): Promise<IReview | null> {
+    try {
+      return await this.reviewRepository.findOne({reviewerId:userid})
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 export default UserRepository;

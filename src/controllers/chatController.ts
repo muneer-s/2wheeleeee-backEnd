@@ -38,11 +38,7 @@ export class ChatController {
         } catch (error) {
             console.error('erron while fetching message details',error);
         }
-    } 
-
-   
-
-
+    }
 
 }
 

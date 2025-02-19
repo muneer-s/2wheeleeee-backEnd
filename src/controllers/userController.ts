@@ -331,6 +331,10 @@ export class UserController {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("All fields are required."));
             }
 
+            const allreadyReviewed = await this.UserServices.userAlreadyReviewed(reviewerId)
+            if(allreadyReviewed){
+                return res.status(BAD_REQUEST).json(ResponseModel.error('User Already submitted a Review'))
+            }
             const review = await this.UserServices.submitReview(reviewerId, bikeId, rating, feedback)
 
             if (!review) {

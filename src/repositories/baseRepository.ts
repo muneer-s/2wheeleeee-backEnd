@@ -164,13 +164,21 @@ class BaseRepository<T extends Document> {
 
     async findModel(): Promise<T[]> {
         try {
-            return await this.model.find().populate('bikeId')
+            return await this.model.find().populate('bikeId').populate('userId')
         } catch (error) {
-            console.log("error in base repository of order list : ", error)
+            console.log("error in base repository findModel : ", error)
             throw error
         }
     }
 
+    async findFeedback(): Promise<T[]> {
+        try {
+            return await this.model.find().populate('userId').sort({ updatedAt: -1, createdAt: -1 });
+        } catch (error) {
+            console.log("error in base repository findModel : ", error)
+            throw error
+        }
+    }
     async deleteById(id: string): Promise<{ deletedCount?: number }> {
         try {
             return await this.model.deleteOne({ _id: id });

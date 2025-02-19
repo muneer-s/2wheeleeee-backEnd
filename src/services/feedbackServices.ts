@@ -23,31 +23,31 @@ class feedbackServices implements IFeedbackServices {
         }
     }
 
-    // async getWallet(walletId: string): Promise<IWallet> {
-    //     try {
-    //         const result = await this.walletRepository.getWallet(walletId)
-    //         return result
-    //     } catch (error) {
-    //         console.log(error)
-    //         throw error
-    //     }
-    // }
+    async myFeedback(userId: string): Promise<IFeedback | null> {
+        try {
+            return await this.feedbackRepository.myFeedback(userId)
+        } catch (error) {
+            throw error
+        }
+    }
 
-    // async saveWallet(walletId: string, newBalance:number,total:number, bikeId: string) {
-    //     try {
-    //         const historyEntry = {
-    //             date: new Date(),
-    //             type: "debit",
-    //             amount: total,
-    //             reason: bikeId
-    //         };
+    async deleteFeedback(feedbackId: string): Promise<IFeedback | null> {
+        try {
+            return await this.feedbackRepository.deleteFeedback(feedbackId)
+        } catch (error) {
+            throw error
+        }
+    }
 
-    //         return await this.walletRepository.updateWalletBalance(walletId, newBalance, historyEntry);
-    //     } catch (error) {
-    //         console.error("Error in WalletServices - saveWallet:", error);
-    //         throw error;
-    //     }
-    // }
+    async updateFeedback(feedbackId: string, data: Partial<IFeedback>): Promise<IFeedback | null> {
+        try {
+            return await this.feedbackRepository.updateFeedback(feedbackId,data)
+        } catch (error) {
+            throw error
+        }
+    }
+
+   
 }
 
 export default feedbackServices;

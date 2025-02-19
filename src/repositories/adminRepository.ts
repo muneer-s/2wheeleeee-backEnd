@@ -9,6 +9,7 @@ import { BikeData } from '../interfaces/BikeInterface';
 import { SortOrder } from 'mongoose';
 import OrderModel, { IOrder } from '../models/orderModel';
 import { error } from 'console';
+import FeedbackModel, { IFeedback } from '../models/feedback';
 
 dotenv.config();
 
@@ -26,11 +27,13 @@ class AdminRepository implements IAdminRepository {
     private userRepository: BaseRepository<UserInterface>;
     private bikeRepository: BaseRepository<BikeData>;
     private orderRepository: BaseRepository<IOrder>
+    private feedbackRepository:BaseRepository<IFeedback>
 
     constructor() {
         this.userRepository = new BaseRepository(userModel);
         this.bikeRepository = new BaseRepository(bikeModel);
         this.orderRepository = new BaseRepository(OrderModel)
+        this.feedbackRepository = new BaseRepository(FeedbackModel)
     }
 
 
@@ -342,6 +345,14 @@ class AdminRepository implements IAdminRepository {
             return userDetails
         } catch (error) {
             console.log("error in admin repository is find user : ", error);
+            throw error
+        }
+    }
+
+    async allFeedbacks(): Promise<IFeedback[] | null> {
+        try {
+            return await this.feedbackRepository.findFeedback()
+        } catch (error) {
             throw error
         }
     }

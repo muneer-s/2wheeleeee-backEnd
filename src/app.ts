@@ -17,6 +17,7 @@ import offerRouter from './routes/offerRoutes';
 import chatRouter from './routes/chatRoutes';
 import {app,server} from './socket/socket'
 import feedbackRouter from './routes/feedBackRoutes';
+import messageRouter from './routes/messageRoutes';
 // import messageRouter from './routes/messageRoutes';
 
 
@@ -57,7 +58,7 @@ app.use('/api/offer',offerRouter)
 app.use('/api/feedback',feedbackRouter)
 
 app.use('/api/chat',chatRouter)
-// app.use('/api/message',messageRouter)
+app.use('/api/chat',messageRouter)
 
 const port = process.env.PORT || 2000;
 
