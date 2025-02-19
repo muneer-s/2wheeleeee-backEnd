@@ -6,4 +6,6 @@ export interface IFeedbackServices{
     myFeedback(userId:string):Promise<IFeedback | null>
     deleteFeedback(feedbackId:string):Promise<IFeedback | null>
     updateFeedback(feedbackId: string, data: Partial<IFeedback>): Promise<IFeedback | null>;
+    allFeedbacks():Promise<IFeedback[] | null >
+
 }

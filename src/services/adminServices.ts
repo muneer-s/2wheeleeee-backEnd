@@ -162,6 +162,14 @@ class AdminServices implements IAdminService {
         }
     }
 
+    async deleteFeedback(feedbackId: string): Promise<IFeedback | null> {
+        try {
+            return await this.adminRepository.deleteFeedback(feedbackId)
+        } catch (error) {
+            throw error
+        }
+    }
+
 
 }
 

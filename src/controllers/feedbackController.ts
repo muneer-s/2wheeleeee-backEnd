@@ -13,9 +13,9 @@ export class FeedbackController {
 
     async createFeedback(req: Request, res: Response): Promise<Response | void> {
         try {
-            const { userId, role, rating, comment } = req.body;
+            const { userId, rating, comment } = req.body;
 
-            if (!userId || !role || !rating || !comment) {
+            if (!userId || !rating || !comment) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error('Missing required fields'));
             }
 
@@ -27,7 +27,6 @@ export class FeedbackController {
 
             const feedbackData = new FeedbackModel({
                 userId: new mongoose.Types.ObjectId(userId),
-                role,
                 rating,
                 feedback: comment
             });
@@ -52,7 +51,6 @@ export class FeedbackController {
             }
 
             return res.status(OK).json(ResponseModel.success("Feedback deleted"))
-
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error'))
         }
@@ -61,7 +59,6 @@ export class FeedbackController {
     async getMyFeedback(req: Request, res: Response): Promise<Response | void> {
         try {
             const userId = req.params.userId
-            console.log(6547, userId);
 
             if (!userId) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("User id is missing"))
@@ -97,6 +94,17 @@ export class FeedbackController {
             return res.status(OK).json(ResponseModel.success("Feedback updated successfully", updatedFeedback));
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error'))
+        }
+    }
+
+
+    async getAllFeedback(req: Request, res: Response): Promise<Response | void> {
+        try {
+            const allFeedbacks = await this.FeedbackService.allFeedbacks()        
+            return res.status(OK).json(ResponseModel.success('Get all feedbacks',allFeedbacks))
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error'))
+
         }
     }
 

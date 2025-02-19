@@ -14,7 +14,6 @@ class feedbackRepository implements IFeedbackRepository {
     async createFeedback(data: IFeedback): Promise<IFeedback> {
         try {
             return await this.feedbackRepository.create(data)
-
         } catch (error) {
             throw error
         }
@@ -48,6 +47,14 @@ class feedbackRepository implements IFeedbackRepository {
     async updateFeedback(feedbackId: string, data: Partial<IFeedback>): Promise<IFeedback | null> {
         try {
             return await this.feedbackRepository.findByIdAndUpdate(feedbackId,data)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async allFeedbacks(): Promise<IFeedback[] | null> {
+        try {
+            return await this.feedbackRepository.findFeedback()
         } catch (error) {
             throw error
         }

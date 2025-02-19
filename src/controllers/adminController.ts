@@ -8,7 +8,7 @@ import { ResponseModel } from '../utils/responseModel';
 
 dotenv.config();
 
-const { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR,NOT_FOUND } = STATUS_CODES;
+const { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR,NOT_FOUND,BAD_REQUEST } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
 export class AdminController {
@@ -139,8 +139,6 @@ export class AdminController {
         }
     }
 
-    
-
     async getAllBikeDetails(req: Request, res: Response): Promise<Response | void> {
         try {
 
@@ -229,13 +227,29 @@ export class AdminController {
 
     async getAllFeedback(req: Request, res: Response): Promise<Response | void> {
         try {
-            const allFeedbacks = await this.AdminServices.allFeedbacks()
-            console.log(90,allFeedbacks);
-        
+            const allFeedbacks = await this.AdminServices.allFeedbacks()        
             return res.status(OK).json(ResponseModel.success('Get all feedbacks',allFeedbacks))
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error'))
 
+        }
+    }
+
+
+    async deleteFeedback(req: Request, res: Response): Promise<Response | void> {
+        try {
+            const feedbackId = req.params.feedbackId
+            if (!feedbackId) {
+                return res.status(BAD_REQUEST).json(ResponseModel.error("feedback id is missing"))
+            }
+            const deletedFeedback = await this.AdminServices.deleteFeedback(feedbackId)
+            if (!deletedFeedback) {
+                return res.status(NOT_FOUND).json(ResponseModel.error("No Feedback Found"))
+            }
+
+            return res.status(OK).json(ResponseModel.success("Feedback deleted"))
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error'))
         }
     }
 

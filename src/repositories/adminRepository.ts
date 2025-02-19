@@ -36,7 +36,6 @@ class AdminRepository implements IAdminRepository {
         this.feedbackRepository = new BaseRepository(FeedbackModel)
     }
 
-
     async getAllUsers(filters: { 
         page: number; 
         limit: number; 
@@ -352,6 +351,14 @@ class AdminRepository implements IAdminRepository {
     async allFeedbacks(): Promise<IFeedback[] | null> {
         try {
             return await this.feedbackRepository.findFeedback()
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async deleteFeedback(id: string): Promise<IFeedback | null> {
+        try {
+            return await this.feedbackRepository.findByIdAndDelete(id)
         } catch (error) {
             throw error
         }

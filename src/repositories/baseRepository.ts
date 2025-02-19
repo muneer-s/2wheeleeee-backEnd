@@ -175,7 +175,7 @@ class BaseRepository<T extends Document> {
         try {
             return await this.model.find().populate('userId').sort({ updatedAt: -1, createdAt: -1 });
         } catch (error) {
-            console.log("error in base repository findModel : ", error)
+            console.log("error in base repository findfeedback : ", error)
             throw error
         }
     }

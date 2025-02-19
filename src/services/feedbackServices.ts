@@ -47,6 +47,14 @@ class feedbackServices implements IFeedbackServices {
         }
     }
 
+    async allFeedbacks(): Promise<IFeedback[] | null> {
+        try {
+            return await this.feedbackRepository.allFeedbacks()
+        } catch (error) {
+            throw error
+        }
+    }
+
    
 }
 

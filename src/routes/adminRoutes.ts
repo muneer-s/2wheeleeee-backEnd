@@ -25,6 +25,7 @@ adminRouter
   .get('/orderList', adminAuthMiddleware, (req, res) => { adminController.getOrderList(req, res) })
   .get('/OrderDetails/:orderId', adminAuthMiddleware, (req, res) => { adminController.getOrderDetails(req, res) })
   .get('/getAllFeedbacks',adminAuthMiddleware,(req,res)=>{adminController.getAllFeedback(req,res)})
+  .delete('/feedback/:feedbackId',adminAuthMiddleware,(req,res)=>{adminController.deleteFeedback(req,res)})
 
 
 

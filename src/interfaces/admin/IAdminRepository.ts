@@ -51,5 +51,6 @@ export interface IAdminRepository {
     findBike(bikeId:string):Promise<BikeData>;
     findUser(userId:string):Promise<UserInterface>;
     allFeedbacks():Promise<IFeedback[] | null >
+    deleteFeedback(id:string):Promise<IFeedback | null>
 
 }

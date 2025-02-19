@@ -4,7 +4,6 @@ export interface IFeedback extends Document {
     userId: ObjectId;
     rating: number;
     feedback: string;
-    role: string,
 }
 
 const feedbackSchema: Schema<IFeedback> = new mongoose.Schema({
@@ -18,9 +17,6 @@ const feedbackSchema: Schema<IFeedback> = new mongoose.Schema({
         required: true
     },
     feedback: {
-        type: String
-    },
-    role: {
         type: String
     },
 }, { timestamps: true })

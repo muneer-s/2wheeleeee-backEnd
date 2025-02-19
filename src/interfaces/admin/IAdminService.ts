@@ -42,5 +42,6 @@ export interface IAdminService {
   getOrder():Promise <IOrder[] | undefined>;
   orderDetails(orderId:string):Promise<any>
   allFeedbacks():Promise<IFeedback[] | null >
+  deleteFeedback(feedbackId:string):Promise<IFeedback | null>
 
 }
