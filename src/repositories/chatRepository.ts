@@ -56,7 +56,6 @@ class chatRepository implements IChatRepository {
                 .sort({ updatedAt: -1 });
 
             return result
-
         } catch (error) {
             console.error("error in getting chat:", error);
             throw error;
