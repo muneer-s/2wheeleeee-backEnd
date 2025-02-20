@@ -24,12 +24,6 @@ class messageRepository implements IMessageRepository {
 
     async getMessage(chatId: string): Promise<IMessage[] | null> {
         try {
-            // const messages = await this.messageRepository.model
-            //     .find({ chat: chatId })
-            //     .populate("sender", "name email")
-            //     .populate("chat")
-            //     .exec();
-
             const messages = await this.messageRepository.getModel()
                 .find({ chat: chatId })
                 .populate("sender", "name email")

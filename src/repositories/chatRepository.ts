@@ -51,7 +51,7 @@ class chatRepository implements IChatRepository {
             const result = await this.chatRepository.findChat({
                 users: { $elemMatch: { $eq: userId } },
             })
-                .populate({ path: "users", select: "name email" })
+                .populate({ path: "users", select: "name email profile_picture" })
                 .populate("latestMessage")
                 .sort({ updatedAt: -1 });
 

@@ -14,10 +14,7 @@ export class ChatController {
     async accessChat(req:Request,res:Response) {
         try {
             const {receiverId,senderId} = req.body   
-            
-            
             const chat = await this.ChatServices.accessChat(receiverId,senderId)
-            
             // res.json(chat)
             return res.status(OK).json(ResponseModel.success("Access chat ",chat))
 

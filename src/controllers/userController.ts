@@ -10,7 +10,6 @@ import logger from '../utils/logger';
 import { IUserService } from '../interfaces/user/IUserService';
 import { IOtpService } from '../interfaces/otp/IOtpService';
 import { ResponseModel } from '../utils/responseModel';
-import { error } from 'console';
 
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND, FORBIDDEN } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
@@ -127,9 +126,6 @@ export class UserController {
                 return res.status(NOT_FOUND).json({ success: false, message: "Email is required." })
             }
 
-
-
-
             //const forgotPassword: any = await this._userUsecase.forgotPassword(req.body.email);
 
 
@@ -159,7 +155,7 @@ export class UserController {
 
             return res.status(OK).json(ResponseModel.success('Success', userDetails));
         } catch (error) {
-            console.log(11,error);
+            console.log(error);
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error))
         }
     }
@@ -214,8 +210,6 @@ export class UserController {
                 maxRent: Number(maxRent),
             });
 
-            console.log(11, result)
-
             return res.status(OK).json(ResponseModel.success('Get Bike List', {
                 bikeList: result.bikeList,
                 totalBikes: result.totalBikes,
@@ -265,7 +259,7 @@ export class UserController {
                 return res.status(NOT_FOUND).json(ResponseModel.error("User ID is required"));
             }
 
-            const orders = await this.UserServices.getOrder(userId.toString())
+            const orders = await this.UserServices.getOrder(userId.toString())            
 
             if (orders.length === 0) {
                 return res.status(OK).json(ResponseModel.success('No orders found for this user', { orders: [] }));
@@ -351,7 +345,6 @@ export class UserController {
     async getReviews(req: Request, res: Response) {
         try {
             const { bikeId } = req.params;
-            console.log(2121, bikeId)
 
             if (!bikeId) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("Bike ID is required"));
@@ -359,7 +352,6 @@ export class UserController {
 
             const reviews = await this.UserServices.findReviews(bikeId)
 
-            console.log(98,reviews);
 
             return res.status(OK).json(ResponseModel.success('Get reviews of the bike',{data: reviews }));
 

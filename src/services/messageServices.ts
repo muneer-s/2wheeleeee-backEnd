@@ -16,9 +16,7 @@ class messageServices implements IMessageService {
                 sender:senderId,
                 chat:chatId,
                 content
-            }
-            console.log('new message servicil ',newMessage);
-            
+            }            
             const message = await this.messageRepository.sendMessage(newMessage)
             if(!message){
                 return null

@@ -8,7 +8,6 @@ import razorpay from '../config/razorpayConfig';
 import { IWalletService } from '../interfaces/wallet/IWalletService';
 import { IUserService } from '../interfaces/user/IUserService';
 import { BikeData } from '../interfaces/BikeInterface';
-import { log } from 'console';
 import orderServices from '../services/orderServices';
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
 
@@ -53,7 +52,6 @@ export class OrderController {
 
 
             const findBike = await this.OrderServices.findBike(bikeId)
-            console.log(11122, findBike)
             const ownerId = findBike?.userId
 
             const status = "Booked"

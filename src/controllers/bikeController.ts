@@ -68,7 +68,6 @@ export class HostController {
     async bikeSingleView(req: Request, res: Response): Promise<Response> {
         try {
             const bikeId = req.query.bikeId
-            console.log(111, bikeId);
             if (!bikeId) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("Bike Id is required"))
             }
@@ -120,14 +119,11 @@ export class HostController {
 
             const { Id } = req.query;
 
-            console.log(1, Id)
-
             if (!Id) {
                 return res.status(NOT_FOUND).json(ResponseModel.error("User ID is required"));
             }
 
             const orders = await this.HostServices.findOrder(Id.toString())
-            console.log(2, orders)
 
             if (!orders) {
                 return res.status(OK).json(ResponseModel.success('No orders found for this user', { orders: [] }));

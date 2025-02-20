@@ -175,7 +175,6 @@ export class AdminController {
             const { reason } = req.body;
 
             if (reason) {
-                console.log(`Revocation reason: ${reason}`);
                 const bike = await this.AdminServices.revokeHost(bikeId, reason)
                 return res.status(OK).json(ResponseModel.success('Revoked',bike));
             } else {
@@ -185,7 +184,7 @@ export class AdminController {
 
         } catch (error) {
             console.log(error);
-            res.status(500).json({ success: false, message: 'Internal server error' });
+            // res.status(500).json({ success: false, message: 'Internal server error' });
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
         }
     }
@@ -204,7 +203,6 @@ export class AdminController {
     async getOrderList(req:Request,res:Response):Promise<Response | void>{
         try {
             const orders = await this.AdminServices.getOrder()
-            console.log(11,orders);
             return res.status(OK).json(ResponseModel.success('Order List Getting Success',{order:orders}))
         } catch (error) {
             console.log("error in admin controller getting order list : ",error)

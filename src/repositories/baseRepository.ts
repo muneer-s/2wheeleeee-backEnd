@@ -110,7 +110,7 @@ class BaseRepository<T extends Document> {
     }
 
     findChat(filter: any) {
-        return this.model.find(filter); // Returns a Query directly
+        return this.model.find(filter);
     }
 
     async findByIdAndUpdate(id: string, update: Partial<T>): Promise<T | null> {

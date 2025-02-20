@@ -34,8 +34,6 @@ export class OfferController {
 
             const newOffer = new OfferModel({ offerName, discount, startDate, endDate, description, offerBy: createdBy });
 
-            console.log(99999, newOffer)
-
             await this.offerServices.saveOffer(newOffer)
             return res.status(OK).json(ResponseModel.success("Offer created successfully"))
         } catch (error) {
@@ -61,8 +59,6 @@ export class OfferController {
     async deleteOffer(req: Request, res: Response) {
         try {
             const offerId = req.params.id;
-
-            console.log(111, offerId)
 
             if (!offerId) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("Offer ID is required"));
@@ -106,11 +102,6 @@ export class OfferController {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("End date must be after the start date."));
             }
 
-
-
-            //await OfferModel.findByIdAndUpdate(offerId, updatedData, { new: true });
-
-
             const updatedOffer = await this.offerServices.updateOffer(offerId, updatedData);
             
             if (!updatedOffer) {
@@ -118,7 +109,6 @@ export class OfferController {
             }
 
             return res.status(OK).json(ResponseModel.success("Offer updated successfully."));
-
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("Internal server error", error as Error));
 
@@ -146,7 +136,6 @@ export class OfferController {
     async removeOffer(req:Request,res:Response){
         try {
             const {bikeId} = req.body
-            console.log(111,bikeId)
 
             await this.offerServices.removeOffer(bikeId)
 

@@ -16,33 +16,31 @@ const io = new Server(server, {    // io is the Socket.IO server.
 });
 
 
-interface ActiveUsersType{
-    userId:string;
-    socketId:string;
+interface ActiveUsersType {
+    userId: string;
+    socketId: string;
 }
 
 let activeUsers = [] as ActiveUsersType[]
 
-
-// 5️⃣ Handling Socket.IO Connections
-
+// handling Socket.IO Connections
 io.on("connection", (socket) => {
     console.log('a user connected', socket.id);
 
-    socket.on("setup", (userId) => {      // User Setup (Joining)
+    socket.on("setup", (userId) => {      // user setup (joining)
         socket.join(userId);
         socket.emit("connected");
-        if(!activeUsers.some((user) => user.userId === userId)){
-            activeUsers.push({userId:userId,socketId:socket.id})
-          }
-          io.emit('get-users',activeUsers) 
+        if (!activeUsers.some((user) => user.userId === userId)) {
+            activeUsers.push({ userId: userId, socketId: socket.id })
+        }
+        io.emit('get-users', activeUsers)
     });
 
     socket.on("join chat", (room) => {
         socket.join(room);
-      }); 
+    });
 
-    // Sending Messages
+    // sending messages
     socket.on("message", (message) => {
         console.log("Message received:", message);
 
@@ -54,22 +52,22 @@ io.on("connection", (socket) => {
         });
     });
 
-    // When a message is sent:
-    // Extracts chat from the message.
-    // Loops through chat.users and sends the message only to users except the sender (socket.in(user).emit("message received", message)).
+    // when a message is sent:
+    // extracts chat from the message.
+    // loops through chat.users and sends the message only to users except the sender (socket.in(user).emit("message received", message)).
 
 
-    // Handling Disconnection
+    // handling disconnection
     socket.on("disconnect", () => {
         console.log("user disconnected");
         activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
-        io.emit('get-users',activeUsers)
-      });
+        io.emit('get-users', activeUsers)
+    });
 
-      socket.on("offline",() => { 
+    socket.on("offline", () => {
         activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
-        io.emit('get-users',activeUsers)
-      })
+        io.emit('get-users', activeUsers)
+    })
 
 });
 

@@ -21,6 +21,6 @@ messageRouter
    .get('/getallmessage',userAuth,(req,res)=>{ messageController.getMessage(req,res) })
 
 
- 
+  
 
 export default messageRouter;
