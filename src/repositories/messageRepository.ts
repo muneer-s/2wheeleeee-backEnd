@@ -13,7 +13,7 @@ class messageRepository implements IMessageRepository {
     async sendMessage(newMessage: object): Promise<IMessage | null> {
         try {
             let message = await this.messageRepository.create(newMessage);
-            message = await message.populate("sender", "name email");
+            message = await message.populate("sender", "name email profile_picture");
             message = await message.populate("chat");
             return message;
         } catch (error) {

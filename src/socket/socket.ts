@@ -65,11 +65,6 @@ io.on("connection", (socket) => {
         });
     });
 
-    // when a message is sent:
-    // extracts chat from the message.
-    // loops through chat.users and sends the message only to users except the sender (socket.in(user).emit("message received", message)).
-
-
     // handling disconnection
     socket.on("disconnect", () => {
         console.log("user disconnected");
