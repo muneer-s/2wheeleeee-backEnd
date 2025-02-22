@@ -362,6 +362,14 @@ class UserServices implements IUserService {
         }
     }
 
+    async allOrders(): Promise<IOrder[] | null> {
+        try {
+            return await this.userRepository.allOrders()
+        } catch (error) {
+            throw error
+        }
+    }
+
 
 
 

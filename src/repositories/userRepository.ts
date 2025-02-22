@@ -192,7 +192,11 @@ class UserRepository implements IUserRepository {
 
   async getOrder(userId: string): Promise<IOrder[]> {
     try {
-      const orders = await this.orderRepository.find({ userId })
+      const orders = await this.orderRepository.find(
+        { userId },
+        { sort: { createdAt: -1 } }
+      );
+
       if (!orders || orders.length === 0) {
         return [];
       }
@@ -307,11 +311,24 @@ class UserRepository implements IUserRepository {
 
   async userAlreadyReviewed(userid: string): Promise<IReview | null> {
     try {
-      return await this.reviewRepository.findOne({reviewerId:userid})
+      return await this.reviewRepository.findOne({ reviewerId: userid })
     } catch (error) {
       throw error
     }
   }
+
+async allOrders(): Promise<IOrder[] | null> {
+  try {
+    return await this.orderRepository.findAll()
+  } catch (error) {
+    throw error
+  }
+}
+
+
+
+
+
 }
 
 export default UserRepository;

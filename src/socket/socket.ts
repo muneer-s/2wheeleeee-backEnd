@@ -7,8 +7,8 @@ const server = createServer(app);
 
 
 // initialize Socket.IO
-const io = new Server(server, {    // io is the Socket.IO server.
-    pingTimeout: 60000, // if 60 seconds user didnt send any messges . then it gonna closa the connect and save the bandwidth
+const io = new Server(server, {    
+    pingTimeout: 60000, 
     cors: {
         origin: process.env.FRONTEND_URL || 'http://localhost:5173',
         methods: ["GET", "POST"],
@@ -24,12 +24,12 @@ interface ActiveUsersType {
 
 let activeUsers = [] as ActiveUsersType[]
 
-// handling Socket.IO Connections
+// Socket.IO Connections
 io.on("connection", (socket) => {
     console.log('a user connected', socket.id);
 
-    socket.on("setup", (userId) => {      // user setup (joining) this will take user data from front end
-        socket.join(userId);  // creating a room for that perticular user only
+    socket.on("setup", (userId) => {   
+        socket.join(userId);  
         socket.emit("connected");
         if (!activeUsers.some((user) => user.userId === userId)) {
             activeUsers.push({ userId: userId, socketId: socket.id })
@@ -38,10 +38,10 @@ io.on("connection", (socket) => {
     });
 
     // joining a chat
-    socket.on("join chat", (room) => { // take room id from front end
+    socket.on("join chat", (room) => { 
         socket.join(room);
         console.log("user joined Room: ", room);
-    });  // when we click on any chat then this new room will create with that person
+    }); 
 
 
 
@@ -56,10 +56,14 @@ io.on("connection", (socket) => {
 
         let chat = message.chat;
 
-        if (!chat.user) return console.log("chat.users not defined");
+        if (!chat.users) return console.log("chat.users not defined");
 
         chat.users.forEach((user: any) => {
+            console.log(1, user);
+            console.log(2, message.sender._id);
+
             if (user._id !== message.sender._id) {
+                console.log(98, message);
                 socket.to(user._id).emit("message received", message); // send the message to others
             }
         });

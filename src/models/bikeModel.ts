@@ -78,7 +78,9 @@ const bikeSchema: Schema<BikeData> = new Schema({
     offerPrice: {
         type: Number,
     },
-});
+},
+{ timestamps: true }
+);
 
 
 const bikeModel: Model<BikeData> = mongoose.model<BikeData>('Bike', bikeSchema);

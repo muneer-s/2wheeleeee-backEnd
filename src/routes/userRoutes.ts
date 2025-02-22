@@ -82,7 +82,8 @@ userRouter
     .put('/earlyReturns/:orderId',userAuth,(req,res)=>{userController.earlyReturn(req,res)})
     .put('/returnOrder/:orderId',userAuth,(req,res)=>{userController.returnOrder(req,res)})
     .post('/submitReview',userAuth,(req,res)=>{userController.submitReview(req,res)})
-    .get('/getReviews/:bikeId',userAuth,(req,res)=>{userController.getReviews(req,res)})
+    .get('/getReviews/:bikeId',(req,res)=>{userController.getReviews(req,res)})
+    .get('/isAlreadyBooked/:bikeId',userAuth,(req,res)=>{userController.isBikeAlreadyBooked(req,res)})
 
 
 export default userRouter;

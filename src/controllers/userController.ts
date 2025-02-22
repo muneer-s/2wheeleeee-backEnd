@@ -64,15 +64,15 @@ export class UserController {
                 return res.status(BAD_REQUEST).json(ResponseModel.error('Incorrect password. Please try again.'));
             }
 
-            if(isUserPresent.isBlocked){
+            if (isUserPresent.isBlocked) {
                 return res.status(FORBIDDEN).json(ResponseModel.error('User is blocked by the admin'))
             }
 
             const time = this.milliseconds(0, 30, 0); // 30 minutes
             const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
 
-        //    const time = this.milliseconds(0, 0, 15);  // 15 sec
-        //    const refreshTokenExpiryTime = this.milliseconds(0, 3, 0);  // 1 minute
+            //    const time = this.milliseconds(0, 0, 15);  // 15 sec
+            //    const refreshTokenExpiryTime = this.milliseconds(0, 3, 0);  // 1 minute
 
             const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
             const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
@@ -259,7 +259,7 @@ export class UserController {
                 return res.status(NOT_FOUND).json(ResponseModel.error("User ID is required"));
             }
 
-            const orders = await this.UserServices.getOrder(userId.toString())            
+            const orders = await this.UserServices.getOrder(userId.toString())
 
             if (orders.length === 0) {
                 return res.status(OK).json(ResponseModel.success('No orders found for this user', { orders: [] }));
@@ -326,7 +326,7 @@ export class UserController {
             }
 
             const allreadyReviewed = await this.UserServices.userAlreadyReviewed(reviewerId)
-            if(allreadyReviewed){
+            if (allreadyReviewed) {
                 return res.status(BAD_REQUEST).json(ResponseModel.error('User Already submitted a Review'))
             }
             const review = await this.UserServices.submitReview(reviewerId, bikeId, rating, feedback)
@@ -353,13 +353,38 @@ export class UserController {
             const reviews = await this.UserServices.findReviews(bikeId)
 
 
-            return res.status(OK).json(ResponseModel.success('Get reviews of the bike',{data: reviews }));
+            return res.status(OK).json(ResponseModel.success('Get reviews of the bike', { data: reviews }));
 
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
         }
     }
 
+
+    async isBikeAlreadyBooked(req: Request, res: Response) {
+        try {
+            const bikeId = req.params.bikeId
+            console.log(12121, bikeId)
+
+            let bikeOrdered :boolean | undefined= false
+
+            const allOrders = await this.UserServices.allOrders()
+
+            console.log(2222, allOrders);
+
+
+            bikeOrdered = allOrders?.some(order => 
+                order.bikeId.toString() === bikeId && order.status !== "Completed"
+            );
+
+            console.log("Bike Ordered:", bikeOrdered);
+            return res.status(OK).json(ResponseModel.success("This bike order status : ",{bikeOrdered:bikeOrdered}))
+
+
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
+        }
+    }
 
 }
 

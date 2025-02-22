@@ -28,7 +28,9 @@ const walletSchema:Schema<IWallet> = new Schema({
         }
     }]
     
-})
+},
+{ timestamps: true }
+)
 
 
 const walletModel = mongoose.model<IWallet>('Wallet',walletSchema)

@@ -205,6 +205,16 @@ class BaseRepository<T extends Document> {
         }
     }
 
+    async findAll():Promise<any>{
+        try {
+            return await this.model.find()
+        } catch (error) {
+            console.log("Error in Base repository findAll : ",error);
+            
+            throw new Error("Failed to get multiple documents")
+        }
+    }
+
 
 }
 
