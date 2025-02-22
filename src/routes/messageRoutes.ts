@@ -6,7 +6,6 @@ import userAuth from '../middleware/userAuthMiddleware';
 import chatRepository from '../repositories/chatRepository';
 
 
-
 const messageRep = new messageRepository()
 const chatRep = new chatRepository()
 const messageSer = new messageServices(messageRep,chatRep)

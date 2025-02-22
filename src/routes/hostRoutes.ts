@@ -13,7 +13,6 @@ const service = new HostServices(hostRepository,userRepository)
 const hostController = new HostController(service)
 
 
-
 const hostRouter = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 

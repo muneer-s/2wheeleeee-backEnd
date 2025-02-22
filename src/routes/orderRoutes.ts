@@ -1,7 +1,4 @@
 import express from 'express';
-import OtpController from '../controllers/otpController';
-import OtpServices from '../services/otpServices';
-import OtpRepository from '../repositories/otpRepository';
 import orderRepository from '../repositories/orderRepository';
 import orderServices from '../services/orderServices';
 import OrderController from '../controllers/orderController';
@@ -10,7 +7,6 @@ import walletRepository from '../repositories/walletRepository';
 import UserRepository from '../repositories/userRepository';
 import walletServices from '../services/walletServices';
 import UserServices from '../services/userServices';
-
 
 const walletRep = new walletRepository()
 const userRep = new UserRepository()
@@ -23,8 +19,6 @@ const orderService = new orderServices(OrderRepository)
 const orderController = new OrderController(orderService,walletSer,userSer)
 
 const orderRouter = express.Router()
-
-
 
 orderRouter
     .post('/createOrder', userAuth, (req, res) => { orderController.createOrder(req, res) })
