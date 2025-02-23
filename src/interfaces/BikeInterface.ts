@@ -1,6 +1,6 @@
-import mongoose,{ Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
-export interface BikeData  extends Document{
+export interface BikeData extends Document {
     userId: mongoose.Types.ObjectId;
     companyName: string;
     modelName: string;
@@ -9,17 +9,18 @@ export interface BikeData  extends Document{
     registerNumber: string;
     insuranceExpDate: Date;
     polutionExpDate: Date;
-    images: string[]; 
-    rcImage: string | null; 
-    PolutionImage: string | null; 
-    insuranceImage: string | null; 
-    isBlocked?: boolean; 
-    isHost?: boolean; 
-    isEdit:boolean;
-    offer:mongoose.Types.ObjectId | null;
-    offerApplied:boolean | null;
-    offerPrice:number | null;
-        
+    images: string[];
+    rcImage: string | null;
+    PolutionImage: string | null;
+    insuranceImage: string | null;
+    isBlocked?: boolean;
+    isHost?: boolean;
+    isEdit: boolean;
+    offer: mongoose.Types.ObjectId | null;
+    offerApplied: boolean | null;
+    offerPrice: number | null;
+    location: string
+
 }
 
 

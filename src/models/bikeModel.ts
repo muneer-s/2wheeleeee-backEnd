@@ -78,8 +78,13 @@ const bikeSchema: Schema<BikeData> = new Schema({
     offerPrice: {
         type: Number,
     },
+    location: {
+        type: String,
+        required: true
+    }
+
 },
-{ timestamps: true }
+    { timestamps: true }
 );
 
 

@@ -15,7 +15,7 @@ const { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } = STATUS_CODES;
 
 
 class HostServices implements IHostService {
-    constructor(private hostRepository: IHostRepository, private userRepository:IUserRepository) { }
+    constructor(private hostRepository: IHostRepository, private userRepository: IUserRepository) { }
 
     async saveBikeDetails(req: Request, res: Response): Promise<Response | undefined> {
         try {
@@ -27,16 +27,6 @@ class HostServices implements IHostService {
             const rcImage: Express.Multer.File | undefined = files?.rcImage?.[0];
             const PolutionImage: Express.Multer.File | undefined = files?.PolutionImage?.[0];
             const insuranceImage: Express.Multer.File | undefined = files?.insuranceImage?.[0];
-
-
-            // console.log("Received Form Data:");
-            // console.log(req.body);
-
-            // console.log("Uploaded Files:");
-            // console.log("Images: ", images);
-            // console.log("RC Image: ", rcImage);
-            // console.log("Insurance Image: ", insuranceImage);
-
 
             const uploadToCloudinary = (buffer: Buffer, folder: string): Promise<UploadApiResponse> => {
                 return new Promise((resolve, reject) => {
@@ -92,6 +82,10 @@ class HostServices implements IHostService {
                 return res.status(BAD_REQUEST).json(ResponseModel.error("User ID is required"));
             }
 
+            const location = req.body.location
+            console.log(333,location);
+            
+
 
             const bikeData: BikeDataInput = {
                 userId: new mongoose.Types.ObjectId(req.userId),
@@ -109,16 +103,18 @@ class HostServices implements IHostService {
                 isEdit: false,
                 offer: null,
                 offerApplied: false,
-                offerPrice: null
+                offerPrice: null,
+                location: location
             };
 
+            console.log(321, bikeData);
 
             const savedBike = await this.hostRepository.saveBikeDetails(bikeData);
             return res.status(OK).json(ResponseModel.success("Bike details saved successfully", {data: savedBike}));
 
         } catch (error) {
             console.error("Error uploading images or saving bike details:", error);
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error))
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error))
         }
     }
 
@@ -144,7 +140,7 @@ class HostServices implements IHostService {
         }
     }
 
-    async bikeSingleView(bikeId: string) : Promise<BikeData | null>{
+    async bikeSingleView(bikeId: string): Promise<BikeData | null> {
         try {
             const bike = await this.hostRepository.bikeSingleView(bikeId)
             return bike
@@ -164,7 +160,7 @@ class HostServices implements IHostService {
         }
     }
 
-    async editBike(req: Request, res: Response): Promise< Response> {
+    async editBike(req: Request, res: Response): Promise<Response> {
         try {
             const { bikeId } = req.query;
 
@@ -224,7 +220,7 @@ class HostServices implements IHostService {
             throw error;
         }
     }
-    
+
     async findOrder(userId: string): Promise<IOrder[] | undefined> {
         try {
             return await this.hostRepository.getOrder(userId)
@@ -249,7 +245,7 @@ class HostServices implements IHostService {
             }
 
             const user = await this.hostRepository.findUser(order?.userId.toString())
-            if(!user){
+            if (!user) {
                 throw new Error("User details not found")
             }
 

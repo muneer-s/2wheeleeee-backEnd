@@ -230,6 +230,7 @@ class UserServices implements IUserService {
                 query.$or = [
                     { modelName: { $regex: search, $options: 'i' } },
                     { companyName: { $regex: search, $options: 'i' } },
+                    { location: { $regex: search, $options: 'i' } },
                 ];
             }
             if (fuelType) {
