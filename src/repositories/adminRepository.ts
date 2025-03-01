@@ -21,13 +21,12 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-
 class AdminRepository implements IAdminRepository {
 
     private userRepository: BaseRepository<UserInterface>;
     private bikeRepository: BaseRepository<BikeData>;
     private orderRepository: BaseRepository<IOrder>
-    private feedbackRepository:BaseRepository<IFeedback>
+    private feedbackRepository: BaseRepository<IFeedback>
 
     constructor() {
         this.userRepository = new BaseRepository(userModel);
@@ -36,13 +35,13 @@ class AdminRepository implements IAdminRepository {
         this.feedbackRepository = new BaseRepository(FeedbackModel)
     }
 
-    async getAllUsers(filters: { 
-        page: number; 
-        limit: number; 
-        search: string; 
-        isBlocked?: string | undefined; 
-        isUser?: string | undefined 
-    }):Promise<{ users: UserInterface[]; totalUsers: number; totalPages: number } | undefined> {
+    async getAllUsers(filters: {
+        page: number;
+        limit: number;
+        search: string;
+        isBlocked?: string | undefined;
+        isUser?: string | undefined
+    }): Promise<{ users: UserInterface[]; totalUsers: number; totalPages: number } | undefined> {
         try {
             const { page, limit, search, isBlocked, isUser } = filters;
             const query: any = {};
@@ -55,9 +54,8 @@ class AdminRepository implements IAdminRepository {
 
             const sort: { [key: string]: SortOrder } = { name: 1 };
 
-            const users = await this.userRepository.find(query, { sort, skip, limit });    
+            const users = await this.userRepository.find(query, { sort, skip, limit });
 
-            // const totalUsers = await userModel.countDocuments(query);
             const totalUsers = await this.userRepository.count(query);
 
             const totalPages = Math.ceil(totalUsers / limit)
@@ -123,7 +121,7 @@ class AdminRepository implements IAdminRepository {
     }
 
     async getAllBikeDetails(
-        query: object, 
+        query: object,
         options: { skip: number; limit: number; sort: object, search?: string }
     ): Promise<{ bikes: IBikeWithUserDetails[]; total: number }> {
         try {
@@ -197,11 +195,11 @@ class AdminRepository implements IAdminRepository {
             const result = bikesWithUserDetails.map((bike: any) => {
                 return {
                     ...bike,
-                    userDetails: bike.userDetails, 
+                    userDetails: bike.userDetails,
                 };
             });
-            console.log(222222222,result);
-            
+            console.log(222222222, result);
+
 
             return { bikes: result, total };
         } catch (error) {
@@ -210,7 +208,7 @@ class AdminRepository implements IAdminRepository {
         }
     }
 
-    async verifyHost(bikeId: string): Promise<BikeData | string | undefined>  {
+    async verifyHost(bikeId: string): Promise<BikeData | string | undefined> {
         try {
             const bike = await this.bikeRepository.findById(bikeId);
 
@@ -228,7 +226,7 @@ class AdminRepository implements IAdminRepository {
                 }
 
                 await transporter.sendMail(mailOptions)
-            } 
+            }
 
             await bike.save();
             return bike
@@ -261,7 +259,7 @@ class AdminRepository implements IAdminRepository {
 
             await bike.save();
             return bike
-            
+
         } catch (error) {
             console.log(error)
         }
@@ -297,7 +295,7 @@ class AdminRepository implements IAdminRepository {
         }
     }
 
-    async getOrder():Promise <IOrder[] | undefined>{
+    async getOrder(): Promise<IOrder[] | undefined> {
         try {
             const order = await this.orderRepository.findModel()
             return order
@@ -310,35 +308,35 @@ class AdminRepository implements IAdminRepository {
     async findOrder(orderId: string): Promise<IOrder | undefined> {
         try {
             const orderdetails = await this.orderRepository.findById(orderId)
-            if(!orderdetails){
+            if (!orderdetails) {
                 throw error
             }
             return orderdetails
-            
+
         } catch (error) {
             console.log("error in admin repository is find order : ", error);
             throw error
         }
     }
 
-    async findBike(bikeId:string): Promise<BikeData>{
+    async findBike(bikeId: string): Promise<BikeData> {
         try {
             const bikeDetails = await this.bikeRepository.findById(bikeId)
-            if(!bikeDetails){
-                throw error 
+            if (!bikeDetails) {
+                throw error
             }
             return bikeDetails
-            
+
         } catch (error) {
             console.log("error in admin repository is find bike : ", error);
             throw error
         }
     }
 
-    async findUser(userId:string):Promise<UserInterface>{
+    async findUser(userId: string): Promise<UserInterface> {
         try {
             const userDetails = await this.userRepository.findById(userId)
-            if(!userDetails){
+            if (!userDetails) {
                 throw error
             }
             return userDetails
@@ -363,7 +361,7 @@ class AdminRepository implements IAdminRepository {
             throw error
         }
     }
-    
+
 
 }
 

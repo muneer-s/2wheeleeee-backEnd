@@ -1,14 +1,11 @@
 import { Request, Response } from 'express';
 import { STATUS_CODES } from "../constants/httpStatusCodes";
-
 import { IOrderService } from '../interfaces/order/IOrderService';
 import { ResponseModel } from '../utils/responseModel';
 import OrderModel from '../models/orderModel';
 import razorpay from '../config/razorpayConfig';
 import { IWalletService } from '../interfaces/wallet/IWalletService';
 import { IUserService } from '../interfaces/user/IUserService';
-import { BikeData } from '../interfaces/BikeInterface';
-import orderServices from '../services/orderServices';
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
 
 

@@ -18,16 +18,14 @@ export interface IUserRepository {
   getBikeDetails(id: string): Promise<any | null>;
   findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
   getOrder(userId: string): Promise<IOrder[]>;
-
   findOrder(orderId: string): Promise<IOrder | undefined>;
   findBike(bikeId: string): Promise<BikeData>;
   findUser(userId: string): Promise<UserInterface>;
-
   findOrderAndUpdate(orderId: string): Promise<IOrder | null>
-  returnOrder(orderId:string):Promise<IOrder | null>
-    submitReview(reviewerId:string, bikeId:string, rating:number, feedback:string):Promise<IReview | null>
-    findReviews(bikeId:string):Promise<IReview[] | null>
-    userAlreadyReviewed(userid:string):Promise<IReview | null>
-    allOrders():Promise<IOrder[] | null>
+  returnOrder(orderId: string): Promise<IOrder | null>
+  submitReview(reviewerId: string, bikeId: string, rating: number, feedback: string): Promise<IReview | null>
+  findReviews(bikeId: string): Promise<IReview[] | null>
+  userAlreadyReviewed(userid: string): Promise<IReview | null>
+  allOrders(): Promise<IOrder[] | null>
 
 }

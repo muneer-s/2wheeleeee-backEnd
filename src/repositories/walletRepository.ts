@@ -25,9 +25,6 @@ class walletRepository implements IWalletRepository {
         }
     }
 
-   
-
-
     async updateWalletBalance(walletId: string, newBalance: number, historyEntry: object): Promise<IWallet | null> {
         try {
             const updatedWallet = await this.walletRepository.updateById(walletId, {
@@ -45,8 +42,6 @@ class walletRepository implements IWalletRepository {
             throw error;
         }
     }
-    
-
 
 
 }

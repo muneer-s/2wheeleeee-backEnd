@@ -1,9 +1,7 @@
 import { Request, response, Response } from 'express';
 import { STATUS_CODES } from "../constants/httpStatusCodes";
-import HostServices from '../services/bikeServices';
 import IHostService from '../interfaces/bike/IBikeService';
 import { ResponseModel } from '../utils/responseModel';
-import { IOrderService } from '../interfaces/order/IOrderService';
 
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
 

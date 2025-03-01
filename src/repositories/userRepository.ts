@@ -15,14 +15,14 @@ class UserRepository implements IUserRepository {
 
   private userRepository: BaseRepository<UserInterface>;
   private bikeRepository: BaseRepository<BikeData>;
-  private hostRepository: BaseRepository<IWallet>;
+  private walletRepository: BaseRepository<IWallet>;
   private orderRepository: BaseRepository<IOrder>
   private reviewRepository: BaseRepository<IReview>
 
   constructor() {
     this.userRepository = new BaseRepository(userModel);
     this.bikeRepository = new BaseRepository(bikeModel);
-    this.hostRepository = new BaseRepository(walletModel);
+    this.walletRepository = new BaseRepository(walletModel);
     this.orderRepository = new BaseRepository(OrderModel)
     this.reviewRepository = new BaseRepository(ReviewModel)
   }
@@ -39,7 +39,7 @@ class UserRepository implements IUserRepository {
 
     } catch (error) {
       console.log(error as Error);
-      return null;
+      throw error
     }
   }
 
@@ -48,7 +48,7 @@ class UserRepository implements IUserRepository {
       const newUser = await this.userRepository.create(userData);
       return newUser;
     } catch (error) {
-      console.log(error as Error);
+      console.log('Error in Save user: ',error);
       throw error
     }
   }
@@ -56,12 +56,10 @@ class UserRepository implements IUserRepository {
 
   async createWallet(): Promise<IWallet> {
     try {
-
-
-      const wallet = await this.hostRepository.create({ balance: 0 })
+      const wallet = await this.walletRepository.create({ balance: 0 })
       return wallet
     } catch (error) {
-      console.error("error in creating wallet:", error);
+      console.error("error in creating wallet: ", error);
       throw error;
     }
   }
@@ -87,22 +85,16 @@ class UserRepository implements IUserRepository {
 
   async editProfile(email: string, userData: Partial<UserInterface>): Promise<UserInterface | null> {
     try {
-      // const updatedUser = await userModel.findOneAndUpdate(
-      //   { email },
-      //   { $set: userData },
-      //   { new: true, runValidators: true }
-      // );
       const updatedUser = await this.userRepository.findOneAndUpdate(
         { email },
         { $set: userData },
         { new: true, runValidators: true }
       );
 
-
       return updatedUser;
     } catch (error) {
       console.error("Error updating profile:", error);
-      throw new Error("Error updating user profile");
+      throw error
     }
   }
 
@@ -118,12 +110,17 @@ class UserRepository implements IUserRepository {
       return updatedUser;
     } catch (error) {
       console.error("Error updating user documents in the repository:", error);
-      throw new Error("Failed to update user documents in the database");
+      throw error
     }
   }
 
   async getUserById(userId: string): Promise<UserInterface | null> {
-    return await this.userRepository.findById(userId);
+    try {
+      return await this.userRepository.findById(userId);
+    } catch (error) {
+      console.log('Error in getUserById: ',error);
+      throw error
+    }
   }
 
   async getBikeList(query: object, skip: number, limit: number): Promise<BikeData[]> {
@@ -138,7 +135,6 @@ class UserRepository implements IUserRepository {
   async countBikes(query: object): Promise<number> {
     try {
       return await this.bikeRepository.countDocuments(query);
-
     } catch (error) {
       console.error('Error in repository countBikes:', error);
       throw error;
@@ -179,10 +175,8 @@ class UserRepository implements IUserRepository {
   }
 
   async findUserByEmail(email: string): Promise<UserInterface | null | undefined> {
-    try {
-      const user = await this.userRepository.findOne({ email });
-      return user
-
+    try { 
+      return await this.userRepository.findOne({ email });
     } catch (error) {
       console.log(error);
       throw error
@@ -214,7 +208,6 @@ class UserRepository implements IUserRepository {
         throw error
       }
       return orderdetails
-
     } catch (error) {
       console.log("error in admin repository is find order : ", error);
       throw error
@@ -317,13 +310,13 @@ class UserRepository implements IUserRepository {
     }
   }
 
-async allOrders(): Promise<IOrder[] | null> {
-  try {
-    return await this.orderRepository.findAll()
-  } catch (error) {
-    throw error
+  async allOrders(): Promise<IOrder[] | null> {
+    try {
+      return await this.orderRepository.findAll()
+    } catch (error) {
+      throw error
+    }
   }
-}
 
 
 

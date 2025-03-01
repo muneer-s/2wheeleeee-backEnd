@@ -4,7 +4,7 @@ import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { ResponseModel } from '../utils/responseModel';
 import { IWalletService } from '../interfaces/wallet/IWalletService';
 
-const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND } = STATUS_CODES;
+const { OK, NOT_FOUND } = STATUS_CODES;
 
 
 export class WalletController {

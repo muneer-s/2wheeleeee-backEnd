@@ -1,7 +1,7 @@
-import  {  Document } from "mongoose";
+import { Document } from "mongoose";
 
 export interface OTPInterface extends Document {
-  email: string; 
+  email: string;
   hashedOTP: string;
   expireAt: Date;
 }

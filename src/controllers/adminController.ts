@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { STATUS_CODES } from '../constants/httpStatusCodes';
 import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
-import AdminServices from '../services/adminServices';
 import { IAdminService } from '../interfaces/admin/IAdminService';
 import { ResponseModel } from '../utils/responseModel';
 

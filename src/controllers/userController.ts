@@ -1,12 +1,6 @@
-import { Request, response, Response } from 'express';
-import UserServices from '../services/userServices';
-import { generateAndSendOTP } from "../utils/otpGenerator";
+import { Request, Response } from 'express';
 import { STATUS_CODES } from "../constants/httpStatusCodes";
-import userModel from '../models/userModels';
 import { CreateJWT } from '../utils/generateToken';
-import bikeModel from '../models/bikeModel';
-import OtpServices from '../services/otpServices';
-import logger from '../utils/logger';
 import { IUserService } from '../interfaces/user/IUserService';
 import { IOtpService } from '../interfaces/otp/IOtpService';
 import { ResponseModel } from '../utils/responseModel';

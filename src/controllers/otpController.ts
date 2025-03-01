@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import OtpServices from '../services/otpServices';
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import userModel from '../models/userModels';
 import { CreateJWT } from '../utils/generateToken';

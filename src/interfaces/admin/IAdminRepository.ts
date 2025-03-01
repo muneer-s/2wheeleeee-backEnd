@@ -9,25 +9,15 @@ export interface IBikeWithUserDetails extends BikeData {
 
 export interface IAdminRepository {
 
-    getAllUsers(filters: {
-        page: number;
-        limit: number;
-        search: string;
-        isBlocked?: string | undefined;
-        isUser?: string | undefined;
-    }): Promise<{
+    getAllUsers(filters: { page: number; limit: number; search: string; isBlocked?: string | undefined; isUser?: string | undefined }): Promise<{
         users: UserInterface[];
         totalUsers: number;
         totalPages: number;
     } | undefined>;
 
     getSingleUser(userId: string): Promise<UserInterface | null | undefined>;
-
     userVerify(userId: string): Promise<UserInterface | string | undefined>;
-
-    userBlockUnblock(
-        userId: string
-    ): Promise<UserInterface | { success: boolean; message: string } | undefined>;
+    userBlockUnblock(userId: string): Promise<UserInterface | { success: boolean; message: string } | undefined>;
 
     getAllBikeDetails(
         query: object,
@@ -38,19 +28,14 @@ export interface IAdminRepository {
     }>;
 
     verifyHost(bikeId: string): Promise<BikeData | string | undefined>;
-
     revokeHost(bikeId: string, reason: string): Promise<BikeData | string | undefined>;
-
-
-
     findUserByEmail(email: string): Promise<UserInterface | null | undefined>;
-
     isEditOn(bikeId: string): Promise<BikeData | undefined>;
     getOrder(): Promise<IOrder[] | undefined>;
-    findOrder(orderId:string):Promise<IOrder | undefined>;
-    findBike(bikeId:string):Promise<BikeData>;
-    findUser(userId:string):Promise<UserInterface>;
-    allFeedbacks():Promise<IFeedback[] | null >
-    deleteFeedback(id:string):Promise<IFeedback | null>
+    findOrder(orderId: string): Promise<IOrder | undefined>;
+    findBike(bikeId: string): Promise<BikeData>;
+    findUser(userId: string): Promise<UserInterface>;
+    allFeedbacks(): Promise<IFeedback[] | null>
+    deleteFeedback(id: string): Promise<IFeedback | null>
 
 }

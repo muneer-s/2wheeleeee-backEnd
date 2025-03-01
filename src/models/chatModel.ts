@@ -1,14 +1,12 @@
 import { ObjectId } from 'mongodb'
 import mongoose, { Document, Schema } from 'mongoose'
 
-
 export interface IChat extends Document {
     _id: ObjectId,
     users: string[],
     latestMessage: object,
 
 }
-
 
 const chatSchema: Schema<IChat> = new Schema({
     users: [{

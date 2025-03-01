@@ -10,10 +10,6 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
     let token = req.cookies.admin_access_token;
     let refreshToken = req.cookies.admin_refresh_token;
 
-    console.log("admin aces token  : ", token);
-    console.log("admin refresh  : ", refreshToken);
-
-
     if (!refreshToken) {
         res.status(401).json({ success: false, message: 'Admin Token expired or not available' });
         return
@@ -22,7 +18,7 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
     if (!token) {
         try {
             const newAccessToken = await refreshAdminAccessToken(refreshToken);
-            const accessTokenExpiresIn = 30 * 60 * 1000; 
+            const accessTokenExpiresIn = 30 * 60 * 1000;
 
             res.cookie('admin_access_token', newAccessToken, {
                 maxAge: accessTokenExpiresIn,

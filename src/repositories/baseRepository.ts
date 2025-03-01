@@ -1,8 +1,6 @@
-import mongoose, { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
+import { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
 import { SortOrder } from "mongoose";
-import { Query } from "mongoose";
 import { PipelineStage } from "mongoose";
-
 
 class BaseRepository<T extends Document> {
     private model: Model<T>;
@@ -205,12 +203,12 @@ class BaseRepository<T extends Document> {
         }
     }
 
-    async findAll():Promise<any>{
+    async findAll(): Promise<any> {
         try {
             return await this.model.find()
         } catch (error) {
-            console.log("Error in Base repository findAll : ",error);
-            
+            console.log("Error in Base repository findAll : ", error);
+
             throw new Error("Failed to get multiple documents")
         }
     }

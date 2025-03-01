@@ -6,7 +6,7 @@ export interface IOffer extends Document {
     startDate: Date;
     endDate: Date;
     description: string;
-    offerBy:ObjectId
+    offerBy: ObjectId
 }
 
 const offerSchema: Schema<IOffer> = new mongoose.Schema({
@@ -29,8 +29,8 @@ const offerSchema: Schema<IOffer> = new mongoose.Schema({
     description: {
         type: String
     },
-    offerBy:{
-        type:Schema.Types.ObjectId
+    offerBy: {
+        type: Schema.Types.ObjectId
     }
 
 
