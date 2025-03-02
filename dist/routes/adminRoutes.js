@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const adminController_1 = require("../controllers/adminController");
-const adminAuthMiddleware_1 = require("../middleware/adminAuthMiddleware");
+const adminAuthMiddleware_1 = require("../Middleware/adminAuthMiddleware");
 const adminServices_1 = __importDefault(require("../services/adminServices"));
 const adminRepository_1 = __importDefault(require("../repositories/adminRepository"));
 const repository = new adminRepository_1.default();
