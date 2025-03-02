@@ -19,20 +19,17 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
-const otpGenerator_1 = require("../utils/otpGenerator");
 const httpStatusCodes_1 = require("../constants/httpStatusCodes");
-const userModels_1 = __importDefault(require("../models/userModels"));
 const generateToken_1 = require("../utils/generateToken");
-const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR } = httpStatusCodes_1.STATUS_CODES;
+const responseModel_1 = require("../utils/responseModel");
+const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, NOT_FOUND, FORBIDDEN } = httpStatusCodes_1.STATUS_CODES;
 const jwtHandler = new generateToken_1.CreateJWT();
 class UserController {
-    constructor(UserServices) {
+    constructor(UserServices, OtpServices) {
         this.UserServices = UserServices;
+        this.OtpServices = OtpServices;
         this.milliseconds = (h, m, s) => ((h * 60 * 60 + m * 60 + s) * 1000);
     }
     userSignup(req, res) {
@@ -40,57 +37,23 @@ class UserController {
             try {
                 const userData = req.body;
                 const userFound = yield this.UserServices.userSignup(userData);
-                if (userFound == false) {
-                    yield (0, otpGenerator_1.generateAndSendOTP)(req.body.email);
-                    const saveData = yield this.UserServices.saveUser(req.body);
-                    console.log('saved data: ', saveData);
-                    res.status(OK).json({ email: req.body.email, success: true, message: 'OTP sent for verification...' });
-                }
-                else {
-                    console.log('user already nd , so onnum cheyyanda , resposne sended to front end ');
-                    res.status(BAD_REQUEST).json({ success: false, message: 'The email is already in use!' });
-                }
-            }
-            catch (error) {
-                console.log(error);
-                res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
-            }
-        });
-    }
-    verifyOtp(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let data = req.body;
-                const otpMatched = yield this.UserServices.verifyOtp(data);
-                if (otpMatched) {
-                    const userEmail = data.userId;
-                    let userDetails = yield userModels_1.default.findOne({ email: userEmail }, 'email name profile_picture _id');
-                    console.log('user details in verify otp , ', userDetails);
-                    if (!userDetails) {
-                        return res.status(BAD_REQUEST).json({
-                            success: false,
-                            message: 'User not found!',
-                        });
+                if (!userFound) {
+                    yield this.OtpServices.generateAndSendOtp(req.body.email);
+                    const userWallet = yield this.UserServices.createWallet();
+                    userData.wallet = userWallet._id;
+                    if (!userWallet) {
+                        return res.status(BAD_REQUEST).json(responseModel_1.ResponseModel.error("wallet not created"));
                     }
-                    const time = this.milliseconds(23, 30, 0);
-                    const userAccessToken = jwtHandler.generateToken(userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString());
-                    const userRefreshToken = jwtHandler.generateRefreshToken(userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString());
-                    console.log("user details : ", userDetails);
-                    res.status(OK).cookie('user_access_token', userAccessToken, {
-                        expires: new Date(Date.now() + time),
-                        sameSite: 'strict',
-                    }).cookie('user_refresh_token', userRefreshToken, {
-                        expires: new Date(Date.now() + time),
-                        sameSite: 'strict',
-                    }).json({ userData: userDetails, userAccessToken: userAccessToken, userRefreshToken: userRefreshToken, success: true, message: 'OTP verification successful, account verified.' });
+                    yield this.UserServices.saveUser(userData);
+                    return res.status(OK).json(responseModel_1.ResponseModel.success('OTP sent for verification', { email: req.body.email }));
                 }
                 else {
-                    res.status(BAD_REQUEST).json({ success: false, message: 'OTP verification failed!' });
+                    return res.status(BAD_REQUEST).json(responseModel_1.ResponseModel.error('The email is already in use!'));
                 }
             }
             catch (error) {
                 console.log(error);
-                res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
             }
         });
     }
@@ -99,23 +62,29 @@ class UserController {
             try {
                 const { email, password } = req.body;
                 const isUserPresent = yield this.UserServices.login(email);
-                console.log('is user present', isUserPresent);
                 if (!isUserPresent) {
-                    return res.status(404).json({ success: false, message: 'No account found with this email. Please register first.' });
+                    return res.status(NOT_FOUND).json(responseModel_1.ResponseModel.error('No account found with this email. Please register first.'));
                 }
                 const isPasswordMatch = yield isUserPresent.matchPassword(password);
                 if (!isPasswordMatch) {
-                    return res.status(400).json({ success: false, message: 'Incorrect password. Please try again.' });
+                    return res.status(BAD_REQUEST).json(responseModel_1.ResponseModel.error('Incorrect password. Please try again.'));
                 }
-                const time = this.milliseconds(23, 30, 0);
+                if (isUserPresent.isBlocked) {
+                    return res.status(FORBIDDEN).json(responseModel_1.ResponseModel.error('User is blocked by the admin'));
+                }
+                const time = this.milliseconds(0, 30, 0); // 30 minutes
+                const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
+                //    const time = this.milliseconds(0, 0, 15);  // 15 sec
+                //    const refreshTokenExpiryTime = this.milliseconds(0, 3, 0);  // 1 minute
                 const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
                 const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
-                return res.status(200).cookie('user_access_token', userAccessToken, {
+                return res.status(OK).cookie('user_access_token', userAccessToken, {
                     expires: new Date(Date.now() + time),
                     sameSite: 'strict',
-                }).json({
-                    success: true,
-                    message: 'Login successful',
+                }).cookie('user_refresh_token', userRefreshToken, {
+                    expires: new Date(Date.now() + refreshTokenExpiryTime),
+                    sameSite: 'strict',
+                }).json(responseModel_1.ResponseModel.success('Login successful', {
                     user: {
                         email: isUserPresent.email,
                         name: isUserPresent.name,
@@ -124,42 +93,47 @@ class UserController {
                     },
                     userAccessToken,
                     userRefreshToken
-                });
+                }));
             }
             catch (error) {
                 console.log('Error during login:', error);
-                return res.status(500).json({ success: false, message: 'An unexpected error occurred. Please try again later.' });
-            }
-        });
-    }
-    resendOtp(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                console.log('resend otp req : ', req.body);
-                const email = req.body.email;
-                console.log(email);
-                const otp = yield (0, otpGenerator_1.generateAndSendOTP)(email);
-            }
-            catch (error) {
-                console.log(error);
-                res.status(500).json({ success: false, message: 'Internal server error' });
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('An unexpected error occurred. Please try again later.', error));
             }
         });
     }
     logout(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('logout ethi :only cookies clrear cheyyal aanu vendath ', req.body.email);
-                res.cookie('user_access_token', '', {
+                return res.cookie('user_access_token', '', {
                     httpOnly: true,
                     expires: new Date(0)
                 }).cookie('user_refresh_token', '', {
                     httpOnly: true,
                     expires: new Date(0)
-                }).status(OK).json({ success: true, message: 'Logged out successfully' });
+                }).status(OK).json(responseModel_1.ResponseModel.success('Logged out successfully'));
             }
             catch (error) {
                 console.log(error);
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
+            }
+        });
+    }
+    forgotPassword(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email } = req.body;
+                if (!email) {
+                    return res.status(NOT_FOUND).json({ success: false, message: "Email is required." });
+                }
+                //const forgotPassword: any = await this._userUsecase.forgotPassword(req.body.email);
+                // if (forgotPassword.status == 400) {
+                //     return res.status(forgotPassword.status).json(forgotPassword.message);
+                // }
+                // return res.status(forgotPassword.status).json(forgotPassword.message);
+            }
+            catch (error) {
+                console.log(error);
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
             }
         });
     }
@@ -167,18 +141,16 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             try {
-                console.log('get profilil ethiiii');
-                const email = (_a = req.query.email) !== null && _a !== void 0 ? _a : ''; // Use a default value if email is undefined
+                const email = (_a = req.query.email) !== null && _a !== void 0 ? _a : '';
                 if (!email || typeof email !== 'string') {
-                    return res.status(BAD_REQUEST).json({ success: false, message: 'Invalid email provided' });
+                    return res.status(BAD_REQUEST).json(responseModel_1.ResponseModel.error('Invalid email provided'));
                 }
                 const userDetails = yield this.UserServices.getProfile(email);
-                console.log('userd dataaa:    ', userDetails);
-                res.status(OK).json({ success: true, userDetails });
+                return res.status(OK).json(responseModel_1.ResponseModel.success('Success', userDetails));
             }
             catch (error) {
                 console.log(error);
-                res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
             }
         });
     }
@@ -186,23 +158,208 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const _a = req.body, { email } = _a, userData = __rest(_a, ["email"]);
-                console.log('User email:', email);
-                console.log('User data:', userData);
                 if (!email) {
-                    return res.status(400).json({ message: "Email is required" });
+                    return res.status(NOT_FOUND).json(responseModel_1.ResponseModel.error("Email is required"));
                 }
-                const updatedUserData = yield this.UserServices.editProfile(email, userData);
+                const updatedUserData = yield this.UserServices.editProfile(email, userData, req);
                 if (!updatedUserData) {
-                    return res.status(404).json({ message: "User not found" });
+                    return res.status(NOT_FOUND).json(responseModel_1.ResponseModel.error("User not found"));
                 }
-                res.status(200).json({
-                    message: "User profile updated successfully",
+                return res.status(OK).json(responseModel_1.ResponseModel.success("User profile updated successfully", {
                     data: updatedUserData,
-                });
+                    user: {
+                        email: updatedUserData.email,
+                        name: updatedUserData.name,
+                        profile_picture: updatedUserData.profile_picture,
+                        userId: updatedUserData._id
+                    },
+                }));
             }
             catch (error) {
                 console.error("Controller error updating profile:", error);
-                res.status(500).json("Internal server error");
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
+            }
+        });
+    }
+    editUserDocuments(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const updatedUserDocuments = yield this.UserServices.editUserDocuments(req, res);
+                return res.status(OK).json(responseModel_1.ResponseModel.success('User profile updated successfully', { data: updatedUserDocuments }));
+            }
+            catch (error) {
+                console.log(error);
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
+            }
+        });
+    }
+    GetBikeList(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { page = 1, limit = 10, search = '', fuelType, minRent, maxRent } = req.query;
+                const result = yield this.UserServices.GetBikeList({
+                    page: Number(page),
+                    limit: Number(limit),
+                    search: String(search),
+                    fuelType: String(fuelType),
+                    minRent: Number(minRent),
+                    maxRent: Number(maxRent),
+                });
+                return res.status(OK).json(responseModel_1.ResponseModel.success('Get Bike List', {
+                    bikeList: result.bikeList,
+                    totalBikes: result.totalBikes,
+                    totalPages: result.totalPages,
+                }));
+            }
+            catch (error) {
+                console.error('Error in controller GetBikeList:', error);
+                res.status(500).json({ success: false, message: 'Failed to get bike list' });
+            }
+        });
+    }
+    getBikeDetails(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+                const bike = yield this.UserServices.getBikeDetails(id);
+                if (!bike)
+                    return res.status(NOT_FOUND).json(responseModel_1.ResponseModel.error('Bike not found'));
+                return res.status(OK).json(responseModel_1.ResponseModel.success('Bike Details', bike));
+            }
+            catch (error) {
+                console.error("Error getting bike details :", error);
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error("Failed to get bike Deatils", error));
+            }
+        });
+    }
+    checkBlockedStatus(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email } = req.body;
+                const user = yield this.UserServices.findUserByEmail(email);
+                if (!user) {
+                    return res.status(NOT_FOUND).json(responseModel_1.ResponseModel.error('User not found'));
+                }
+                return res.status(OK).json(responseModel_1.ResponseModel.success('success', { isBlocked: user.isBlocked }));
+            }
+            catch (error) {
+                console.error('Error checking user status:', error);
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('Internal server error', error));
+            }
+        });
+    }
+    getOrderList(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { userId } = req.query;
+                if (!userId) {
+                    return res.status(NOT_FOUND).json(responseModel_1.ResponseModel.error("User ID is required"));
+                }
+                const orders = yield this.UserServices.getOrder(userId.toString());
+                if (orders.length === 0) {
+                    return res.status(OK).json(responseModel_1.ResponseModel.success('No orders found for this user', { orders: [] }));
+                }
+                return res.status(OK).json(responseModel_1.ResponseModel.success('Order List Getting Success', { order: orders || [] }));
+            }
+            catch (error) {
+                console.log("error in admin controller getting order list : ", error);
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
+            }
+        });
+    }
+    getOrderDetails(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const orderDetails = yield this.UserServices.orderDetails(req.params.orderId);
+                return res.status(OK).json(responseModel_1.ResponseModel.success("Order Details Get", orderDetails));
+            }
+            catch (error) {
+                console.log("error in admin controller getting order details : ", error);
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
+            }
+        });
+    }
+    earlyReturn(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { orderId } = req.params;
+                const updatedOrder = yield this.UserServices.findOrderAndUpdate(orderId);
+                if (!updatedOrder) {
+                    return res.status(NOT_FOUND).json(responseModel_1.ResponseModel.error("Order not found"));
+                }
+                return res.status(OK).json(responseModel_1.ResponseModel.success("Order status updated successfully", updatedOrder));
+            }
+            catch (error) {
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
+            }
+        });
+    }
+    returnOrder(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { orderId } = req.params;
+                const updatedOrder = yield this.UserServices.returnOrder(orderId);
+                if (!updatedOrder) {
+                    return res.status(NOT_FOUND).json(responseModel_1.ResponseModel.error("Order not found"));
+                }
+                return res.status(OK).json(responseModel_1.ResponseModel.success("Order status updated successfully", updatedOrder));
+            }
+            catch (error) {
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
+            }
+        });
+    }
+    submitReview(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { reviewerId, bikeId, rating, feedback } = req.body;
+                if (!reviewerId || !bikeId || !rating) {
+                    return res.status(BAD_REQUEST).json(responseModel_1.ResponseModel.error("All fields are required."));
+                }
+                const allreadyReviewed = yield this.UserServices.userAlreadyReviewed(reviewerId);
+                if (allreadyReviewed) {
+                    return res.status(BAD_REQUEST).json(responseModel_1.ResponseModel.error('User Already submitted a Review'));
+                }
+                const review = yield this.UserServices.submitReview(reviewerId, bikeId, rating, feedback);
+                if (!review) {
+                    return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error("Failed to submit review."));
+                }
+                return res.status(OK).json(responseModel_1.ResponseModel.success("Review submitted successfully!", review));
+            }
+            catch (error) {
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
+            }
+        });
+    }
+    getReviews(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { bikeId } = req.params;
+                if (!bikeId) {
+                    return res.status(BAD_REQUEST).json(responseModel_1.ResponseModel.error("Bike ID is required"));
+                }
+                const reviews = yield this.UserServices.findReviews(bikeId);
+                return res.status(OK).json(responseModel_1.ResponseModel.success('Get reviews of the bike', { data: reviews }));
+            }
+            catch (error) {
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
+            }
+        });
+    }
+    isBikeAlreadyBooked(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const bikeId = req.params.bikeId;
+                console.log(12121, bikeId);
+                let bikeOrdered = false;
+                const allOrders = yield this.UserServices.allOrders();
+                console.log(2222, allOrders);
+                bikeOrdered = allOrders === null || allOrders === void 0 ? void 0 : allOrders.some(order => order.bikeId.toString() === bikeId && order.status !== "Completed");
+                console.log("Bike Ordered:", bikeOrdered);
+                return res.status(OK).json(responseModel_1.ResponseModel.success("This bike order status : ", { bikeOrdered: bikeOrdered }));
+            }
+            catch (error) {
+                return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
             }
         });
     }

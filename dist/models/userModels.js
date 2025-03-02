@@ -42,10 +42,6 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    password: {
-        type: String,
-        required: true
-    },
     email: {
         type: String,
         required: true,
@@ -53,6 +49,20 @@ const userSchema = new mongoose_1.Schema({
     },
     phoneNumber: {
         type: Number,
+    },
+    password: {
+        type: String,
+    },
+    dateOfBirth: {
+        type: Date,
+    },
+    address: {
+        type: String,
+        default: '',
+    },
+    profile_picture: {
+        type: String,
+        default: ''
     },
     isBlocked: {
         type: Boolean,
@@ -62,36 +72,29 @@ const userSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false
     },
-    profile_picture: {
-        type: String,
-        default: ''
-    },
-    dateOfBirth: {
-        type: Date,
-    },
-    address: {
-        type: String,
-        default: '',
-    },
-    lisence_picture_front: {
-        type: String,
-        default: ''
-    },
-    lisence_picture_back: {
-        type: String,
-        default: ''
-    },
     isUser: {
         type: Boolean,
         default: false
     },
-    lisence_number: {
-        type: Number
+    license_number: {
+        type: String
     },
-    lisence_Exp_Date: {
+    license_Exp_Date: {
         type: Date
+    },
+    license_picture_front: {
+        type: String,
+        default: ''
+    },
+    license_picture_back: {
+        type: String,
+        default: ''
+    },
+    wallet: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'Wallet'
     }
-});
+}, { timestamps: true });
 userSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!this.isModified("password")) {

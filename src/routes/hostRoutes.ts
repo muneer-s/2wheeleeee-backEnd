@@ -3,7 +3,7 @@ import HostController from '../controllers/bikeController';
 import HostServices from '../services/bikeServices';
 import HostRepository from '../repositories/bikeRepository';
 import multer from 'multer';
-import userAuth from '../middleware/userAuthMiddleware';
+import userAuth from '../Middleware/userAuthMiddleware';
 import UserRepository from '../repositories/userRepository';
 
 

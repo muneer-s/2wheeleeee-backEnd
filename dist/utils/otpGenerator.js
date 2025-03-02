@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateAndSendOTP = void 0;
+exports.generateRandomOTP = generateRandomOTP;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const otpModels_1 = __importDefault(require("../models/otpModels"));
@@ -28,12 +29,6 @@ const transporter = nodemailer_1.default.createTransport({
 const generateAndSendOTP = (toEmail) => __awaiter(void 0, void 0, void 0, function* () {
     const otp = generateRandomOTP();
     const hashedOTP = yield bcrypt_1.default.hash(otp, 10);
-    // await OTPModel.create({
-    //     email:toEmail,
-    //     hashedOTP,
-    //     expireAt: new Date(Date.now() + 60 * 1000), 
-    //   });
-    // Upsert logic: update or create an OTP document for the given email
     yield otpModels_1.default.findOneAndUpdate({ email: toEmail }, {
         $set: {
             hashedOTP,

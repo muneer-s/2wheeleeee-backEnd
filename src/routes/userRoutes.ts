@@ -3,8 +3,7 @@ import { UserController } from '../controllers/userController';
 import UserServices from '../services/userServices';
 import UserRepository from '../repositories/userRepository';
 import upload from '../config/multer';
-import userAuth from '../middleware/userAuthMiddleware';
-
+import userAuth from '../Middleware/userAuthMiddleware';
 import multer from 'multer';
 import OtpRepository from '../repositories/otpRepository';
 import OtpServices from '../services/otpServices';

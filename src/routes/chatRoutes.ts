@@ -2,7 +2,7 @@ import express from 'express';
 import chatRepository from '../repositories/chatRepository';
 import chatServices from '../services/chatServices';
 import ChatController from '../controllers/chatController';
-import userAuth from '../middleware/userAuthMiddleware';
+import userAuth from '../Middleware/userAuthMiddleware';
 
 
 const chatRep = new chatRepository()

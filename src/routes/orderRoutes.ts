@@ -2,7 +2,7 @@ import express from 'express';
 import orderRepository from '../repositories/orderRepository';
 import orderServices from '../services/orderServices';
 import OrderController from '../controllers/orderController';
-import userAuth from '../middleware/userAuthMiddleware';
+import userAuth from '../Middleware/userAuthMiddleware';
 import walletRepository from '../repositories/walletRepository';
 import UserRepository from '../repositories/userRepository';
 import walletServices from '../services/walletServices';

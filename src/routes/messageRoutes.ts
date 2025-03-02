@@ -2,7 +2,7 @@ import express from 'express';
 import messageRepository from '../repositories/messageRepository';
 import messageServices from '../services/messageServices';
 import MessageController from '../controllers/messageController';
-import userAuth from '../middleware/userAuthMiddleware';
+import userAuth from '../Middleware/userAuthMiddleware';
 import chatRepository from '../repositories/chatRepository';
 
 

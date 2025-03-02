@@ -2,7 +2,7 @@ import express from 'express';
 import feedbackRepository from '../repositories/feedbackRepository';
 import feedbackServices from '../services/feedbackServices';
 import FeedbackController from '../controllers/feedbackController';
-import userAuth from '../middleware/userAuthMiddleware';
+import userAuth from '../Middleware/userAuthMiddleware';
 
 const feedbackRep = new feedbackRepository()
 const feedbackSer = new feedbackServices(feedbackRep)

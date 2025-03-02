@@ -2,7 +2,7 @@ import express from 'express';
 import offerRepository from '../repositories/offerRepository';
 import offerServices from '../services/offerServices';
 import OfferController from '../controllers/offerController';
-import userAuth from '../middleware/userAuthMiddleware';
+import userAuth from '../Middleware/userAuthMiddleware';
 
 
 const offerRep = new offerRepository()

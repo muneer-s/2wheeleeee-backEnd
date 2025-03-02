@@ -1,6 +1,6 @@
 import express from 'express';
 import { AdminController } from '../controllers/adminController';
-import { adminAuthMiddleware } from '../middleware/adminAuthMiddleware';
+import { adminAuthMiddleware } from '../Middleware/adminAuthMiddleware';
 import AdminServices from '../services/adminServices';
 import AdminRepository from '../repositories/adminRepository';
 

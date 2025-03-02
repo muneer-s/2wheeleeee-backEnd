@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
-
 import UserRepository from '../repositories/userRepository';
 import { STATUS_CODES } from '../constants/httpStatusCodes';
-
 import { UserInterface } from '../interfaces/IUser';
 import { ResponseModel } from '../utils/responseModel';
 
