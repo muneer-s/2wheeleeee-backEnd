@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
 import UserRepository from '../repositories/userRepository';
 import { STATUS_CODES } from '../constants/httpStatusCodes';
+
 import { UserInterface } from '../interfaces/IUser';
 import { ResponseModel } from '../utils/responseModel';
 
@@ -27,14 +28,12 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
     let refresh_token = req.cookies.user_refresh_token;
 
     if (!refresh_token) {
-        return res.status(UNAUTHORIZED).json(ResponseModel.error('User Token expired or not available'))
-
+        return res.status(UNAUTHORIZED).json(ResponseModel.error('User Refresh Token expired or not available'))
     }
 
     if (!token) {
         try {
             const newAccessToken = await refreshAccessToken(refresh_token);
-
             const accessTokenMaxAge = 30 * 60 * 1000;
 
             res.cookie('user_access_token', newAccessToken, {
