@@ -140,6 +140,8 @@ export class UserController {
     async getProfile(req: Request, res: Response): Promise<Response | void> {
         try {
             const email = req.query.email ?? '';
+            console.log(111111111111111111,email);
+            
 
             if (!email || typeof email !== 'string') {
                 return res.status(BAD_REQUEST).json(ResponseModel.error('Invalid email provided'));

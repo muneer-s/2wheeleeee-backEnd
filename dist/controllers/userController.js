@@ -142,6 +142,7 @@ class UserController {
             var _a;
             try {
                 const email = (_a = req.query.email) !== null && _a !== void 0 ? _a : '';
+                console.log(111111111111111111, email);
                 if (!email || typeof email !== 'string') {
                     return res.status(BAD_REQUEST).json(responseModel_1.ResponseModel.error('Invalid email provided'));
                 }
