@@ -48,6 +48,8 @@ export class UserController {
         try {
             const { email, password } = req.body
             const isUserPresent = await this.UserServices.login(email)
+            console.log(32,isUserPresent);
+            
 
             if (!isUserPresent) {
                 return res.status(NOT_FOUND).json(ResponseModel.error('No account found with this email. Please register first.'));
@@ -70,6 +72,10 @@ export class UserController {
 
             const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
             const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
+
+            console.log(11,userAccessToken);
+            console.log(22,userRefreshToken);
+            
 
 
             return res.status(OK).cookie('user_access_token', userAccessToken, {

@@ -26,6 +26,8 @@ declare global {
 const userAuth = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     let token = req.cookies.user_access_token;
     let refresh_token = req.cookies.user_refresh_token;
+    console.log(9876543121);
+    
 
     console.log(1,token);
     console.log(2,refresh_token);
