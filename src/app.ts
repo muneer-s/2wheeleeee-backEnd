@@ -18,7 +18,6 @@ import chatRouter from './routes/chatRoutes';
 import {app,server} from './socket/socket'
 import feedbackRouter from './routes/feedBackRoutes';
 import messageRouter from './routes/messageRoutes';
-// import messageRouter from './routes/messageRoutes';
 
 
 const corsOptions = {
@@ -29,10 +28,7 @@ const corsOptions = {
   allowedHeaders: 'Content-Type,Authorization',
 };
 
-
-
 connectDB();
-
 
 //middleware
 app.use(cors(corsOptions));

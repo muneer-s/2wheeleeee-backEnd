@@ -80,10 +80,10 @@ export class UserController {
 
             return res.status(OK).cookie('user_access_token', userAccessToken, {
                 expires: new Date(Date.now() + time),
-                sameSite: 'strict',
+                sameSite: 'none',
             }).cookie('user_refresh_token', userRefreshToken, {
                 expires: new Date(Date.now() + refreshTokenExpiryTime),
-                sameSite: 'strict',
+                sameSite: 'none',
             }).json(
                 ResponseModel.success('Login successful', {
                     user: {

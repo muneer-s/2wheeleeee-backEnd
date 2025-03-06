@@ -43,12 +43,8 @@ io.on("connection", (socket) => {
         console.log("user joined Room: ", room);
     }); 
 
-
-
     socket.on("typing", (room) => socket.in(room).emit("typing"))
     socket.on("stop typing", (room) => socket.in(room).emit("stop typing"))
-
-
 
     // sending messages
     socket.on("message", (message) => {
