@@ -48,8 +48,8 @@ export class UserController {
         try {
             const { email, password } = req.body
             const isUserPresent = await this.UserServices.login(email)
-            console.log(32,isUserPresent);
-            
+            console.log(32, isUserPresent);
+
 
             if (!isUserPresent) {
                 return res.status(NOT_FOUND).json(ResponseModel.error('No account found with this email. Please register first.'));
@@ -73,17 +73,21 @@ export class UserController {
             const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
             const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
 
-            console.log(11,userAccessToken);
-            console.log(22,userRefreshToken);
-            
+            console.log(11, userAccessToken);
+            console.log(22, userRefreshToken);
+
 
 
             return res.status(OK).cookie('user_access_token', userAccessToken, {
                 expires: new Date(Date.now() + time),
                 sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production', // Ensure secure in production
+                httpOnly: true,
             }).cookie('user_refresh_token', userRefreshToken, {
                 expires: new Date(Date.now() + refreshTokenExpiryTime),
                 sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production',
+                httpOnly: true,
             }).json(
                 ResponseModel.success('Login successful', {
                     user: {
@@ -146,8 +150,8 @@ export class UserController {
     async getProfile(req: Request, res: Response): Promise<Response | void> {
         try {
             const email = req.query.email ?? '';
-            console.log(111111111111111111,email);
-            
+            console.log(111111111111111111, email);
+
 
             if (!email || typeof email !== 'string') {
                 return res.status(BAD_REQUEST).json(ResponseModel.error('Invalid email provided'));
@@ -368,19 +372,19 @@ export class UserController {
             const bikeId = req.params.bikeId
             console.log(12121, bikeId)
 
-            let bikeOrdered :boolean | undefined= false
+            let bikeOrdered: boolean | undefined = false
 
             const allOrders = await this.UserServices.allOrders()
 
             console.log(2222, allOrders);
 
 
-            bikeOrdered = allOrders?.some(order => 
+            bikeOrdered = allOrders?.some(order =>
                 order.bikeId.toString() === bikeId && order.status !== "Completed"
             );
 
             console.log("Bike Ordered:", bikeOrdered);
-            return res.status(OK).json(ResponseModel.success("This bike order status : ",{bikeOrdered:bikeOrdered}))
+            return res.status(OK).json(ResponseModel.success("This bike order status : ", { bikeOrdered: bikeOrdered }))
 
 
         } catch (error) {
