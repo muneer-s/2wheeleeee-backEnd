@@ -64,11 +64,11 @@ export class UserController {
                 return res.status(FORBIDDEN).json(ResponseModel.error('User is blocked by the admin'))
             }
 
-            const time = this.milliseconds(0, 30, 0); // 30 minutes
-            const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
+            // const time = this.milliseconds(0, 30, 0); // 30 minutes
+            // const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
 
-            //    const time = this.milliseconds(0, 0, 15);  // 15 sec
-            //    const refreshTokenExpiryTime = this.milliseconds(0, 3, 0);  // 1 minute
+               const time = this.milliseconds(0, 1, 0);  
+               const refreshTokenExpiryTime = this.milliseconds(0, 3, 0); 
 
             const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
             const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
@@ -79,17 +79,19 @@ export class UserController {
 
 
             return res.status(OK).cookie('user_access_token', userAccessToken, {
-                expires: new Date(Date.now() + time),
+                // expires: new Date(Date.now() + time),
+                maxAge:7 * 24 * 60 * 60 * 1000,
                 sameSite: 'none',
                 secure: process.env.NODE_ENV === 'production', // Ensure secure in production
                 httpOnly: true,
             }).cookie('user_refresh_token', userRefreshToken, {
-                expires: new Date(Date.now() + refreshTokenExpiryTime),
+                maxAge:7 * 24 * 60 * 60 * 1000,
+                // expires: new Date(Date.now() + refreshTokenExpiryTime),
                 sameSite: 'none',
                 secure: process.env.NODE_ENV === 'production',
                 httpOnly: true,
             }).json(
-                ResponseModel.success('Login successful', {
+                ResponseModel.success('Login successful45675467567', {
                     user: {
                         email: isUserPresent.email,
                         name: isUserPresent.name,
