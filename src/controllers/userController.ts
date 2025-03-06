@@ -81,13 +81,13 @@ export class UserController {
             return res.status(OK).cookie('user_access_token', userAccessToken, {
                 // expires: new Date(Date.now() + time),
                 maxAge:7 * 24 * 60 * 60 * 1000,
-                sameSite: 'none',
+                sameSite: 'strict',
                 secure: process.env.NODE_ENV === 'production', // Ensure secure in production
                 httpOnly: true,
             }).cookie('user_refresh_token', userRefreshToken, {
                 maxAge:7 * 24 * 60 * 60 * 1000,
                 // expires: new Date(Date.now() + refreshTokenExpiryTime),
-                sameSite: 'none',
+                sameSite: 'strict',
                 secure: process.env.NODE_ENV === 'production',
                 httpOnly: true,
             }).json(
