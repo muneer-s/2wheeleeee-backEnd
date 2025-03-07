@@ -26,8 +26,8 @@ declare global {
 const userAuth = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     let token = req.cookies.user_access_token;
     let refresh_token = req.cookies.user_refresh_token;
+
     console.log(9876543121);
-    
     console.log(1,token);
     console.log(2,refresh_token);
 
@@ -42,12 +42,10 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
 
             res.cookie('user_access_token', newAccessToken, {
                 maxAge: accessTokenMaxAge,
-                sameSite: 'none',
+                sameSite: 'none', // lax???
                 secure: true
-            });
-
+            });  //credential :true???
             token = newAccessToken;
-
         } catch (error) {
             return res.status(UNAUTHORIZED).json(ResponseModel.error('Failed to refresh token'));
         }

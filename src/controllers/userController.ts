@@ -64,34 +64,31 @@ export class UserController {
                 return res.status(FORBIDDEN).json(ResponseModel.error('User is blocked by the admin'))
             }
 
-            // const time = this.milliseconds(0, 30, 0); // 30 minutes
-            // const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
-
-               const time = this.milliseconds(0, 1, 0);  
-               const refreshTokenExpiryTime = this.milliseconds(0, 3, 0); 
+            // const time = this.milliseconds(0, 1, 0);
+            // const refreshTokenExpiryTime = this.milliseconds(0, 3, 0);
 
             const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
             const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
 
             console.log(11, userAccessToken);
             console.log(22, userRefreshToken);
-
-
-
-            return res.status(OK).cookie('user_access_token', userAccessToken, {
-                // expires: new Date(Date.now() + time),
-                maxAge:7 * 24 * 60 * 60 * 1000,
-                sameSite: 'strict',
-                secure: process.env.NODE_ENV === 'production', // Ensure secure in production
-                httpOnly: true,
-            }).cookie('user_refresh_token', userRefreshToken, {
-                maxAge:7 * 24 * 60 * 60 * 1000,
-                // expires: new Date(Date.now() + refreshTokenExpiryTime),
-                sameSite: 'strict',
-                secure: process.env.NODE_ENV === 'production',
-                httpOnly: true,
-            }).json(
-                ResponseModel.success('Login successful45675467567', {
+            
+            return res.status(OK)
+                .cookie('user_access_token', userAccessToken, {
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none', // Allows cross-site cookies
+                    secure: true, // Required for cross-site cookies in HTTPS
+                    httpOnly: true,
+                    domain: 'https://2wheleeee.store' // Replace with your actual domain
+                })
+                .cookie('user_refresh_token', userRefreshToken, {
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none',
+                    secure: true,
+                    httpOnly: true,
+                    domain: 'https://2wheleeee.store'
+                })
+                .json(ResponseModel.success('Login successful', {
                     user: {
                         email: isUserPresent.email,
                         name: isUserPresent.name,
@@ -100,8 +97,38 @@ export class UserController {
                     },
                     userAccessToken,
                     userRefreshToken
-                })
-            );
+                }));
+
+
+            // return res.status(OK).cookie('user_access_token', userAccessToken, {
+            //     maxAge: 7 * 24 * 60 * 60 * 1000,
+            //     sameSite: 'strict',
+            //     secure: process.env.NODE_ENV === 'production', // Ensure secure in production
+            //     httpOnly: true,
+            // }).cookie('user_refresh_token', userRefreshToken, {
+            //     maxAge: 7 * 24 * 60 * 60 * 1000,
+            //     sameSite: 'strict',
+            //     secure: process.env.NODE_ENV === 'production',
+            //     httpOnly: true,
+            // }).json(
+            //     ResponseModel.success('Login successful45675467567', {
+            //         user: {
+            //             email: isUserPresent.email,
+            //             name: isUserPresent.name,
+            //             profile_picture: isUserPresent.profile_picture,
+            //             userId: isUserPresent._id
+            //         },
+            //         userAccessToken,
+            //         userRefreshToken
+            //     })
+            // );
+
+
+
+
+
+
+
         } catch (error) {
             console.log('Error during login:', error);
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('An unexpected error occurred. Please try again later.', error as Error));
