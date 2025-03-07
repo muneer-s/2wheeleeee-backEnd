@@ -88,7 +88,7 @@ export class UserController {
                     httpOnly: true,
                     domain: '.2wheleeee.store'
                 })
-                .json(ResponseModel.success('Login successful', {
+                .json(ResponseModel.success('Login successfull', {
                     user: {
                         email: isUserPresent.email,
                         name: isUserPresent.name,
