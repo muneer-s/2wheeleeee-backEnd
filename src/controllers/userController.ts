@@ -72,21 +72,21 @@ export class UserController {
 
             console.log(11, userAccessToken);
             console.log(22, userRefreshToken);
-            
+
             return res.status(OK)
                 .cookie('user_access_token', userAccessToken, {
                     maxAge: 7 * 24 * 60 * 60 * 1000,
                     sameSite: 'none', // Allows cross-site cookies
-                    secure: true, // Required for cross-site cookies in HTTPS
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
-                    domain: 'https://2wheleeee.store' // Replace with your actual domain
+                    domain: '.2wheleeee.store' // Replace with your actual domain
                 })
                 .cookie('user_refresh_token', userRefreshToken, {
                     maxAge: 7 * 24 * 60 * 60 * 1000,
                     sameSite: 'none',
-                    secure: true,
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
-                    domain: 'https://2wheleeee.store'
+                    domain: '.2wheleeee.store'
                 })
                 .json(ResponseModel.success('Login successful', {
                     user: {
