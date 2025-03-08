@@ -7,12 +7,12 @@ dotenv.config();
 export class CreateJWT {
     generateToken(payload: string | undefined): string | undefined {
         if (payload) {
-            const token = jwt.sign({ data: payload }, process.env.JWT_SECRET as Secret, { expiresIn: '1m' });
+            const token = jwt.sign({ data: payload }, process.env.JWT_SECRET as Secret, { expiresIn: '30m' });
             return token;
         }
     }
     generateRefreshToken(payload: string | undefined): string | undefined {
-        return jwt.sign({ data: payload }, process.env.JWT_SECRET as Secret, { expiresIn: '3m' });
+        return jwt.sign({ data: payload }, process.env.JWT_SECRET as Secret, { expiresIn: '48h' });
     }
 
     verifyToken(token: string): JwtPayload | null {

@@ -10,12 +10,12 @@ dotenv_1.default.config();
 class CreateJWT {
     generateToken(payload) {
         if (payload) {
-            const token = jwt.sign({ data: payload }, process.env.JWT_SECRET, { expiresIn: '1m' });
+            const token = jwt.sign({ data: payload }, process.env.JWT_SECRET, { expiresIn: '30m' });
             return token;
         }
     }
     generateRefreshToken(payload) {
-        return jwt.sign({ data: payload }, process.env.JWT_SECRET, { expiresIn: '3m' });
+        return jwt.sign({ data: payload }, process.env.JWT_SECRET, { expiresIn: '48h' });
     }
     verifyToken(token) {
         try {
