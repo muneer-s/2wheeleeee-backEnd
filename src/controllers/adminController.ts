@@ -7,7 +7,7 @@ import { ResponseModel } from '../utils/responseModel';
 
 dotenv.config();
 
-const { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR,NOT_FOUND,BAD_REQUEST } = STATUS_CODES;
+const { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND, BAD_REQUEST } = STATUS_CODES;
 const jwtHandler = new CreateJWT()
 
 export class AdminController {
@@ -32,22 +32,37 @@ export class AdminController {
                 return res.status(UNAUTHORIZED).json(ResponseModel.error('Invalid email or password'))
             }
 
-            const time = this.milliseconds(0, 30, 0);
-            const refreshTokenExpires = 48 * 60 * 60 * 1000;
+            // const time = this.milliseconds(0, 30, 0);
+            // const refreshTokenExpires = 48 * 60 * 60 * 1000;
 
             const token = jwtHandler.generateToken(adminEmail);
             const refreshToken = jwtHandler.generateRefreshToken(adminEmail);
 
             return res.status(OK)
+                // .cookie('admin_access_token', token, {
+                //     expires: new Date(Date.now() + time),
+                //     httpOnly: true,
+                //     sameSite: 'strict',
+                // }).cookie('admin_refresh_token', refreshToken, {
+                //     expires: new Date(Date.now() + refreshTokenExpires),
+                //     httpOnly: true,
+                //     sameSite: 'strict',
+                // })
                 .cookie('admin_access_token', token, {
-                    expires: new Date(Date.now() + time),
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none', // Allows cross-site cookies
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
-                    sameSite: 'strict',
-                }).cookie('admin_refresh_token', refreshToken, {
-                    expires: new Date(Date.now() + refreshTokenExpires),
+                    domain: '.2wheleeee.store'
+                })
+                .cookie('admin_refresh_token', refreshToken, {
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none',
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
-                    sameSite: 'strict',
-                }).json(ResponseModel.success('Login successful', {
+                    domain: '.2wheleeee.store'
+                })
+                .json(ResponseModel.success('Login successful', {
                     adminEmail: adminEmail,
                     token,
                     refreshToken
@@ -61,13 +76,19 @@ export class AdminController {
 
     async logout(req: Request, res: Response): Promise<Response | void> {
         try {
-            res.cookie('admin_access_token', '', {
+            res.clearCookie('admin_access_token', {
                 httpOnly: true,
-                expires: new Date(0)
-            }).cookie('admin_refresh_token', '', {
+                secure: true,
+                sameSite: 'strict',
+                path: '/',
+            });
+
+            res.clearCookie('admin_refresh_token', {
                 httpOnly: true,
-                expires: new Date(0)
-            })
+                secure: true,
+                sameSite: 'strict',
+                path: '/',
+            });
 
             return res.status(OK).json({ success: true, message: 'Logged out successfully' });
         } catch (error) {
@@ -130,11 +151,11 @@ export class AdminController {
             const userId = req.params.id
             const user = await this.AdminServices.userBlockUnblock(userId)
 
-            return res.status(OK).json(ResponseModel.success('Success',user))
+            return res.status(OK).json(ResponseModel.success('Success', user))
 
         } catch (error) {
             console.log(error);
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("INTERNAL SERVER ERROR",error as Error))
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("INTERNAL SERVER ERROR", error as Error))
         }
     }
 
@@ -161,10 +182,10 @@ export class AdminController {
             };
 
             let bikeDetails = await this.AdminServices.getAllBikeDetails(query, options)
-            return res.status(OK).json(ResponseModel.success('Bike details Get successfully',bikeDetails))
+            return res.status(OK).json(ResponseModel.success('Bike details Get successfully', bikeDetails))
         } catch (error) {
             console.log(error);
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
         }
     }
 
@@ -175,16 +196,16 @@ export class AdminController {
 
             if (reason) {
                 const bike = await this.AdminServices.revokeHost(bikeId, reason)
-                return res.status(OK).json(ResponseModel.success('Revoked',bike));
+                return res.status(OK).json(ResponseModel.success('Revoked', bike));
             } else {
                 const bike = await this.AdminServices.verifyHost(bikeId)
-                return res.status(OK).json(ResponseModel.success('Verified',bike));
+                return res.status(OK).json(ResponseModel.success('Verified', bike));
             }
 
         } catch (error) {
             console.log(error);
             // res.status(500).json({ success: false, message: 'Internal server error' });
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
         }
     }
 
@@ -192,40 +213,40 @@ export class AdminController {
         try {
             const bikeId = req.params.id
             const bike = await this.AdminServices.isEditOn(bikeId)
-            return res.status(OK).json(ResponseModel.success('Success',bike))
+            return res.status(OK).json(ResponseModel.success('Success', bike))
         } catch (error) {
             console.log("error is from is edit on ", error);
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
         }
     }
 
-    async getOrderList(req:Request,res:Response):Promise<Response | void>{
+    async getOrderList(req: Request, res: Response): Promise<Response | void> {
         try {
             const orders = await this.AdminServices.getOrder()
-            return res.status(OK).json(ResponseModel.success('Order List Getting Success',{order:orders}))
+            return res.status(OK).json(ResponseModel.success('Order List Getting Success', { order: orders }))
         } catch (error) {
-            console.log("error in admin controller getting order list : ",error)
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+            console.log("error in admin controller getting order list : ", error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
 
         }
     }
 
-    async getOrderDetails(req:Request,res:Response):Promise<Response | void>{
+    async getOrderDetails(req: Request, res: Response): Promise<Response | void> {
         try {
             console.log("Request received for Order Details", req.params.orderId);
-            const orderDetails= await this.AdminServices.orderDetails(req.params.orderId)
+            const orderDetails = await this.AdminServices.orderDetails(req.params.orderId)
 
-            return res.status(OK).json(ResponseModel.success("Order Details Get",orderDetails))
+            return res.status(OK).json(ResponseModel.success("Order Details Get", orderDetails))
         } catch (error) {
-            console.log("error in admin controller getting order details : ",error)
-            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR',error as Error));
+            console.log("error in admin controller getting order details : ", error)
+            return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
         }
     }
 
     async getAllFeedback(req: Request, res: Response): Promise<Response | void> {
         try {
-            const allFeedbacks = await this.AdminServices.allFeedbacks()        
-            return res.status(OK).json(ResponseModel.success('Get all feedbacks',allFeedbacks))
+            const allFeedbacks = await this.AdminServices.allFeedbacks()
+            return res.status(OK).json(ResponseModel.success('Get all feedbacks', allFeedbacks))
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('Internal server error'))
 

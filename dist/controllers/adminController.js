@@ -37,20 +37,35 @@ class AdminController {
                 if (email !== adminEmail || password !== adminPassword) {
                     return res.status(UNAUTHORIZED).json(responseModel_1.ResponseModel.error('Invalid email or password'));
                 }
-                const time = this.milliseconds(0, 30, 0);
-                const refreshTokenExpires = 48 * 60 * 60 * 1000;
+                // const time = this.milliseconds(0, 30, 0);
+                // const refreshTokenExpires = 48 * 60 * 60 * 1000;
                 const token = jwtHandler.generateToken(adminEmail);
                 const refreshToken = jwtHandler.generateRefreshToken(adminEmail);
                 return res.status(OK)
+                    // .cookie('admin_access_token', token, {
+                    //     expires: new Date(Date.now() + time),
+                    //     httpOnly: true,
+                    //     sameSite: 'strict',
+                    // }).cookie('admin_refresh_token', refreshToken, {
+                    //     expires: new Date(Date.now() + refreshTokenExpires),
+                    //     httpOnly: true,
+                    //     sameSite: 'strict',
+                    // })
                     .cookie('admin_access_token', token, {
-                    expires: new Date(Date.now() + time),
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none', // Allows cross-site cookies
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
-                    sameSite: 'strict',
-                }).cookie('admin_refresh_token', refreshToken, {
-                    expires: new Date(Date.now() + refreshTokenExpires),
+                    domain: '.2wheleeee.store'
+                })
+                    .cookie('admin_refresh_token', refreshToken, {
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none',
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
-                    sameSite: 'strict',
-                }).json(responseModel_1.ResponseModel.success('Login successful', {
+                    domain: '.2wheleeee.store'
+                })
+                    .json(responseModel_1.ResponseModel.success('Login successful', {
                     adminEmail: adminEmail,
                     token,
                     refreshToken
@@ -65,12 +80,17 @@ class AdminController {
     logout(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                res.cookie('admin_access_token', '', {
+                res.clearCookie('admin_access_token', {
                     httpOnly: true,
-                    expires: new Date(0)
-                }).cookie('admin_refresh_token', '', {
+                    secure: true,
+                    sameSite: 'strict',
+                    path: '/',
+                });
+                res.clearCookie('admin_refresh_token', {
                     httpOnly: true,
-                    expires: new Date(0)
+                    secure: true,
+                    sameSite: 'strict',
+                    path: '/',
                 });
                 return res.status(OK).json({ success: true, message: 'Logged out successfully' });
             }
