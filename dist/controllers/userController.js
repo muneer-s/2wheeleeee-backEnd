@@ -136,13 +136,21 @@ class UserController {
     logout(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.cookie('user_access_token', '', {
+                return res
+                    .clearCookie('user_access_token', {
+                    httpOnly: true, // cookie can't be accessed via JavaScript (prevents XSS attacks).
+                    secure: true, // cookie is sent only over HTTPS (ensure your environment supports HTTPS).
+                    sameSite: 'strict', // prevents cross-site requests (adds CSRF protection)
+                    path: '/', // cookie is cleared for all routes in the domain
+                })
+                    .clearCookie('user_refresh_token', {
                     httpOnly: true,
-                    expires: new Date(0)
-                }).cookie('user_refresh_token', '', {
-                    httpOnly: true,
-                    expires: new Date(0)
-                }).status(OK).json(responseModel_1.ResponseModel.success('Logged out successfully'));
+                    secure: true,
+                    sameSite: 'strict',
+                    path: '/',
+                })
+                    .status(OK)
+                    .json(responseModel_1.ResponseModel.success('Logged out successfully'));
             }
             catch (error) {
                 console.log(error);
