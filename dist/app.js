@@ -22,9 +22,7 @@ const chatRoutes_1 = __importDefault(require("./routes/chatRoutes"));
 const socket_1 = require("./socket/socket");
 const feedBackRoutes_1 = __importDefault(require("./routes/feedBackRoutes"));
 const messageRoutes_1 = __importDefault(require("./routes/messageRoutes"));
-// import messageRouter from './routes/messageRoutes';
 const corsOptions = {
-    // origin: https://2wheeleeee.vercel.app/ || process.env.FRONTEND_URL || "http://localhost:5173",
     origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: 'GET,POST,PUT,DELETE',

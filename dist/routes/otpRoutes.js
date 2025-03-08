@@ -11,6 +11,7 @@ const otpRepository = new otpRepository_1.default();
 const service = new otpServices_1.default(otpRepository);
 const otpController = new otpController_1.default(service);
 const otpRouter = express_1.default.Router();
+console.log(1234);
 otpRouter
     .post('/verifyOtp', (req, res) => { otpController.verifyOtp(req, res); })
     .post('/resendOtp', (req, res) => { otpController.resendOtp(req, res); });

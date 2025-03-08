@@ -62,6 +62,7 @@ class UserController {
             try {
                 const { email, password } = req.body;
                 const isUserPresent = yield this.UserServices.login(email);
+                console.log(32, isUserPresent);
                 if (!isUserPresent) {
                     return res.status(NOT_FOUND).json(responseModel_1.ResponseModel.error('No account found with this email. Please register first.'));
                 }
@@ -72,19 +73,28 @@ class UserController {
                 if (isUserPresent.isBlocked) {
                     return res.status(FORBIDDEN).json(responseModel_1.ResponseModel.error('User is blocked by the admin'));
                 }
-                const time = this.milliseconds(0, 30, 0); // 30 minutes
-                const refreshTokenExpiryTime = this.milliseconds(48, 0, 0); //  48 hours
-                //    const time = this.milliseconds(0, 0, 15);  // 15 sec
-                //    const refreshTokenExpiryTime = this.milliseconds(0, 3, 0);  // 1 minute
+                // const time = this.milliseconds(0, 1, 0);
+                // const refreshTokenExpiryTime = this.milliseconds(0, 3, 0);
                 const userAccessToken = jwtHandler.generateToken(isUserPresent._id.toString());
                 const userRefreshToken = jwtHandler.generateRefreshToken(isUserPresent._id.toString());
-                return res.status(OK).cookie('user_access_token', userAccessToken, {
-                    expires: new Date(Date.now() + time),
-                    sameSite: 'strict',
-                }).cookie('user_refresh_token', userRefreshToken, {
-                    expires: new Date(Date.now() + refreshTokenExpiryTime),
-                    sameSite: 'strict',
-                }).json(responseModel_1.ResponseModel.success('Login successful', {
+                console.log(11, userAccessToken);
+                console.log(22, userRefreshToken);
+                return res.status(OK)
+                    .cookie('user_access_token', userAccessToken, {
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none', // Allows cross-site cookies
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
+                    httpOnly: true,
+                    domain: '.2wheleeee.store' // Replace with your actual domain
+                })
+                    .cookie('user_refresh_token', userRefreshToken, {
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none',
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
+                    httpOnly: true,
+                    domain: '.2wheleeee.store'
+                })
+                    .json(responseModel_1.ResponseModel.success('Login successfull', {
                     user: {
                         email: isUserPresent.email,
                         name: isUserPresent.name,
@@ -94,6 +104,28 @@ class UserController {
                     userAccessToken,
                     userRefreshToken
                 }));
+                // return res.status(OK).cookie('user_access_token', userAccessToken, {
+                //     maxAge: 7 * 24 * 60 * 60 * 1000,
+                //     sameSite: 'strict',
+                //     secure: process.env.NODE_ENV === 'production', // Ensure secure in production
+                //     httpOnly: true,
+                // }).cookie('user_refresh_token', userRefreshToken, {
+                //     maxAge: 7 * 24 * 60 * 60 * 1000,
+                //     sameSite: 'strict',
+                //     secure: process.env.NODE_ENV === 'production',
+                //     httpOnly: true,
+                // }).json(
+                //     ResponseModel.success('Login successful45675467567', {
+                //         user: {
+                //             email: isUserPresent.email,
+                //             name: isUserPresent.name,
+                //             profile_picture: isUserPresent.profile_picture,
+                //             userId: isUserPresent._id
+                //         },
+                //         userAccessToken,
+                //         userRefreshToken
+                //     })
+                // );
             }
             catch (error) {
                 console.log('Error during login:', error);

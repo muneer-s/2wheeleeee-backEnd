@@ -25,6 +25,7 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     var _a, _b, _c, _d;
     let token = req.cookies.user_access_token;
     let refresh_token = req.cookies.user_refresh_token;
+    console.log(9876543121);
     console.log(1, token);
     console.log(2, refresh_token);
     if (!refresh_token) {
@@ -36,9 +37,9 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             const accessTokenMaxAge = 30 * 60 * 1000;
             res.cookie('user_access_token', newAccessToken, {
                 maxAge: accessTokenMaxAge,
-                sameSite: 'none',
+                sameSite: 'none', // lax???
                 secure: true
-            });
+            }); //credential :true???
             token = newAccessToken;
         }
         catch (error) {
