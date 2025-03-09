@@ -38,12 +38,20 @@ export class OtpController {
                 const userAccessToken = jwtHandler.generateToken(userDetails?._id.toString());
                 const userRefreshToken = jwtHandler.generateRefreshToken(userDetails?._id.toString());
 
+
+
                 return res.status(OK).cookie('user_access_token', userAccessToken, {
-                    expires: new Date(Date.now() + time),
-                    sameSite: 'strict',
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none', // Allows cross-site cookies
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
+                    httpOnly: true,
+                    domain: '.2wheleeee.store'
                 }).cookie('user_refresh_token', userRefreshToken, {
-                    expires: new Date(Date.now() + refreshTokenExpiryTime),
-                    sameSite: 'strict',
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    sameSite: 'none',
+                    secure: process.env.NODE_ENV === 'production' ? true : false,
+                    httpOnly: true,
+                    domain: '.2wheleeee.store'
                 }).json(
                     ResponseModel.success('OTP verification successful, account verified.', {
                         userData: userDetails,

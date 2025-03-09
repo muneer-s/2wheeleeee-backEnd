@@ -85,7 +85,7 @@ class UserController {
                     sameSite: 'none', // Allows cross-site cookies
                     secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
-                    domain: '.2wheleeee.store' // Replace with your actual domain
+                    domain: '.2wheleeee.store'
                 })
                     .cookie('user_refresh_token', userRefreshToken, {
                     maxAge: 7 * 24 * 60 * 60 * 1000,
