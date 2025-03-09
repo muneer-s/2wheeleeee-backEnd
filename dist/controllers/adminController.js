@@ -42,18 +42,9 @@ class AdminController {
                 const token = jwtHandler.generateToken(adminEmail);
                 const refreshToken = jwtHandler.generateRefreshToken(adminEmail);
                 return res.status(OK)
-                    // .cookie('admin_access_token', token, {
-                    //     expires: new Date(Date.now() + time),
-                    //     httpOnly: true,
-                    //     sameSite: 'strict',
-                    // }).cookie('admin_refresh_token', refreshToken, {
-                    //     expires: new Date(Date.now() + refreshTokenExpires),
-                    //     httpOnly: true,
-                    //     sameSite: 'strict',
-                    // })
                     .cookie('admin_access_token', token, {
                     maxAge: 7 * 24 * 60 * 60 * 1000,
-                    sameSite: 'none', // Allows cross-site cookies
+                    sameSite: 'none',
                     secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
                     domain: '.2wheleeee.store'
