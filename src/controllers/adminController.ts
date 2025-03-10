@@ -41,7 +41,7 @@ export class AdminController {
             return res.status(OK)
                 .cookie('admin_access_token', token, {
                     maxAge: 7 * 24 * 60 * 60 * 1000,
-                    sameSite: 'none', 
+                    sameSite: 'none',
                     secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
                     domain: '.2wheleeee.store'
@@ -68,17 +68,21 @@ export class AdminController {
     async logout(req: Request, res: Response): Promise<Response | void> {
         try {
             res.clearCookie('admin_access_token', {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'strict',
                 path: '/',
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+                httpOnly: true,
+                domain: '.2wheleeee.store'
             });
 
             res.clearCookie('admin_refresh_token', {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'strict',
                 path: '/',
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+                httpOnly: true,
+                domain: '.2wheleeee.store'
             });
 
             return res.status(OK).json({ success: true, message: 'Logged out successfully' });

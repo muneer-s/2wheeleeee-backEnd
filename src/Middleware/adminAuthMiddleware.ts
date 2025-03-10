@@ -18,12 +18,14 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
     if (!token) {
         try {
             const newAccessToken = await refreshAdminAccessToken(refreshToken);
-            const accessTokenExpiresIn = 30 * 60 * 1000;
+            //const accessTokenExpiresIn = 30 * 60 * 1000;
 
             res.cookie('admin_access_token', newAccessToken, {
-                maxAge: accessTokenExpiresIn,
                 httpOnly: true,
-                sameSite: 'strict',
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+                domain: '.2wheleeee.store'
             });
 
             token = newAccessToken;
