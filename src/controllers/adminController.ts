@@ -68,8 +68,6 @@ export class AdminController {
     async logout(req: Request, res: Response): Promise<Response | void> {
         try {
             res.clearCookie('admin_access_token', {
-                path: '/',
-                maxAge: 7 * 24 * 60 * 60 * 1000,
                 sameSite: 'none',
                 secure: process.env.NODE_ENV === 'production' ? true : false,
                 httpOnly: true,
@@ -77,8 +75,6 @@ export class AdminController {
             });
 
             res.clearCookie('admin_refresh_token', {
-                path: '/',
-                maxAge: 7 * 24 * 60 * 60 * 1000,
                 sameSite: 'none',
                 secure: process.env.NODE_ENV === 'production' ? true : false,
                 httpOnly: true,

@@ -72,16 +72,12 @@ class AdminController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 res.clearCookie('admin_access_token', {
-                    path: '/',
-                    maxAge: 7 * 24 * 60 * 60 * 1000,
                     sameSite: 'none',
                     secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
                     domain: '.2wheleeee.store'
                 });
                 res.clearCookie('admin_refresh_token', {
-                    path: '/',
-                    maxAge: 7 * 24 * 60 * 60 * 1000,
                     sameSite: 'none',
                     secure: process.env.NODE_ENV === 'production' ? true : false,
                     httpOnly: true,
