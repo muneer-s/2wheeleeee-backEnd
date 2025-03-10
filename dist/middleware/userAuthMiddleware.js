@@ -66,7 +66,18 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             }
         }
         else {
-            return res.status(UNAUTHORIZED).json(responseModel_1.ResponseModel.error(decoded === null || decoded === void 0 ? void 0 : decoded.message));
+            const newAccessToken = yield refreshAccessToken(refresh_token);
+            console.log(135, newAccessToken);
+            // const accessTokenMaxAge = 30 * 60 * 1000;
+            res.cookie('user_access_token', newAccessToken, {
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite: 'none', // Allows cross-site cookies
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+                httpOnly: true,
+                domain: '.2wheleeee.store'
+            });
+            token = newAccessToken;
+            // return res.status(UNAUTHORIZED).json(ResponseModel.error(decoded?.message))
         }
     }
     catch (err) {

@@ -61,7 +61,6 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
         const decoded = jwt.verifyToken(token);
 
         console.log(333,decoded);
-        
 
         if (decoded?.success) {
             let user = await userRepository.getUserById(decoded.decoded?.data?.toString());
@@ -77,7 +76,20 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
                 next();
             }
         } else {
-            return res.status(UNAUTHORIZED).json(ResponseModel.error(decoded?.message))
+            const newAccessToken = await refreshAccessToken(refresh_token);
+            console.log(135,newAccessToken);
+            
+            // const accessTokenMaxAge = 30 * 60 * 1000;
+
+            res.cookie('user_access_token', newAccessToken, {
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite: 'none', // Allows cross-site cookies
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+                httpOnly: true,
+                domain: '.2wheleeee.store'
+            });
+            token = newAccessToken;
+            // return res.status(UNAUTHORIZED).json(ResponseModel.error(decoded?.message))
         }
 
     } catch (err: any) {
