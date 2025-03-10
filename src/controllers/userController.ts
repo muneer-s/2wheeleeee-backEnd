@@ -98,37 +98,6 @@ export class UserController {
                     userAccessToken,
                     userRefreshToken
                 }));
-
-
-            // return res.status(OK).cookie('user_access_token', userAccessToken, {
-            //     maxAge: 7 * 24 * 60 * 60 * 1000,
-            //     sameSite: 'strict',
-            //     secure: process.env.NODE_ENV === 'production', // Ensure secure in production
-            //     httpOnly: true,
-            // }).cookie('user_refresh_token', userRefreshToken, {
-            //     maxAge: 7 * 24 * 60 * 60 * 1000,
-            //     sameSite: 'strict',
-            //     secure: process.env.NODE_ENV === 'production',
-            //     httpOnly: true,
-            // }).json(
-            //     ResponseModel.success('Login successful45675467567', {
-            //         user: {
-            //             email: isUserPresent.email,
-            //             name: isUserPresent.name,
-            //             profile_picture: isUserPresent.profile_picture,
-            //             userId: isUserPresent._id
-            //         },
-            //         userAccessToken,
-            //         userRefreshToken
-            //     })
-            // );
-
-
-
-
-
-
-
         } catch (error) {
             console.log('Error during login:', error);
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('An unexpected error occurred. Please try again later.', error as Error));
@@ -140,14 +109,16 @@ export class UserController {
             return res
                 .clearCookie('user_access_token', {
                     httpOnly: true, // cookie can't be accessed via JavaScript (prevents XSS attacks).
-                    secure: true,   // cookie is sent only over HTTPS (ensure your environment supports HTTPS).
-                    sameSite: 'strict',  // prevents cross-site requests (adds CSRF protection)
+                    secure: process.env.NODE_ENV === 'production',   // cookie is sent only over HTTPS (ensure your environment supports HTTPS).
+                    sameSite: 'none',  // prevents cross-site requests (adds CSRF protection)
                     path: '/',   // cookie is cleared for all routes in the domain
+                    domain: '.2wheleeee.store',
                 })
                 .clearCookie('user_refresh_token', {
                     httpOnly: true,
-                    secure: true,
-                    sameSite: 'strict',
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'none',
+                    domain: '.2wheleeee.store',
                     path: '/',
                 })
                 .status(OK)
