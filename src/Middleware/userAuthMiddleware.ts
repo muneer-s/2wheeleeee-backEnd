@@ -34,6 +34,8 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
     if (!token) {
         try {
             const newAccessToken = await refreshAccessToken(refresh_token);
+            console.log(111,newAccessToken);
+            
             // const accessTokenMaxAge = 30 * 60 * 1000;
 
             res.cookie('user_access_token', newAccessToken, {
@@ -54,7 +56,12 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
             token = req.cookies.user_access_token;
         }
 
+        console.log(222,token);
+        
         const decoded = jwt.verifyToken(token);
+
+        console.log(333,decoded);
+        
 
         if (decoded?.success) {
             let user = await userRepository.getUserById(decoded.decoded?.data?.toString());

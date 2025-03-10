@@ -31,6 +31,7 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     if (!token) {
         try {
             const newAccessToken = yield refreshAccessToken(refresh_token);
+            console.log(111, newAccessToken);
             // const accessTokenMaxAge = 30 * 60 * 1000;
             res.cookie('user_access_token', newAccessToken, {
                 maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -49,7 +50,9 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         if (!token) {
             token = req.cookies.user_access_token;
         }
+        console.log(222, token);
         const decoded = jwt.verifyToken(token);
+        console.log(333, decoded);
         if (decoded === null || decoded === void 0 ? void 0 : decoded.success) {
             let user = yield userRepository.getUserById((_b = (_a = decoded.decoded) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.toString());
             console.log(132, user);
