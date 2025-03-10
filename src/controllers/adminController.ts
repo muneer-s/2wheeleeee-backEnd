@@ -129,7 +129,6 @@ export class AdminController {
         try {
             const userId = req.params.id
             const user = await this.AdminServices.userVerify(userId)
-            //res.status(200).json({ success: true, user });
             return res.status(OK).json(ResponseModel.success('Success', user))
         } catch (error) {
             console.log(error);
@@ -141,9 +140,7 @@ export class AdminController {
         try {
             const userId = req.params.id
             const user = await this.AdminServices.userBlockUnblock(userId)
-
             return res.status(OK).json(ResponseModel.success('Success', user))
-
         } catch (error) {
             console.log(error);
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("INTERNAL SERVER ERROR", error as Error))
@@ -152,7 +149,6 @@ export class AdminController {
 
     async getAllBikeDetails(req: Request, res: Response): Promise<Response | void> {
         try {
-
             const { page = 1, limit = 10, search = '', filter = '', sort = '' } = req.query as {
                 page?: string;
                 limit?: string;
@@ -195,7 +191,6 @@ export class AdminController {
 
         } catch (error) {
             console.log(error);
-            // res.status(500).json({ success: false, message: 'Internal server error' });
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
         }
     }
@@ -226,7 +221,6 @@ export class AdminController {
         try {
             console.log("Request received for Order Details", req.params.orderId);
             const orderDetails = await this.AdminServices.orderDetails(req.params.orderId)
-
             return res.status(OK).json(ResponseModel.success("Order Details Get", orderDetails))
         } catch (error) {
             console.log("error in admin controller getting order details : ", error)

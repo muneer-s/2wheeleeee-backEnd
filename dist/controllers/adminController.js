@@ -132,7 +132,6 @@ class AdminController {
             try {
                 const userId = req.params.id;
                 const user = yield this.AdminServices.userVerify(userId);
-                //res.status(200).json({ success: true, user });
                 return res.status(OK).json(responseModel_1.ResponseModel.success('Success', user));
             }
             catch (error) {
@@ -190,7 +189,6 @@ class AdminController {
             }
             catch (error) {
                 console.log(error);
-                // res.status(500).json({ success: false, message: 'Internal server error' });
                 return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
             }
         });

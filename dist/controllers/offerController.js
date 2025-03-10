@@ -117,7 +117,7 @@ class OfferController {
             try {
                 const { bikeId, offerId } = req.body;
                 if (!bikeId || !offerId) {
-                    return res.status(400).json({ message: "Bike ID and Offer ID are required." });
+                    return res.status(BAD_REQUEST).json({ message: "Bike ID and Offer ID are required." });
                 }
                 yield this.offerServices.findBikeAndOffer(bikeId, offerId);
                 return res.status(OK).json(responseModel_1.ResponseModel.success("Bike updated successfully"));

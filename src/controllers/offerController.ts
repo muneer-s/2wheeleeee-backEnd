@@ -121,12 +121,10 @@ export class OfferController {
             const { bikeId, offerId } = req.body;
 
             if (!bikeId || !offerId) {
-                return res.status(400).json({ message: "Bike ID and Offer ID are required." });
-            }
-
+                return res.status(BAD_REQUEST).json({ message: "Bike ID and Offer ID are required." });
+            }            
             await this.offerServices.findBikeAndOffer(bikeId, offerId)
             return res.status(OK).json(ResponseModel.success("Bike updated successfully"))
-
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error("Internal server error", error as Error));
         }
