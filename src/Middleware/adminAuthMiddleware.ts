@@ -41,8 +41,20 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
         if (decoded?.success && decoded.decoded?.data === process.env.ADMIN_EMAIL) {
             next(); // Proceed to the next middleware or route handler
         } else {
-            res.status(401).json({ success: false, message: 'Invalid token' });
-            return
+            const newAccessToken = await refreshAdminAccessToken(refreshToken);
+            //const accessTokenExpiresIn = 30 * 60 * 1000;
+
+            res.cookie('admin_access_token', newAccessToken, {
+                httpOnly: true,
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+                domain: '.2wheleeee.store'
+            });
+
+            token = newAccessToken;
+            // res.status(401).json({ success: false, message: 'Invalid token' });
+            // return
         }
     } catch (error: any) {
         if (error.name === 'TokenExpiredError') {
