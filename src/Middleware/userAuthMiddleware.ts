@@ -27,24 +27,22 @@ const userAuth = async (req: Request, res: Response, next: NextFunction): Promis
     let token = req.cookies.user_access_token;
     let refresh_token = req.cookies.user_refresh_token;
 
-    console.log(9876543121);
-    console.log(1,token);
-    console.log(2,refresh_token);
-
     if (!refresh_token) {
-        return res.status(UNAUTHORIZED).json(ResponseModel.error('User Refresh Token expired or not available'))
+        return res.status(UNAUTHORIZED).json(ResponseModel.error('User Token expired or not available'))
     }
 
     if (!token) {
         try {
             const newAccessToken = await refreshAccessToken(refresh_token);
-            const accessTokenMaxAge = 30 * 60 * 1000;
+            // const accessTokenMaxAge = 30 * 60 * 1000;
 
             res.cookie('user_access_token', newAccessToken, {
-                maxAge: accessTokenMaxAge,
-                sameSite: 'none', // lax???
-                secure: true
-            });  //credential :true???
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite: 'none', // Allows cross-site cookies
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+                httpOnly: true,
+                domain: '.2wheleeee.store'
+            });
             token = newAccessToken;
         } catch (error) {
             return res.status(UNAUTHORIZED).json(ResponseModel.error('Failed to refresh token'));

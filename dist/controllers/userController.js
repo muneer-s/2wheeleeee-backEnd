@@ -119,7 +119,7 @@ class UserController {
                     httpOnly: true, // cookie can't be accessed via JavaScript (prevents XSS attacks).
                     secure: process.env.NODE_ENV === 'production', // cookie is sent only over HTTPS (ensure your environment supports HTTPS).
                     sameSite: 'none', // prevents cross-site requests (adds CSRF protection)
-                    path: '/', // cookie is cleared for all routes in the domain
+                    // path: '/',   // cookie is cleared for all routes in the domain
                     domain: '.2wheleeee.store',
                 })
                     .clearCookie('user_refresh_token', {
@@ -127,7 +127,7 @@ class UserController {
                     secure: process.env.NODE_ENV === 'production',
                     sameSite: 'none',
                     domain: '.2wheleeee.store',
-                    path: '/',
+                    // path: '/',
                 })
                     .status(OK)
                     .json(responseModel_1.ResponseModel.success('Logged out successfully'));
