@@ -36,7 +36,9 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const userData = req.body;
+                console.log("user data kitti", userData);
                 const userFound = yield this.UserServices.userSignup(userData);
+                console.log("userne founded : ", userFound);
                 if (!userFound) {
                     yield this.OtpServices.generateAndSendOtp(req.body.email);
                     const userWallet = yield this.UserServices.createWallet();

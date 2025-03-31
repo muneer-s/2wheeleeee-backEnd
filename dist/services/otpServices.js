@@ -45,7 +45,15 @@ class OtpServices {
                     subject: 'OTP Verification',
                     text: `Welcome to 2wheleeee. Your OTP for registration is: ${otp}`
                 };
-                yield transporter.sendMail(mailOptions);
+                // const a =   await transporter.sendMail(mailOptions)
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.error("Error sending email:", error);
+                    }
+                    else {
+                        console.log("Email sent:", info.response);
+                    }
+                });
                 return otp;
             }
             catch (error) {

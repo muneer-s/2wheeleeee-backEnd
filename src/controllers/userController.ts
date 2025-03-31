@@ -18,7 +18,9 @@ export class UserController {
     async userSignup(req: Request, res: Response): Promise<Response | void> {
         try {
             const userData = req.body;
+            console.log("user data kitti",userData)
             const userFound = await this.UserServices.userSignup(userData);
+            console.log("userne founded : ",userFound)
 
             if (!userFound) {
                 await this.OtpServices.generateAndSendOtp(req.body.email)

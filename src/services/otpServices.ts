@@ -20,9 +20,8 @@ class OtpServices implements IOtpService{
 
     async generateAndSendOtp(email: string): Promise<string | null> {
         try {
-            const otp: string | null = generateRandomOTP()
+            const otp: string | null = generateRandomOTP()            
             const hashedOTP = await bcrypt.hash(otp, 10);
-
             const saveOtp = await this.otpRepository.saveOtp(email, hashedOTP)
 
             if (!saveOtp) {
@@ -35,9 +34,18 @@ class OtpServices implements IOtpService{
                 to: email,
                 subject: 'OTP Verification',
                 text: `Welcome to 2wheleeee. Your OTP for registration is: ${otp}`
-            }
+            }            
 
-            await transporter.sendMail(mailOptions)
+            // const a =   await transporter.sendMail(mailOptions)
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error("Error sending email:", error);
+                } else {
+                    console.log("Email sent:", info.response);
+                }
+            })
+            
             return otp
         } catch (error) {
             console.error("Error generate and send otp service layer:", error);
