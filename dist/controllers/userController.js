@@ -162,7 +162,6 @@ class UserController {
             var _a;
             try {
                 const email = (_a = req.query.email) !== null && _a !== void 0 ? _a : '';
-                console.log(111111111111111111, email);
                 if (!email || typeof email !== 'string') {
                     return res.status(BAD_REQUEST).json(responseModel_1.ResponseModel.error('Invalid email provided'));
                 }
@@ -278,12 +277,13 @@ class UserController {
                 }
                 const orders = yield this.UserServices.getOrder(userId.toString());
                 if (orders.length === 0) {
+                    console.log("no order get for the user ");
                     return res.status(OK).json(responseModel_1.ResponseModel.success('No orders found for this user', { orders: [] }));
                 }
                 return res.status(OK).json(responseModel_1.ResponseModel.success('Order List Getting Success', { order: orders || [] }));
             }
             catch (error) {
-                console.log("error in admin controller getting order list : ", error);
+                console.log("error in user controller getting order list : ", error);
                 return res.status(INTERNAL_SERVER_ERROR).json(responseModel_1.ResponseModel.error('INTERNAL SERVER ERROR', error));
             }
         });

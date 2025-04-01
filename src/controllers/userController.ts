@@ -157,15 +157,10 @@ export class UserController {
     async getProfile(req: Request, res: Response): Promise<Response | void> {
         try {
             const email = req.query.email ?? '';
-            console.log(111111111111111111, email);
-
-
             if (!email || typeof email !== 'string') {
                 return res.status(BAD_REQUEST).json(ResponseModel.error('Invalid email provided'));
             }
-
             const userDetails = await this.UserServices.getProfile(email);
-
             return res.status(OK).json(ResponseModel.success('Success', userDetails));
         } catch (error) {
             console.log(error);
@@ -275,11 +270,12 @@ export class UserController {
             const orders = await this.UserServices.getOrder(userId.toString())
 
             if (orders.length === 0) {
+                console.log("no order get for the user ")
                 return res.status(OK).json(ResponseModel.success('No orders found for this user', { orders: [] }));
             }
             return res.status(OK).json(ResponseModel.success('Order List Getting Success', { order: orders || [] }))
         } catch (error) {
-            console.log("error in admin controller getting order list : ", error)
+            console.log("error in user controller getting order list : ", error)
             return res.status(INTERNAL_SERVER_ERROR).json(ResponseModel.error('INTERNAL SERVER ERROR', error as Error));
 
         }
