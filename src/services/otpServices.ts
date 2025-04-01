@@ -38,13 +38,14 @@ class OtpServices implements IOtpService{
 
             // const a =   await transporter.sendMail(mailOptions)
 
-            transporter.sendMail(mailOptions, (error, info) => {
+            const a =  await transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
                     console.error("Error sending email:", error);
                 } else {
                     console.log("Email sent:", info.response);
                 }
             })
+            console.log("email successfully send : ",a);
             
             return otp
         } catch (error) {
