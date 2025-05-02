@@ -20,8 +20,8 @@ import feedbackRouter from './routes/feedBackRoutes';
 import messageRouter from './routes/messageRoutes';
 
 
-const corsOptions:any = {
-  origin: [process.env.FRONTEND_URL , "https://www.2wheleeee.store"],
+const corsOptions = {
+  origin: process.env.FRONTEND_URL,
   credentials: true,
   methods: 'GET,POST,PUT,DELETE',
   allowedHeaders: 'Content-Type,Authorization',
